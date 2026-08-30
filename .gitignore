@@ -1,0 +1,38 @@
+# --- Secrets: never commit ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+service-account*.json
+
+# --- Separate repo (has its own origin: filamelitebasketball/nxgenpremierleague) ---
+nxgen-premier-league/
+
+# --- Snapshots / archives (large, regenerable) ---
+*.zip
+nxgen-codebase-snapshots/
+
+# --- Dependencies & build output ---
+node_modules/
+dist/
+build/
+.output/
+.wrangler/
+.tanstack/
+.vite/
+.turbo/
+
+# --- Editor / OS noise ---
+.DS_Store
+Thumbs.db
+desktop.ini
+*.bak
+*.tmp
+*~
+.vscode/
+.idea/
+
+# --- Logs ---
+*.log
+npm-debug.log*

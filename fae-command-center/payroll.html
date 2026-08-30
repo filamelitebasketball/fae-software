@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. Payroll — DOLE Compliant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#050507;--s1:#0d0d10;--s2:#111115;--s3:#16161c;--s4:#1c1c24;
+  --gold:#c9a227;--gold-l:#e8c468;--gold-d:#9a7a1a;--gold-dim:rgba(201,162,39,.12);
+  --paint:#f0f2f5;--txt2:rgba(184,188,200,.62);--txt3:rgba(184,188,200,.34);
+  --bball:#e8843c;--vball:#5b8fe8;--pball:#2ecc71;--red:#ef4444;--red-dim:rgba(239,68,68,.14);
+  --green:#22c55e;--green-dim:rgba(34,197,94,.12);--blue:#5b8fe8;--blue-dim:rgba(91,143,232,.12);
+  --amber:#eab308;--amber-dim:rgba(234,179,8,.14);
+  --bd:rgba(255,255,255,.07);--bd-g:rgba(201,162,39,.22);
+  --disp:'Archivo',system-ui,sans-serif;--body:'DM Sans',system-ui,-apple-system,"Segoe UI",sans-serif;--mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--void);color:var(--paint);font-family:var(--body);font-size:14px;line-height:1.5;padding:22px}
+.wrap{max-width:1400px;margin:0 auto}
+a{color:inherit;text-decoration:none}
+/* Header */
+.top{display:flex;align-items:center;gap:16px;background:linear-gradient(180deg,var(--s2),var(--s1));border:1px solid var(--bd);border-radius:16px;padding:20px 24px;margin-bottom:18px}
+.top .ic{width:48px;height:48px;border-radius:13px;display:grid;place-items:center;font-size:23px;background:var(--gold-dim);color:var(--gold)}
+h1{font-family:var(--disp);font-weight:900;font-size:22px;letter-spacing:-.4px}
+.top p{font-size:12.5px;color:var(--txt2);margin-top:2px}
+.back{margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--gold);border:1px solid var(--bd-g);padding:9px 15px;border-radius:9px}
+.back:hover{background:var(--gold-dim)}
+/* Tabs */
+.tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.tab{font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;padding:10px 16px;border-radius:9px;border:1px solid var(--bd);background:var(--s1);color:var(--txt2);cursor:pointer}
+.tab:hover{color:var(--paint);border-color:var(--bd-g)}
+.tab.on{background:var(--gold-dim);border-color:var(--bd-g);color:var(--gold)}
+.pane{display:none}.pane.on{display:block}
+/* Cards */
+.card{background:linear-gradient(180deg,var(--s2),var(--s1));border:1px solid var(--bd);border-radius:14px;padding:18px;margin-bottom:16px}
+.card-h{font-family:var(--disp);font-weight:800;font-size:14.5px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.card-h .sp{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.g2{display:grid;grid-template-columns:1.25fr .75fr;gap:16px}
+@media(max-width:1050px){.g2{grid-template-columns:1fr}}
+/* Form */
+label{display:block;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:var(--txt3);margin-bottom:6px}
+input,select,textarea{width:100%;background:var(--void);border:1px solid var(--bd);border-radius:9px;color:var(--paint);padding:10px 12px;font-size:13.5px;font-family:inherit}
+textarea{min-height:150px;font-family:var(--mono);font-size:12.5px;line-height:1.7;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+.row{display:grid;gap:11px;margin-bottom:12px}
+.r2{grid-template-columns:1fr 1fr}.r3{grid-template-columns:repeat(3,1fr)}
+.r4{grid-template-columns:repeat(4,1fr)}.r5{grid-template-columns:repeat(5,1fr)}
+@media(max-width:900px){.r3,.r4,.r5{grid-template-columns:1fr 1fr}}
+.chk{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--txt2);margin:8px 0}
+.chk input{width:auto;accent-color:var(--gold)}
+.btn{background:var(--s3);border:1px solid var(--bd);color:var(--paint);padding:10px 16px;border-radius:9px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;cursor:pointer}
+.btn:hover{border-color:var(--gold);color:var(--gold)}
+.btn-g{background:var(--gold);border-color:var(--gold);color:#100c02}
+.btn-g:hover{background:var(--gold-l);color:#100c02}
+.btn-d:hover{border-color:var(--red);color:var(--red)}
+.btn-sm{padding:6px 11px;font-size:10px}
+.btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:11px;margin-bottom:16px}
+@media(max-width:1050px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:620px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:linear-gradient(180deg,var(--s2),var(--s1));border:1px solid var(--bd);border-radius:13px;padding:14px 16px}
+.kpi .l{font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--txt3)}
+.kpi .v{font-family:var(--disp);font-weight:800;font-size:21px;margin-top:6px;letter-spacing:-.5px}
+/* Table */
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--txt3);padding:9px 9px;border-bottom:1px solid var(--bd);white-space:nowrap}
+td{padding:10px 9px;border-bottom:1px solid var(--bd);white-space:nowrap}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+tr:last-child td{border-bottom:none}
+.amt{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.tot td{background:var(--gold-dim);font-weight:700;border-top:1px solid var(--bd-g)}
+.mut{color:var(--txt3)}
+.empty{text-align:center;padding:30px;color:var(--txt3);font-size:13px}
+/* Pills + flags */
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.6px;padding:3px 8px;border-radius:20px;background:var(--s4);color:var(--txt2);white-space:nowrap}
+.p-rest{background:var(--blue-dim);color:var(--blue)}
+.p-hol{background:var(--red-dim);color:var(--red)}
+.p-un{background:var(--green-dim);color:var(--green)}
+.flag{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border-radius:10px;margin-bottom:9px;font-size:12.5px;line-height:1.6}
+.f-red{background:var(--red-dim);border:1px solid rgba(239,68,68,.3)}
+.f-amb{background:var(--amber-dim);border:1px solid rgba(234,179,8,.3)}
+.f-grn{background:var(--green-dim);border:1px solid rgba(34,197,94,.3)}
+.flag b{display:block;margin-bottom:2px}
+.legal{font-size:12.5px;line-height:1.9;color:var(--txt2)}
+.legal b{color:var(--paint)}
+.note{font-size:11.5px;color:var(--txt3);line-height:1.75;margin-top:9px}
+code{background:var(--void);border:1px solid var(--bd);padding:2px 6px;border-radius:5px;color:var(--gold);font-family:var(--mono);font-size:11.5px}
+/* Payslip */
+.slip{background:#fff;color:#111;border-radius:12px;padding:26px;font-size:12.5px}
+.slip h2{font-family:var(--disp);font-size:17px;margin-bottom:2px;color:#000}
+.slip .sub{color:#666;font-size:11.5px}
+.slip hr{border:none;border-top:1px solid #ddd;margin:14px 0}
+.slip .li{display:flex;justify-content:space-between;padding:5px 0}
+.slip .li.b{font-weight:800;font-size:15px;border-top:2px solid #111;margin-top:8px;padding-top:10px}
+.slip table{font-size:11px;color:#111}
+.slip th{color:#666;border-bottom:1px solid #ccc}
+.slip td{border-bottom:1px solid #eee}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--gold);color:#100c02;padding:12px 22px;border-radius:10px;font-family:var(--mono);font-size:12px;font-weight:600;z-index:99;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(-6px)}
+@media print{
+  body{background:#fff;padding:0}
+  .top,.tabs,.noprint,.card-h .sp{display:none!important}
+  .card{border:none;background:#fff;padding:0;margin:0}
+  .slip{border-radius:0;padding:0}
+}
+</style></head><body><div class="wrap">
+
+<div class="top">
+  <div class="ic">&#8369;</div>
+  <div><h1>F.A.E. Payroll</h1><p>DOLE-compliant time &amp; wage computation &middot; Philippine Labor Code</p></div>
+  <a class="back noprint" href="index.html">&larr; Command Center</a>
+</div>
+
+<div class="tabs noprint">
+  <div class="tab on" data-p="run">&#128181; Payroll Run</div>
+  <div class="tab" data-p="log">&#128337; Time Log</div>
+  <div class="tab" data-p="emp">&#128101; Employees</div>
+  <div class="tab" data-p="slip">&#129534; Payslip</div>
+  <div class="tab" data-p="hist">&#128200; Salary History</div>
+  <div class="tab" data-p="audit">&#128220; Audit Trail</div>
+  <div class="tab" data-p="set">&#9881;&#65039; Rates &amp; Law</div>
+</div>
+
+<!-- ============ PAYROLL RUN ============ -->
+<div class="pane on" id="p-run">
+  <div class="card noprint"><div class="card-h">Pay Period
+    <div class="sp">
+      <button class="btn btn-sm" onclick="quickPeriod('m1')">1st&ndash;15th</button>
+      <button class="btn btn-sm" onclick="quickPeriod('m2')">16th&ndash;EOM</button>
+      <button class="btn btn-sm" onclick="quickPeriod('all')">All Data</button>
+    </div></div>
+    <div class="row r3">
+      <div><label>From</label><input type="date" id="pfrom"></div>
+      <div><label>To</label><input type="date" id="pto"></div>
+      <div><label>&nbsp;</label><button class="btn btn-g" style="width:100%" onclick="runPayroll()">Compute Payroll</button></div>
+    </div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="l">Employees</div><div class="v" id="k-emp">0</div></div>
+    <div class="kpi"><div class="l">Days Paid</div><div class="v" id="k-days">0</div></div>
+    <div class="kpi"><div class="l">OT Hours</div><div class="v" id="k-ot" style="color:var(--gold)">0</div></div>
+    <div class="kpi"><div class="l">Night Hours</div><div class="v" id="k-nt" style="color:var(--blue)">0</div></div>
+    <div class="kpi"><div class="l">Gross Pay</div><div class="v" id="k-gross" style="color:var(--green)">&#8369;0</div></div>
+    <div class="kpi"><div class="l">Net Pay</div><div class="v" id="k-net" style="color:var(--gold)">&#8369;0</div></div>
+  </div>
+
+  <div class="card"><div class="card-h">Payroll Register
+    <div class="sp">
+      <input id="run-label" placeholder="Label, e.g. Aug 2nd half" style="width:190px;padding:7px 11px;font-size:12px">
+      <button class="btn btn-sm btn-g" onclick="postRun()">&#128190; Save This Run</button>
+      <button class="btn btn-sm" onclick="exportRegister()">Export CSV</button>
+    </div></div>
+    <div class="scroll"><table><thead><tr>
+      <th>Employee</th><th class="amt">Days</th><th class="amt">Hrs Worked</th><th class="amt">Reg</th><th class="amt">OT</th><th class="amt">Night</th>
+      <th class="amt">Basic</th><th class="amt">OT Pay</th><th class="amt">Night Diff</th><th class="amt">Hol. Pay</th>
+      <th class="amt">Gross</th><th class="amt">Deductions</th><th class="amt">Net Pay</th><th></th>
+    </tr></thead><tbody id="reg-body"><tr><td colspan="14" class="empty">No pay period computed yet.</td></tr></tbody></table></div>
+  </div>
+
+  <div class="card"><div class="card-h">&#9878;&#65039; DOLE Compliance Check</div><div id="compliance"></div></div>
+</div>
+
+<!-- ============ TIME LOG ============ -->
+<div class="pane" id="p-log">
+  <div class="g2">
+    <div class="card"><div class="card-h">&#128229; Import From Logbook</div>
+      <div class="row r3">
+        <div><label>Employee</label><select id="i-emp"></select></div>
+        <div><label>Month</label><select id="i-mon"></select></div>
+        <div><label>Year</label><input type="number" id="i-year" value="2026" min="2000" max="2100"></div>
+      </div>
+      <label>Paste the logbook &mdash; one line per day</label>
+      <textarea id="i-raw" placeholder="14   7:49am   11:31pm
+15   9:11am   7:20pm
+Aug 17   7:52am   12:53am
+Aug 23   8:49am   6:00pm   [rest]
+Aug 25   1:40pm   1:37am
+Aug 30   8:44am"></textarea>
+      <div class="chk"><input type="checkbox" id="i-noclock"><label for="i-noclock" style="margin:0;text-transform:none;letter-spacing:0;font-family:var(--body);font-size:12.5px;color:var(--txt2)">Lines with a date but <b>no times</b> = full day worked (pays the daily wage, no OT)</label></div>
+      <div class="btns">
+        <button class="btn btn-g" onclick="importLog()">Import Lines</button>
+        <button class="btn" onclick="document.getElementById('i-raw').value=''">Clear Box</button>
+      </div>
+      <div class="note">Reads <code>7:49am</code>, <code>7:49 AM</code> and <code>19:20</code>. A day number alone (<code>14</code>) uses the month/year above; <code>Aug 17</code> also works. Time-outs after midnight roll to the next day automatically.<br>
+      Tag non-ordinary days at the end of the line: <code>[rest]</code> <code>[special]</code> <code>[holiday]</code> <code>[rest+special]</code> <code>[rest+holiday]</code> <code>[holiday-unworked]</code>.<br>
+      A line with no time-out is saved with the time-in only and flagged for you to complete.</div>
+    </div>
+    <div class="card"><div class="card-h" id="a-title">&#10133; Add One Day</div>
+      <input type="hidden" id="a-id">
+      <div class="row r2">
+        <div><label>Employee</label><select id="a-emp"></select></div>
+        <div><label>Date</label><input type="date" id="a-date"></div>
+      </div>
+      <div class="row r2">
+        <div><label>Time In</label><input type="time" id="a-in"></div>
+        <div><label>Time Out</label><input type="time" id="a-out"></div>
+      </div>
+      <div class="row"><div><label>Day Type</label><select id="a-type"></select></div></div>
+      <div class="row"><div><label>Note</label><input id="a-note" placeholder="optional"></div></div>
+      <div class="btns"><button class="btn btn-g" style="flex:1" onclick="addDay()" id="a-btn">Add Day</button>
+      <button class="btn" onclick="resetDayForm()">Clear</button></div>
+      <div class="note">Time-out earlier than time-in is treated as the next morning. Leave time-out blank if the shift is still open. Press <b>Edit</b> on any row below to correct it here.</div>
+    </div>
+  </div>
+  <div class="card"><div class="card-h">All Logged Days
+    <div class="sp">
+      <select id="f-emp" style="width:auto;padding:7px 11px;font-size:12px" onchange="renderLog()"></select>
+      <button class="btn btn-sm" onclick="exportLog()">Export CSV</button>
+      <button class="btn btn-sm btn-d" onclick="wipeLog()">Delete All</button>
+    </div></div>
+    <div class="scroll"><table><thead><tr>
+      <th>Date</th><th>Employee</th><th>In</th><th>Out</th><th>Type</th>
+      <th class="amt">Span</th><th class="amt">Worked</th><th class="amt">Reg</th><th class="amt">OT</th><th class="amt">Night</th>
+      <th class="amt">Day Pay</th><th>Note</th><th></th>
+    </tr></thead><tbody id="log-body"></tbody></table></div>
+  </div>
+</div>
+
+<!-- ============ EMPLOYEES ============ -->
+<div class="pane" id="p-emp">
+  <div class="g2">
+    <div class="card"><div class="card-h">&#10133; Add / Edit Employee</div>
+      <input type="hidden" id="e-id">
+      <div class="row r2">
+        <div><label>Full Name</label><input id="e-name" placeholder="e.g. Angelo Santos"></div>
+        <div><label>Position</label><input id="e-pos" placeholder="e.g. Coach / Court Staff"></div>
+      </div>
+      <div class="row r2">
+        <div><label>Daily Wage (&#8369;)</label><input type="number" id="e-rate" value="500" step="0.01"></div>
+        <div><label>Date Hired</label><input type="date" id="e-hired"></div>
+      </div>
+      <div class="card-h" style="font-size:12px;margin:14px 0 10px">Monthly Statutory Deductions (&#8369;)</div>
+      <div class="row r3">
+        <div><label>SSS</label><input type="number" id="e-sss" value="0" step="0.01"></div>
+        <div><label>PhilHealth</label><input type="number" id="e-ph" value="0" step="0.01"></div>
+        <div><label>Pag-IBIG</label><input type="number" id="e-pi" value="0" step="0.01"></div>
+      </div>
+      <div class="chk"><input type="checkbox" id="e-active" checked><label for="e-active" style="margin:0;text-transform:none;letter-spacing:0;font-family:var(--body);font-size:12.5px;color:var(--txt2)">Active employee</label></div>
+      <div class="btns">
+        <button class="btn btn-g" onclick="saveEmp()">Save Employee</button>
+        <button class="btn" onclick="resetEmpForm()">New / Clear</button>
+      </div>
+      <div class="note">Enter the employee's own contribution amounts from the <b>current</b> SSS, PhilHealth and Pag-IBIG circulars &mdash; SSS in particular is a bracket table, not a flat percentage, and all three are revised periodically. Nothing is preset here so no stale rate ever gets applied silently. Leave at 0 to compute gross only.</div>
+    </div>
+    <div class="card"><div class="card-h">&#128176; 13th Month Pay (PD 851)</div>
+      <div class="row"><div><label>Calendar Year</label><input type="number" id="th-year" value="2026" onchange="render13th()"></div></div>
+      <div class="scroll"><table><thead><tr><th>Employee</th><th class="amt">YTD Basic</th><th class="amt">13th Month</th></tr></thead>
+      <tbody id="th-body"></tbody></table></div>
+      <div class="note">13th month pay = total <b>basic salary</b> earned in the calendar year &divide; 12. Overtime, night differential and holiday premiums are excluded by law. Payable on or before <b>December 24</b>. Figures build up as you log days &mdash; log the whole year for an accurate number.</div>
+    </div>
+  </div>
+  <div class="card"><div class="card-h">Employee Roster</div>
+    <div class="scroll"><table><thead><tr>
+      <th>Name</th><th>Position</th><th class="amt">Daily Wage</th><th class="amt">Hourly</th><th class="amt">OT/hr</th>
+      <th>Hired</th><th class="amt">SSS</th><th class="amt">PhilHealth</th><th class="amt">Pag-IBIG</th><th>Status</th><th></th>
+    </tr></thead><tbody id="emp-body"></tbody></table></div>
+  </div>
+</div>
+
+<!-- ============ PAYSLIP ============ -->
+<div class="pane" id="p-slip">
+  <div class="card noprint"><div class="card-h">Generate Payslip
+    <div class="sp"><button class="btn btn-sm" onclick="window.print()">&#128424; Print</button></div></div>
+    <div class="row r3">
+      <div><label>Employee</label><select id="s-emp" onchange="renderSlip()"></select></div>
+      <div><label>From</label><input type="date" id="s-from" onchange="renderSlip()"></div>
+      <div><label>To</label><input type="date" id="s-to" onchange="renderSlip()"></div>
+    </div>
+  </div>
+  <div class="card" id="slip-wrap"><div class="empty">Pick an employee and a date range.</div></div>
+</div>
+
+<!-- ============ SALARY HISTORY ============ -->
+<div class="pane" id="p-hist">
+  <div class="kpis">
+    <div class="kpi"><div class="l">Saved Runs</div><div class="v" id="h-runs">0</div></div>
+    <div class="kpi"><div class="l">Periods Paid</div><div class="v" id="h-per">&mdash;</div></div>
+    <div class="kpi"><div class="l">Total Gross Paid</div><div class="v" id="h-gross" style="color:var(--green)">&#8369;0</div></div>
+    <div class="kpi"><div class="l">Total OT Paid</div><div class="v" id="h-ot" style="color:var(--gold)">&#8369;0</div></div>
+    <div class="kpi"><div class="l">Total Deductions</div><div class="v" id="h-ded" style="color:var(--red)">&#8369;0</div></div>
+    <div class="kpi"><div class="l">Total Net Released</div><div class="v" id="h-net" style="color:var(--gold)">&#8369;0</div></div>
+  </div>
+
+  <div class="card"><div class="card-h">&#128179; Salary Tracker &mdash; Earnings Per Employee
+    <div class="sp">
+      <select id="h-year" style="width:auto;padding:7px 11px;font-size:12px" onchange="renderHistory()"></select>
+      <button class="btn btn-sm" onclick="exportSalaryHistory()">Export CSV</button>
+    </div></div>
+    <div class="scroll"><table><thead><tr>
+      <th>Employee</th><th class="amt">Runs</th><th class="amt">Days</th><th class="amt">OT Hrs</th>
+      <th class="amt">Basic</th><th class="amt">OT Pay</th><th class="amt">Night Diff</th><th class="amt">Holiday</th>
+      <th class="amt">Gross</th><th class="amt">Deductions</th><th class="amt">Net Received</th><th class="amt">Avg / Period</th>
+    </tr></thead><tbody id="h-emp-body"></tbody></table></div>
+    <div class="note">Totals come from <b>saved payroll runs only</b>, so this is the record of what was actually released &mdash; it never shifts when you change a rate later. Compute a period on the Payroll Run tab, then press <b>Save This Run</b> to enter it here.</div>
+  </div>
+
+  <div class="card"><div class="card-h">&#128193; Saved Payroll Runs
+    <div class="sp"><button class="btn btn-sm" onclick="exportRuns()">Export All Runs</button></div></div>
+    <div class="scroll"><table><thead><tr>
+      <th>Saved</th><th>Period</th><th>Label</th><th class="amt">Staff</th><th class="amt">Days</th>
+      <th class="amt">OT Hrs</th><th class="amt">Gross</th><th class="amt">Deductions</th><th class="amt">Net</th><th></th>
+    </tr></thead><tbody id="h-run-body"></tbody></table></div>
+  </div>
+
+  <div class="card"><div class="card-h">&#128202; Per-Period Detail <span id="h-detail-lbl" class="mut" style="font-weight:400;font-size:12px"></span></div>
+    <div class="scroll"><table><thead><tr>
+      <th>Employee</th><th class="amt">Daily Wage</th><th class="amt">Days</th><th class="amt">OT</th><th class="amt">Night</th>
+      <th class="amt">Basic</th><th class="amt">OT Pay</th><th class="amt">Night Diff</th><th class="amt">Gross</th>
+      <th class="amt">Deductions</th><th class="amt">Net</th>
+    </tr></thead><tbody id="h-detail-body"><tr><td colspan="11" class="empty">Pick a saved run above to see who was paid what.</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- ============ AUDIT TRAIL ============ -->
+<div class="pane" id="p-audit">
+  <div class="card"><div class="card-h">&#128220; Audit Trail
+    <div class="sp">
+      <select id="au-filter" style="width:auto;padding:7px 11px;font-size:12px" onchange="renderAudit()">
+        <option value="">All activity</option>
+        <option value="employee">Employees</option>
+        <option value="timelog">Time log</option>
+        <option value="payroll">Payroll runs</option>
+        <option value="settings">Settings</option>
+        <option value="data">Backup / restore</option>
+      </select>
+      <button class="btn btn-sm" onclick="exportAudit()">Export CSV</button>
+      <button class="btn btn-sm btn-d" onclick="wipeAudit()">Clear Trail</button>
+    </div></div>
+    <div class="scroll"><table><thead><tr>
+      <th>When</th><th>By</th><th>Area</th><th>Action</th><th>Record</th><th>Detail</th>
+    </tr></thead><tbody id="au-body"></tbody></table></div>
+    <div class="note">Every change to employees, time logs, rates and payroll runs is recorded here automatically with a timestamp &mdash; this is your paper trail if a wage claim or a DOLE inspection ever asks how a figure was reached. Set your name under <b>Rates &amp; Law</b> so entries are stamped with who made them. Export it with each payroll period and keep the file.</div>
+  </div>
+</div>
+
+<!-- ============ SETTINGS / LAW ============ -->
+<div class="pane" id="p-set">
+  <div class="card"><div class="card-h">&#9881;&#65039; Statutory Rates</div>
+    <div class="row r4">
+      <div><label>Normal Work Hrs/Day</label><input type="number" id="c-work" value="8" step="0.5"></div>
+      <div><label>Unpaid Meal Break (min)</label><input type="number" id="c-meal" value="60" step="5"></div>
+      <div><label>Meal Required After (hrs)</label><input type="number" id="c-mealaft" value="5" step="0.5"></div>
+      <div><label>OT Premium (ordinary)</label><input type="number" id="c-ot" value="1.25" step="0.05"></div>
+    </div>
+    <div class="row r4">
+      <div><label>Night Differential</label><input type="number" id="c-nd" value="0.10" step="0.01"></div>
+      <div><label>Night Starts (hr)</label><input type="number" id="c-nds" value="22" min="0" max="23"></div>
+      <div><label>Night Ends (hr)</label><input type="number" id="c-nde" value="6" min="0" max="23"></div>
+      <div><label>Regional Min. Wage (&#8369;)</label><input type="number" id="c-min" value="0" step="0.01"></div>
+    </div>
+    <div class="row"><div><label>Your Name (stamped on the audit trail)</label><input id="c-actor" placeholder="e.g. Coach Jr"></div></div>
+    <div class="chk"><input type="checkbox" id="c-guar" checked><label for="c-guar" style="margin:0;text-transform:none;letter-spacing:0;font-family:var(--body);font-size:12.5px;color:var(--txt2)">Guarantee the full daily wage on undertime days (uncheck to pro-rate short days &mdash; "no work, no pay")</label></div>
+    <div class="btns"><button class="btn btn-g" onclick="saveCfg()">Save Settings</button>
+    <button class="btn" onclick="resetCfg()">Restore Legal Defaults</button></div>
+    <div class="note">Set the <b>Regional Minimum Wage</b> to the rate in the current DOLE wage order for your region (F.A.E. is in CALABARZON / Region IV-A) and the compliance panel will flag anyone paid below it. Wage orders are revised periodically &mdash; this is left at 0 until you enter the figure in force, so no outdated number is assumed.</div>
+  </div>
+
+  <div class="card"><div class="card-h">&#9878;&#65039; The Rules This Applies</div>
+  <div class="legal">
+  <b>Normal hours &mdash; Art. 83.</b> Eight hours a day. <b>Art. 85</b> requires a meal period of at least 60 minutes for work of more than 5 hours, and that break is <b>not compensable</b>. So a ₱500 day for "9 hours on site" is 8 paid working hours plus an unpaid meal &rarr; hourly rate = ₱500 &divide; 8 = <b>₱62.50</b>. Shifts of 5 hours or less have no meal deducted.<br><br>
+  <b>Overtime &mdash; Art. 87.</b> Work beyond 8 hours earns the hourly rate plus at least <b>25%</b> on an ordinary day &rarr; ₱78.13/hr. Overtime on a rest day or holiday carries an extra <b>30%</b> on that day's premium rate.<br><br>
+  <b>Undertime not offset &mdash; Art. 88.</b> Undertime on one day cannot be charged against overtime on another. Each day is computed on its own here, so this never happens.<br><br>
+  <b>Night differential &mdash; Art. 86.</b> Every hour worked between <b>10:00 PM and 6:00 AM</b> earns an extra <b>10%</b> of the applicable hourly rate. Night hours that are also overtime get 10% of the <i>overtime</i> rate, not the base rate.<br><br>
+  <b>Weekly rest day &mdash; Art. 91.</b> One rest day after every 6 consecutive normal workdays. The compliance panel flags any run of 7 or more straight days.<br><br>
+  <b>Rest day &amp; holiday premiums &mdash; Arts. 93&ndash;94.</b><br>
+  &nbsp;&nbsp;<span class="pill">Ordinary</span> 100% &middot; OT 125%<br>
+  &nbsp;&nbsp;<span class="pill p-rest">rest</span> / <span class="pill p-rest">special</span> 130% &middot; OT 169%<br>
+  &nbsp;&nbsp;<span class="pill p-rest">rest+special</span> 150% &middot; OT 195%<br>
+  &nbsp;&nbsp;<span class="pill p-hol">holiday</span> 200% &middot; OT 260%<br>
+  &nbsp;&nbsp;<span class="pill p-hol">rest+holiday</span> 260% &middot; OT 338%<br>
+  &nbsp;&nbsp;<span class="pill p-un">holiday-unworked</span> 100% of the daily wage for an <b>unworked regular holiday</b> &mdash; this is owed even though nobody reported for work.<br><br>
+  <b>13th month pay &mdash; PD 851.</b> Total basic salary for the year &divide; 12, excluding OT, night differential and premiums. Due on or before December 24. Tracked on the Employees tab.<br><br>
+  <b>Service incentive leave &mdash; Art. 95.</b> 5 days with pay per year once an employee completes one year of service, convertible to cash if unused. Not computed here &mdash; track it separately and settle it at year-end.<br><br>
+  <span style="color:var(--amber)"><b>Scope.</b> This computes wages under the Labor Code. It is not legal advice, and it does not compute withholding tax (BIR) &mdash; confirm your figures with your accountant or the DOLE regional office before releasing pay.</span>
+  </div></div>
+
+  <div class="card"><div class="card-h">&#128190; Data
+    <div class="sp">
+      <button class="btn btn-sm" onclick="backup()">Download Backup</button>
+      <button class="btn btn-sm" onclick="document.getElementById('restore').click()">Restore Backup</button>
+      <input type="file" id="restore" accept=".json" style="display:none" onchange="doRestore(this)">
+    </div></div>
+    <div class="note">Everything is saved in this browser on this device only &mdash; the same single-device limit as the rest of the Command Center tools. Download a backup before clearing your browser data, and keep a copy of the payroll CSV each period as your paper trail.</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+</div>
+<script>
+/* ══════════ STATE ══════════ */
+var KEY='fae-payroll-v1';
+var TYPES={
+  ordinary:{label:'Ordinary',reg:1.00,ot:1.25,cls:'',worked:true},
+  rest:{label:'Rest day',reg:1.30,ot:1.69,cls:'p-rest',worked:true},
+  special:{label:'Special day',reg:1.30,ot:1.69,cls:'p-rest',worked:true},
+  'rest+special':{label:'Special+Rest',reg:1.50,ot:1.95,cls:'p-rest',worked:true},
+  holiday:{label:'Reg. holiday',reg:2.00,ot:2.60,cls:'p-hol',worked:true},
+  'rest+holiday':{label:'Holiday+Rest',reg:2.60,ot:3.38,cls:'p-hol',worked:true},
+  'holiday-unworked':{label:'Holiday (unworked)',reg:1.00,ot:0,cls:'p-un',worked:false},
+  fullday:{label:'Full day (no clock)',reg:1.00,ot:0,cls:'',worked:false,noClock:true}
+};
+var DEF={work:8,meal:60,mealAfter:5,otMult:1.25,nd:0.10,ndStart:22,ndEnd:6,minWage:0,guar:true,actor:''};
+var DB={v:2,cfg:JSON.parse(JSON.stringify(DEF)),emps:[],logs:[],runs:[],audit:[]};
+var LAST={},VIEWRUN=null;
+
+function load(){
+  try{var r=localStorage.getItem(KEY);if(r){var d=JSON.parse(r);
+    DB.cfg=Object.assign({},DEF,d.cfg||{});DB.emps=d.emps||[];DB.logs=d.logs||[];
+    DB.runs=d.runs||[];DB.audit=d.audit||[];}}catch(e){}
+}
+/* ── Audit trail: every change is recorded, automatically ── */
+function logAudit(area,action,record,detail){
+  DB.audit.unshift({id:uid(),ts:new Date().toISOString(),by:(DB.cfg.actor||'').trim()||'—',
+    area:area,action:action,record:record||'',detail:detail||''});
+  if(DB.audit.length>4000){DB.audit.length=4000;}
+}
+function tsFmt(iso){
+  try{var d=new Date(iso);
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+  }catch(e){return iso;}
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){toast('Could not save — browser storage blocked');}}
+function uid(){return 'x'+Math.random().toString(36).slice(2,9);}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');
+  setTimeout(function(){t.classList.remove('on');},2200);}
+function peso(n){return '₱'+(n||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+function peso0(n){return '₱'+Math.round(n||0).toLocaleString();}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+/* ══════════ TIME MATH (Labor Code) ══════════ */
+function hm(t){ if(!t)return null; var p=t.split(':'); return (+p[0])*60+(+p[1]); }
+function fmt12(min){
+  if(min==null)return '—';
+  var h=Math.floor(min/60)%24,mi=min%60,ap=h<12?'am':'pm',hh=h%12; if(hh===0){hh=12;}
+  return hh+':'+String(mi).padStart(2,'0')+ap;
+}
+// Walk the shift minute by minute: skip the unpaid meal, split regular vs OT,
+// and flag every minute inside the night window (Art. 86).
+function splitShift(a,b,cfg){
+  var span=b-a;
+  var meal=(span>cfg.mealAfter*60)?cfg.meal:0;
+  var mStart=a+Math.floor((span-meal)/2),mEnd=mStart+meal;
+  var normal=cfg.work*60,worked=0,reg=0,ot=0,regN=0,otN=0;
+  var ns=cfg.ndStart,ne=cfg.ndEnd;
+  for(var m=a;m<b;m++){
+    if(m>=mStart&&m<mEnd){continue;}
+    worked++;
+    var h=Math.floor((m%1440)/60);
+    var night=(ns>ne)?(h>=ns||h<ne):(h>=ns&&h<ne);
+    if(worked>normal){ot++;if(night){otN++;}}else{reg++;if(night){regN++;}}
+  }
+  return {span:span/60,meal:meal/60,worked:worked/60,reg:reg/60,ot:ot/60,regN:regN/60,otN:otN/60};
+}
+// Full DOLE pay computation for one logged day.
+function computeDay(log,emp,cfg){
+  var TY=TYPES[log.type]||TYPES.ordinary;
+  var rate=+emp.rate||0, hourly=rate/cfg.work;
+  var o={id:log.id,date:log.date,empId:log.empId,type:log.type,ty:TY,note:log.note||'',
+    span:0,worked:0,reg:0,ot:0,night:0,basic:0,otp:0,ndp:0,hol:0,total:0,open:false,paid:true};
+  if(!TY.worked){ // no clock record: pay the agreed day, never invent overtime
+    o.in=null; o.out=null;
+    if(TY.noClock){ o.basic=rate*TY.reg; o.worked=cfg.work; o.reg=cfg.work;
+      o.note=(o.note?o.note+' · ':'')+'no clock times — standard day paid, no OT';
+    } else { o.hol=rate*TY.reg; }
+    o.total=o.basic+o.hol; return o;
+  }
+  var a=hm(log.in), b=hm(log.out);
+  o.in=a; o.out=b;
+  if(a==null){o.paid=false;o.note=(o.note?o.note+' · ':'')+'no time in';return o;}
+  if(b==null){ // open shift — nothing paid until it's closed, never invent hours
+    o.open=true;o.paid=false;
+    o.note=(o.note?o.note+' · ':'')+'NO TIME OUT — not paid until completed';
+    return o;
+  }
+  if(b<=a){b+=1440;}
+  var s=splitShift(a,b,cfg);
+  var effReg=(cfg.guar&&s.reg<cfg.work)?cfg.work:s.reg;
+  o.span=s.span;o.worked=s.worked;o.reg=s.reg;o.ot=s.ot;o.night=s.regN+s.otN;
+  o.basic=hourly*TY.reg*effReg;
+  o.otp=hourly*TY.ot*s.ot;
+  o.ndp=hourly*TY.reg*cfg.nd*s.regN + hourly*TY.ot*cfg.nd*s.otN;
+  o.total=o.basic+o.otp+o.ndp;
+  if(s.reg<cfg.work&&!cfg.guar){o.note=(o.note?o.note+' · ':'')+'undertime, pro-rated';}
+  return o;
+}
+function empById(id){for(var i=0;i<DB.emps.length;i++){if(DB.emps[i].id===id)return DB.emps[i];}return null;}
+function logsIn(from,to,empId){
+  return DB.logs.filter(function(l){
+    if(empId&&l.empId!==empId)return false;
+    if(from&&l.date<from)return false;
+    if(to&&l.date>to)return false;
+    return true;
+  }).sort(function(x,y){return x.date<y.date?-1:x.date>y.date?1:0;});
+}
+// Roll every day for one employee into a period total.
+function periodFor(empId,from,to){
+  var emp=empById(empId); if(!emp)return null;
+  var days=logsIn(from,to,empId).map(function(l){return computeDay(l,emp,DB.cfg);});
+  var t={emp:emp,days:days,n:0,worked:0,reg:0,ot:0,night:0,basic:0,otp:0,ndp:0,hol:0,gross:0,open:0};
+  days.forEach(function(d){
+    if(d.open){t.open++;return;}
+    if(!d.paid)return;
+    t.n++;t.worked+=d.worked;t.reg+=d.reg;t.ot+=d.ot;t.night+=d.night;
+    t.basic+=d.basic;t.otp+=d.otp;t.ndp+=d.ndp;t.hol+=d.hol;t.gross+=d.total;
+  });
+  var months=periodMonths(from,to);
+  t.ded=((+emp.sss||0)+(+emp.ph||0)+(+emp.pi||0))*months;
+  t.net=t.gross-t.ded;
+  return t;
+}
+// Statutory deductions are monthly; scale them to the length of the period.
+function periodMonths(from,to){
+  if(!from||!to)return 1;
+  var a=new Date(from+'T00:00:00'),b=new Date(to+'T00:00:00');
+  var days=Math.round((b-a)/86400000)+1;
+  if(days<=0)return 0;
+  if(days<=16)return 0.5;      // semi-monthly
+  return Math.max(1,Math.round(days/30));
+}
+
+/* ══════════ PAYROLL RUN ══════════ */
+function quickPeriod(k){
+  var n=new Date(),y=n.getFullYear(),m=n.getMonth();
+  var p=function(d){return d.toISOString().slice(0,10);};
+  if(k==='all'){
+    var ds=DB.logs.map(function(l){return l.date;}).sort();
+    document.getElementById('pfrom').value=ds[0]||'';
+    document.getElementById('pto').value=ds[ds.length-1]||'';
+  }else if(k==='m1'){
+    document.getElementById('pfrom').value=p(new Date(y,m,1));
+    document.getElementById('pto').value=p(new Date(y,m,15));
+  }else{
+    document.getElementById('pfrom').value=p(new Date(y,m,16));
+    document.getElementById('pto').value=p(new Date(y,m+1,0));
+  }
+  runPayroll();
+}
+function runPayroll(){
+  var from=document.getElementById('pfrom').value,to=document.getElementById('pto').value;
+  var body=document.getElementById('reg-body');
+  var act=DB.emps.filter(function(e){return e.active!==false;});
+  var rows=[],T={n:0,worked:0,ot:0,night:0,basic:0,otp:0,ndp:0,hol:0,gross:0,ded:0,net:0};
+  act.forEach(function(e){
+    var p=periodFor(e.id,from,to);
+    if(!p||(p.n===0&&p.open===0))return;
+    rows.push(p);
+    T.n+=p.n;T.worked+=p.worked;T.ot+=p.ot;T.night+=p.night;T.basic+=p.basic;
+    T.otp+=p.otp;T.ndp+=p.ndp;T.hol+=p.hol;T.gross+=p.gross;T.ded+=p.ded;T.net+=p.net;
+  });
+  LAST={from:from,to:to,rows:rows,T:T};
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="14" class="empty">No logged days in this period. Add employees and log time first.</td></tr>';
+  }else{
+    body.innerHTML=rows.map(function(p){
+      return '<tr><td style="font-weight:600">'+esc(p.emp.name)+
+      (p.open?' <span class="pill p-hol">'+p.open+' open</span>':'')+'</td>'+
+      '<td class="amt">'+p.n+'</td><td class="amt">'+p.worked.toFixed(2)+'</td>'+
+      '<td class="amt">'+p.reg.toFixed(2)+'</td>'+
+      '<td class="amt" style="color:var(--gold)">'+p.ot.toFixed(2)+'</td>'+
+      '<td class="amt" style="color:var(--blue)">'+p.night.toFixed(2)+'</td>'+
+      '<td class="amt">'+peso(p.basic)+'</td>'+
+      '<td class="amt" style="color:var(--gold)">'+peso(p.otp)+'</td>'+
+      '<td class="amt" style="color:var(--blue)">'+peso(p.ndp)+'</td>'+
+      '<td class="amt" style="color:var(--green)">'+peso(p.hol)+'</td>'+
+      '<td class="amt" style="font-weight:700">'+peso(p.gross)+'</td>'+
+      '<td class="amt" style="color:var(--red)">'+(p.ded?'-'+peso(p.ded):'—')+'</td>'+
+      '<td class="amt" style="font-weight:800;color:var(--gold)">'+peso(p.net)+'</td>'+
+      '<td class="noprint"><button class="btn btn-sm" onclick="gotoSlip(\''+p.emp.id+'\')">Payslip</button></td></tr>';
+    }).join('')+
+    '<tr class="tot"><td>TOTALS</td><td class="amt">'+T.n+'</td><td class="amt">'+T.worked.toFixed(2)+'</td>'+
+    '<td class="amt">'+(T.worked-T.ot).toFixed(2)+'</td><td class="amt">'+T.ot.toFixed(2)+'</td>'+
+    '<td class="amt">'+T.night.toFixed(2)+'</td><td class="amt">'+peso(T.basic)+'</td>'+
+    '<td class="amt">'+peso(T.otp)+'</td><td class="amt">'+peso(T.ndp)+'</td><td class="amt">'+peso(T.hol)+'</td>'+
+    '<td class="amt">'+peso(T.gross)+'</td><td class="amt">'+(T.ded?'-'+peso(T.ded):'—')+'</td>'+
+    '<td class="amt">'+peso(T.net)+'</td><td></td></tr>';
+  }
+  document.getElementById('k-emp').textContent=rows.length;
+  document.getElementById('k-days').textContent=T.n;
+  document.getElementById('k-ot').textContent=T.ot.toFixed(1);
+  document.getElementById('k-nt').textContent=T.night.toFixed(1);
+  document.getElementById('k-gross').textContent=peso0(T.gross);
+  document.getElementById('k-net').textContent=peso0(T.net);
+  checkCompliance(from,to,rows);
+}
+/* ══════════ SAVED RUNS + SALARY TRACKING ══════════ */
+// A saved run is a frozen snapshot: changing a wage later never rewrites history.
+function postRun(){
+  if(!LAST.rows||!LAST.rows.length){toast('Compute a payroll period first');return;}
+  var label=(document.getElementById('run-label').value||'').trim();
+  var dup=DB.runs.filter(function(r){return r.from===LAST.from&&r.to===LAST.to;});
+  if(dup.length&&!confirm('A run for '+LAST.from+' to '+LAST.to+' is already saved.\n\nSave another snapshot of this period?'))return;
+  var run={id:uid(),ts:new Date().toISOString(),from:LAST.from,to:LAST.to,
+    label:label||(LAST.from+' → '+LAST.to),by:(DB.cfg.actor||'').trim()||'—',
+    rows:LAST.rows.map(function(p){
+      return {empId:p.emp.id,name:p.emp.name,pos:p.emp.pos||'',rate:+p.emp.rate||0,
+        n:p.n,worked:p.worked,reg:p.reg,ot:p.ot,night:p.night,basic:p.basic,otp:p.otp,
+        ndp:p.ndp,hol:p.hol,gross:p.gross,ded:p.ded,net:p.net};
+    }),T:JSON.parse(JSON.stringify(LAST.T))};
+  DB.runs.unshift(run);
+  logAudit('payroll','Saved run',run.label,
+    run.rows.length+' staff · '+run.T.n+' days · gross '+peso(run.T.gross)+' · net '+peso(run.T.net));
+  save();renderHistory();renderAudit();
+  document.getElementById('run-label').value='';
+  toast('Payroll run saved to history');
+}
+function delRun(id){
+  var r=null;DB.runs.forEach(function(x){if(x.id===id){r=x;}});
+  if(!r)return;
+  if(!confirm('Delete the saved run "'+r.label+'"?\n\nThis removes it from the salary history permanently.'))return;
+  DB.runs=DB.runs.filter(function(x){return x.id!==id;});
+  logAudit('payroll','Deleted run',r.label,'gross was '+peso(r.T.gross));
+  if(VIEWRUN===id){VIEWRUN=null;}
+  save();renderHistory();renderAudit();toast('Run deleted');
+}
+function viewRun(id){VIEWRUN=id;renderHistory();
+  document.getElementById('h-detail-lbl').scrollIntoView({behavior:'smooth',block:'center'});}
+function runYears(){
+  var ys={};DB.runs.forEach(function(r){ys[(r.from||r.ts).slice(0,4)]=1;});
+  return Object.keys(ys).sort().reverse();
+}
+function renderHistory(){
+  // year filter
+  var sel=document.getElementById('h-year'),cur=sel.value;
+  var ys=runYears();
+  sel.innerHTML='<option value="">All time</option>'+ys.map(function(y){return '<option value="'+y+'">'+y+'</option>';}).join('');
+  if(cur){sel.value=cur;}
+  var yf=sel.value;
+  var runs=DB.runs.filter(function(r){return !yf||(r.from||r.ts).slice(0,4)===yf;});
+  // KPI totals
+  var G=0,O=0,D=0,N=0;
+  runs.forEach(function(r){G+=r.T.gross;O+=r.T.otp;D+=r.T.ded;N+=r.T.net;});
+  document.getElementById('h-runs').textContent=runs.length;
+  document.getElementById('h-per').textContent=runs.length?
+    (runs[runs.length-1].from||'—')+' → '+(runs[0].to||'—'):'—';
+  document.getElementById('h-gross').textContent=peso0(G);
+  document.getElementById('h-ot').textContent=peso0(O);
+  document.getElementById('h-ded').textContent=peso0(D);
+  document.getElementById('h-net').textContent=peso0(N);
+  // per-employee rollup
+  var by={};
+  runs.forEach(function(r){r.rows.forEach(function(w){
+    var k=w.empId||w.name;
+    if(!by[k]){by[k]={name:w.name,runs:0,n:0,ot:0,basic:0,otp:0,ndp:0,hol:0,gross:0,ded:0,net:0};}
+    var t=by[k];t.runs++;t.n+=w.n;t.ot+=w.ot;t.basic+=w.basic;t.otp+=w.otp;
+    t.ndp+=w.ndp;t.hol+=w.hol||0;t.gross+=w.gross;t.ded+=w.ded;t.net+=w.net;
+  });});
+  var keys=Object.keys(by).sort(function(a,b){return by[b].net-by[a].net;});
+  var eb=document.getElementById('h-emp-body');
+  if(!keys.length){
+    eb.innerHTML='<tr><td colspan="12" class="empty">No saved runs yet. Compute a period on the Payroll Run tab, then press &ldquo;Save This Run&rdquo;.</td></tr>';
+  }else{
+    eb.innerHTML=keys.map(function(k){
+      var t=by[k];
+      return '<tr><td style="font-weight:600">'+esc(t.name)+'</td><td class="amt">'+t.runs+'</td>'+
+      '<td class="amt">'+t.n+'</td><td class="amt" style="color:var(--gold)">'+t.ot.toFixed(2)+'</td>'+
+      '<td class="amt">'+peso(t.basic)+'</td><td class="amt" style="color:var(--gold)">'+peso(t.otp)+'</td>'+
+      '<td class="amt" style="color:var(--blue)">'+peso(t.ndp)+'</td><td class="amt">'+peso(t.hol)+'</td>'+
+      '<td class="amt" style="font-weight:700">'+peso(t.gross)+'</td>'+
+      '<td class="amt" style="color:var(--red)">'+(t.ded?'-'+peso(t.ded):'—')+'</td>'+
+      '<td class="amt" style="font-weight:800;color:var(--gold)">'+peso(t.net)+'</td>'+
+      '<td class="amt">'+peso(t.net/Math.max(t.runs,1))+'</td></tr>';
+    }).join('');
+  }
+  // saved run list
+  var rb=document.getElementById('h-run-body');
+  if(!runs.length){
+    rb.innerHTML='<tr><td colspan="10" class="empty">Nothing saved yet.</td></tr>';
+  }else{
+    rb.innerHTML=runs.map(function(r){
+      return '<tr'+(VIEWRUN===r.id?' style="background:var(--gold-dim)"':'')+'>'+
+      '<td class="mut">'+tsFmt(r.ts)+'</td><td>'+esc(r.from||'')+' → '+esc(r.to||'')+'</td>'+
+      '<td style="font-weight:600">'+esc(r.label)+'</td><td class="amt">'+r.rows.length+'</td>'+
+      '<td class="amt">'+r.T.n+'</td><td class="amt" style="color:var(--gold)">'+r.T.ot.toFixed(2)+'</td>'+
+      '<td class="amt">'+peso(r.T.gross)+'</td>'+
+      '<td class="amt" style="color:var(--red)">'+(r.T.ded?'-'+peso(r.T.ded):'—')+'</td>'+
+      '<td class="amt" style="font-weight:700;color:var(--gold)">'+peso(r.T.net)+'</td>'+
+      '<td><button class="btn btn-sm" onclick="viewRun(\''+r.id+'\')">View</button> '+
+      '<button class="btn btn-sm" onclick="exportOneRun(\''+r.id+'\')">CSV</button> '+
+      '<button class="btn btn-sm btn-d" onclick="delRun(\''+r.id+'\')">Del</button></td></tr>';
+    }).join('');
+  }
+  // detail of selected run
+  var db_=document.getElementById('h-detail-body'),lbl=document.getElementById('h-detail-lbl');
+  var sr=null;DB.runs.forEach(function(x){if(x.id===VIEWRUN){sr=x;}});
+  if(!sr){
+    lbl.textContent='';
+    db_.innerHTML='<tr><td colspan="11" class="empty">Pick a saved run above to see who was paid what.</td></tr>';
+  }else{
+    lbl.textContent='· '+sr.label+' ('+sr.from+' → '+sr.to+') · saved '+tsFmt(sr.ts)+' by '+sr.by;
+    db_.innerHTML=sr.rows.map(function(w){
+      return '<tr><td style="font-weight:600">'+esc(w.name)+'</td><td class="amt">'+peso(w.rate)+'</td>'+
+      '<td class="amt">'+w.n+'</td><td class="amt" style="color:var(--gold)">'+w.ot.toFixed(2)+'</td>'+
+      '<td class="amt" style="color:var(--blue)">'+w.night.toFixed(2)+'</td>'+
+      '<td class="amt">'+peso(w.basic)+'</td><td class="amt">'+peso(w.otp)+'</td>'+
+      '<td class="amt">'+peso(w.ndp)+'</td><td class="amt" style="font-weight:700">'+peso(w.gross)+'</td>'+
+      '<td class="amt" style="color:var(--red)">'+(w.ded?'-'+peso(w.ded):'—')+'</td>'+
+      '<td class="amt" style="font-weight:800;color:var(--gold)">'+peso(w.net)+'</td></tr>';
+    }).join('');
+  }
+}
+/* ══════════ AUDIT VIEW ══════════ */
+function renderAudit(){
+  var f=document.getElementById('au-filter').value;
+  var b=document.getElementById('au-body');
+  var rows=DB.audit.filter(function(a){return !f||a.area===f;});
+  if(!rows.length){
+    b.innerHTML='<tr><td colspan="6" class="empty">No activity recorded yet.</td></tr>';return;
+  }
+  b.innerHTML=rows.slice(0,400).map(function(a){
+    var col=a.action.indexOf('Delet')===0||a.action.indexOf('Clear')===0?'var(--red)':
+            (a.action.indexOf('Saved run')===0?'var(--green)':'var(--gold)');
+    return '<tr><td class="mut">'+tsFmt(a.ts)+'</td><td class="mut">'+esc(a.by)+'</td>'+
+    '<td><span class="pill">'+esc(a.area)+'</span></td>'+
+    '<td style="color:'+col+';font-weight:600">'+esc(a.action)+'</td>'+
+    '<td style="font-weight:600">'+esc(a.record||'—')+'</td>'+
+    '<td class="mut" style="white-space:normal;max-width:420px">'+esc(a.detail||'—')+'</td></tr>';
+  }).join('')+(rows.length>400?'<tr><td colspan="6" class="empty">Showing the newest 400 of '+rows.length+' entries — export the CSV for the full trail.</td></tr>':'');
+}
+function wipeAudit(){
+  if(!DB.audit.length){toast('Trail is already empty');return;}
+  if(!confirm('Clear all '+DB.audit.length+' audit entries?\n\nExport the CSV first if you need the record — this cannot be undone.'))return;
+  var n=DB.audit.length;DB.audit=[];
+  logAudit('data','Cleared audit trail','',n+' entries removed');
+  save();renderAudit();toast('Audit trail cleared');
+}
+/* ══════════ COMPLIANCE ══════════ */
+function checkCompliance(from,to,rows){
+  var out=[],cfg=DB.cfg;
+  // 1. below regional minimum wage
+  if(cfg.minWage>0){
+    DB.emps.filter(function(e){return e.active!==false;}).forEach(function(e){
+      if(+e.rate<cfg.minWage){
+        out.push(['f-red','⚠','Below minimum wage — '+esc(e.name),
+        'Daily wage '+peso(e.rate)+' is under the '+peso(cfg.minWage)+' you entered as the regional rate. Underpayment of the minimum wage carries double-indemnity liability under RA 8188. Raise the rate or correct the wage-order figure in Settings.']);
+      }
+    });
+  }else{
+    out.push(['f-amb','ℹ','Regional minimum wage not set',
+    'Enter the CALABARZON wage-order rate in Rates &amp; Law so this tool can check every employee against it. Until then no minimum-wage check runs.']);
+  }
+  // 2. 7+ consecutive days without a rest day (Art. 91)
+  rows.forEach(function(p){
+    var ds=p.days.filter(function(d){return d.paid&&d.ty.worked;}).map(function(d){return d.date;}).sort();
+    var run=1,maxRun=1,start=ds[0],worstStart=ds[0],worstEnd=ds[0];
+    for(var i=1;i<ds.length;i++){
+      var prev=new Date(ds[i-1]+'T00:00:00'),cur=new Date(ds[i]+'T00:00:00');
+      if(Math.round((cur-prev)/86400000)===1){run++;}else{run=1;start=ds[i];}
+      if(run>maxRun){maxRun=run;worstStart=start;worstEnd=ds[i];}
+    }
+    if(maxRun>=7){
+      out.push(['f-red','⚠','No weekly rest day — '+esc(p.emp.name),
+      maxRun+' consecutive days worked ('+worstStart+' to '+worstEnd+'). Art. 91 entitles every employee to a rest day of at least 24 consecutive hours after 6 consecutive normal workdays. Schedule a rest day, and tag any day worked on one as <code>[rest]</code> so it is paid at 130%.']);
+    }
+  });
+  // 3. heavy overtime
+  rows.forEach(function(p){
+    if(p.n>0&&(p.ot/p.n)>4){
+      out.push(['f-amb','⏰','Heavy overtime — '+esc(p.emp.name),
+      'Averaging '+(p.ot/p.n).toFixed(1)+' OT hours a day across '+p.n+' days. It is lawful when paid, and it is paid correctly here, but OT pay is now '+Math.round(p.otp/Math.max(p.basic,1)*100)+'% of basic — usually cheaper to add staff than to keep paying the premium.']);
+    }
+  });
+  // 4. open shifts
+  var open=0;rows.forEach(function(p){open+=p.open;});
+  if(open){out.push(['f-amb','⚡',open+' shift'+(open>1?'s':'')+' with no time-out',
+    'These are excluded from pay entirely — no hours are ever guessed. Complete them on the Time Log tab so the employee is paid for them.']);}
+  // 5. long shifts sanity check
+  var longd=0;rows.forEach(function(p){p.days.forEach(function(d){if(d.span>16){longd++;}});});
+  if(longd){out.push(['f-amb','❓',longd+' shift'+(longd>1?'s':'')+' over 16 hours',
+    'Worth double-checking against the logbook — a mis-read am/pm is the usual cause. If they are real, they are computed and paid in full.']);}
+  if(!out.length){out.push(['f-grn','✓','No issues found',
+    'Every logged day in this period computes cleanly against the Labor Code rules on the Rates &amp; Law tab.']);}
+  document.getElementById('compliance').innerHTML=out.map(function(f){
+    return '<div class="flag '+f[0]+'"><div style="font-size:15px;line-height:1.2">'+f[1]+'</div><div><b>'+f[2]+'</b>'+f[3]+'</div></div>';
+  }).join('');
+}
+/* ══════════ EMPLOYEES ══════════ */
+function saveEmp(){
+  var name=document.getElementById('e-name').value.trim();
+  if(!name){toast('Enter a name first');return;}
+  var id=document.getElementById('e-id').value;
+  var o={id:id||uid(),name:name,pos:document.getElementById('e-pos').value.trim(),
+    rate:+document.getElementById('e-rate').value||0,hired:document.getElementById('e-hired').value,
+    sss:+document.getElementById('e-sss').value||0,ph:+document.getElementById('e-ph').value||0,
+    pi:+document.getElementById('e-pi').value||0,active:document.getElementById('e-active').checked};
+  if(id){
+    var old=empById(id)||{};
+    o.rateHist=old.rateHist||[];
+    var ch=[];
+    if(old.name!==o.name){ch.push('name "'+old.name+'" → "'+o.name+'"');}
+    if((+old.rate||0)!==o.rate){
+      ch.push('daily wage '+peso(old.rate)+' → '+peso(o.rate));
+      o.rateHist.push({ts:new Date().toISOString(),from:+old.rate||0,to:o.rate});
+    }
+    if((old.pos||'')!==o.pos){ch.push('position → "'+o.pos+'"');}
+    if((+old.sss||0)!==o.sss){ch.push('SSS '+peso(old.sss||0)+' → '+peso(o.sss));}
+    if((+old.ph||0)!==o.ph){ch.push('PhilHealth '+peso(old.ph||0)+' → '+peso(o.ph));}
+    if((+old.pi||0)!==o.pi){ch.push('Pag-IBIG '+peso(old.pi||0)+' → '+peso(o.pi));}
+    if((old.active!==false)!==o.active){ch.push(o.active?'reactivated':'set inactive');}
+    for(var i=0;i<DB.emps.length;i++){if(DB.emps[i].id===id){DB.emps[i]=o;}}
+    logAudit('employee','Edited',o.name,ch.length?ch.join('; '):'saved with no changes');
+  }
+  else{
+    o.rateHist=[{ts:new Date().toISOString(),from:0,to:o.rate}];
+    DB.emps.push(o);
+    logAudit('employee','Added',o.name,'daily wage '+peso(o.rate)+(o.pos?' · '+o.pos:''));
+  }
+  save();resetEmpForm();renderEmps();fillSelects();renderAudit();toast('Saved '+name);
+}
+function editEmp(id){
+  var e=empById(id);if(!e)return;
+  document.getElementById('e-id').value=e.id;
+  document.getElementById('e-name').value=e.name;
+  document.getElementById('e-pos').value=e.pos||'';
+  document.getElementById('e-rate').value=e.rate;
+  document.getElementById('e-hired').value=e.hired||'';
+  document.getElementById('e-sss').value=e.sss||0;
+  document.getElementById('e-ph').value=e.ph||0;
+  document.getElementById('e-pi').value=e.pi||0;
+  document.getElementById('e-active').checked=e.active!==false;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function delEmp(id){
+  var e=empById(id);if(!e)return;
+  var n=DB.logs.filter(function(l){return l.empId===id;}).length;
+  if(!confirm('Delete '+e.name+(n?' and their '+n+' logged day(s)':'')+'? This cannot be undone.'))return;
+  DB.emps=DB.emps.filter(function(x){return x.id!==id;});
+  DB.logs=DB.logs.filter(function(l){return l.empId!==id;});
+  logAudit('employee','Deleted',e.name,n+' logged day(s) removed with them · saved payroll runs keep their figures');
+  save();renderEmps();renderLog();fillSelects();runPayroll();renderAudit();toast('Deleted');
+}
+function resetEmpForm(){
+  ['e-id','e-name','e-pos','e-hired'].forEach(function(i){document.getElementById(i).value='';});
+  document.getElementById('e-rate').value=500;
+  ['e-sss','e-ph','e-pi'].forEach(function(i){document.getElementById(i).value=0;});
+  document.getElementById('e-active').checked=true;
+}
+function renderEmps(){
+  var b=document.getElementById('emp-body');
+  if(!DB.emps.length){b.innerHTML='<tr><td colspan="11" class="empty">No employees yet — add one above.</td></tr>';return;}
+  b.innerHTML=DB.emps.map(function(e){
+    var hr=(+e.rate||0)/DB.cfg.work;
+    return '<tr><td style="font-weight:600">'+esc(e.name)+'</td><td class="mut">'+esc(e.pos||'—')+'</td>'+
+    '<td class="amt">'+peso(e.rate)+'</td><td class="amt">'+peso(hr)+'</td>'+
+    '<td class="amt" style="color:var(--gold)">'+peso(hr*DB.cfg.otMult)+'</td>'+
+    '<td class="mut">'+esc(e.hired||'—')+'</td>'+
+    '<td class="amt">'+(e.sss?peso(e.sss):'—')+'</td><td class="amt">'+(e.ph?peso(e.ph):'—')+'</td>'+
+    '<td class="amt">'+(e.pi?peso(e.pi):'—')+'</td>'+
+    '<td>'+(e.active!==false?'<span class="pill p-un">Active</span>':'<span class="pill">Inactive</span>')+'</td>'+
+    '<td><button class="btn btn-sm" onclick="editEmp(\''+e.id+'\')">Edit</button> '+
+    '<button class="btn btn-sm btn-d" onclick="delEmp(\''+e.id+'\')">Del</button></td></tr>';
+  }).join('');
+}
+function render13th(){
+  var y=document.getElementById('th-year').value||new Date().getFullYear();
+  var b=document.getElementById('th-body');
+  var act=DB.emps.filter(function(e){return e.active!==false;});
+  if(!act.length){b.innerHTML='<tr><td colspan="3" class="empty">No employees.</td></tr>';return;}
+  b.innerHTML=act.map(function(e){
+    var p=periodFor(e.id,y+'-01-01',y+'-12-31');
+    var basic=p?p.basic+p.hol:0;
+    return '<tr><td style="font-weight:600">'+esc(e.name)+'</td><td class="amt">'+peso(basic)+'</td>'+
+    '<td class="amt" style="font-weight:700;color:var(--gold)">'+peso(basic/12)+'</td></tr>';
+  }).join('');
+}
+/* ══════════ TIME LOG ══════════ */
+function parseTimes(line){
+  var out=[],m;
+  var re=/(\d{1,2})\s*[:.]?\s*(\d{2})?\s*([ap])\s*\.?\s*m\.?/gi;
+  while((m=re.exec(line))!==null){
+    var h=+m[1],mi=+(m[2]||0),ap=m[3].toLowerCase();
+    if(ap==='a'&&h===12){h=0;} if(ap==='p'&&h!==12){h+=12;}
+    out.push({min:h*60+mi,txt:m[0]});
+  }
+  if(!out.length){
+    var re2=/\b(\d{1,2}):(\d{2})\b/g,m2;
+    while((m2=re2.exec(line))!==null){out.push({min:(+m2[1])*60+(+m2[2]),txt:m2[0]});}
+  }
+  return out;
+}
+var MON=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+function pad(n){return String(n).padStart(2,'0');}
+function importLog(){
+  var empId=document.getElementById('i-emp').value;
+  if(!empId){toast('Add an employee first');return;}
+  var defMon=+document.getElementById('i-mon').value, year=+document.getElementById('i-year').value||2026;
+  var lines=document.getElementById('i-raw').value.split(/\r?\n/);
+  var added=0,skipped=0;
+  lines.forEach(function(ln){
+    var t=ln.trim(); if(!t)return;
+    var type='ordinary';
+    var tag=t.match(/\[([^\]]+)\]/);
+    if(tag){
+      var k=tag[1].toLowerCase().replace(/\s+/g,'').replace('restday','rest');
+      if(k==='holidayunworked'||k==='holiday-unworked'||k==='unworked'){type='holiday-unworked';}
+      else{var parts=k.split('+').sort();k=parts.join('+');
+        if(k==='rest+special'){type='rest+special';}
+        else if(k==='holiday+rest'){type='rest+holiday';}
+        else if(TYPES[k]){type=k;}}
+      t=t.replace(tag[0],' ');
+    }
+    var times=parseTimes(t);
+    // Date: "Aug 17", "8/17", or a bare day number using the month/year above
+    var mon=defMon,day=null;
+    var md=t.match(/([A-Za-z]{3,9})\.?\s*(\d{1,2})(?!\d)/);
+    var sd=t.match(/\b(\d{1,2})\/(\d{1,2})\b/);
+    if(md){var mi=MON.indexOf(md[1].slice(0,3).toLowerCase());if(mi>=0){mon=mi;day=+md[2];}}
+    if(day===null&&sd){mon=+sd[1]-1;day=+sd[2];}
+    if(day===null){
+      var strip=t; times.forEach(function(x){strip=strip.split(x.txt).join(' ');});
+      var bare=strip.match(/\b(\d{1,2})\b/);
+      if(bare){day=+bare[1];}
+    }
+    if(day===null||day<1||day>31){skipped++;return;}
+    var date=year+'-'+pad(mon+1)+'-'+pad(day);
+    var note=t; times.forEach(function(x){note=note.split(x.txt).join(' ');});
+    note=note.replace(/([A-Za-z]{3,9})\.?\s*\d{1,2}(?!\d)/,' ').replace(/\b\d{1,2}\/\d{1,2}\b/,' ')
+      .replace(/\b\d{1,2}\b/,' ').replace(/[|,()\-–]+/g,' ').replace(/\s+/g,' ').trim();
+    var tin=times[0]?pad(Math.floor(times[0].min/60))+':'+pad(times[0].min%60):'';
+    var tout=times[1]?pad(Math.floor((times[1].min%1440)/60))+':'+pad(times[1].min%60):'';
+    if(!TYPES[type].worked){tin='';tout='';}
+    else if(!tin){
+      if(document.getElementById('i-noclock').checked){type='fullday';tin='';tout='';}
+      else{skipped++;return;}
+    }
+    DB.logs=DB.logs.filter(function(l){return !(l.empId===empId&&l.date===date);}); // replace same-day
+    DB.logs.push({id:uid(),empId:empId,date:date,in:tin,out:tout,type:type,note:note});
+    added++;
+  });
+  var iemp=empById(empId);
+  logAudit('timelog','Imported',iemp?iemp.name:'?',
+    added+' day(s) from pasted logbook'+(skipped?' · '+skipped+' line(s) skipped':''));
+  save();renderLog();runPayroll();render13th();renderAudit();
+  toast('Imported '+added+' day'+(added!==1?'s':'')+(skipped?' · '+skipped+' line(s) skipped':''));
+}
+function addDay(){
+  var empId=document.getElementById('a-emp').value;
+  var date=document.getElementById('a-date').value;
+  if(!empId){toast('Add an employee first');return;}
+  if(!date){toast('Pick a date');return;}
+  var type=document.getElementById('a-type').value;
+  var tin=document.getElementById('a-in').value,tout=document.getElementById('a-out').value;
+  if(TYPES[type].worked&&!tin){toast('Enter a time in');return;}
+  if(!TYPES[type].worked){tin='';tout='';}
+  var editId=document.getElementById('a-id').value;
+  var emp=empById(empId),nm=emp?emp.name:'?';
+  var desc=date+' '+(tin||'—')+'–'+(tout||'—')+' ('+TYPES[type].label+')';
+  var o={id:editId||uid(),empId:empId,date:date,in:tin,out:tout,type:type,
+    note:document.getElementById('a-note').value.trim()};
+  if(editId){
+    var was=null;
+    DB.logs.forEach(function(l){if(l.id===editId){was=l;}});
+    DB.logs=DB.logs.map(function(l){return l.id===editId?o:l;});
+    logAudit('timelog','Edited',nm,was?
+      ('was '+was.date+' '+(was.in||'—')+'–'+(was.out||'—')+' ('+(TYPES[was.type]||TYPES.ordinary).label+') → now '+desc):desc);
+    toast('Day updated');
+  }else{
+    var dupe=DB.logs.filter(function(l){return l.empId===empId&&l.date===date;}).length;
+    DB.logs=DB.logs.filter(function(l){return !(l.empId===empId&&l.date===date);});
+    DB.logs.push(o);
+    logAudit('timelog','Added',nm,desc+(dupe?' · replaced an existing entry for that date':''));
+    toast('Day added');
+  }
+  save();resetDayForm();renderLog();runPayroll();render13th();renderAudit();
+}
+function editLog(id){
+  var l=null;DB.logs.forEach(function(x){if(x.id===id){l=x;}});
+  if(!l)return;
+  document.getElementById('a-id').value=l.id;
+  document.getElementById('a-emp').value=l.empId;
+  document.getElementById('a-date').value=l.date;
+  document.getElementById('a-in').value=l.in||'';
+  document.getElementById('a-out').value=l.out||'';
+  document.getElementById('a-type').value=l.type;
+  document.getElementById('a-note').value=l.note||'';
+  document.getElementById('a-title').innerHTML='&#9998; Edit Day &mdash; '+esc(l.date);
+  document.getElementById('a-btn').textContent='Save Changes';
+  document.getElementById('a-title').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function resetDayForm(){
+  document.getElementById('a-id').value='';
+  document.getElementById('a-in').value='';
+  document.getElementById('a-out').value='';
+  document.getElementById('a-note').value='';
+  document.getElementById('a-title').innerHTML='&#10133; Add One Day';
+  document.getElementById('a-btn').textContent='Add Day';
+}
+function delLog(id){
+  var l=null;DB.logs.forEach(function(x){if(x.id===id){l=x;}});
+  if(l){var e=empById(l.empId);
+    logAudit('timelog','Deleted',e?e.name:'?',l.date+' '+(l.in||'—')+'–'+(l.out||'—'));}
+  DB.logs=DB.logs.filter(function(x){return x.id!==id;});
+  save();renderLog();runPayroll();render13th();renderAudit();toast('Removed');
+}
+function wipeLog(){
+  if(!DB.logs.length){toast('Nothing to delete');return;}
+  if(!confirm('Delete all '+DB.logs.length+' logged days? Employees and saved payroll runs are kept. This cannot be undone.'))return;
+  logAudit('timelog','Cleared all','',DB.logs.length+' day(s) deleted');
+  DB.logs=[];save();renderLog();runPayroll();render13th();renderAudit();toast('Time log cleared');
+}
+function renderLog(){
+  var f=document.getElementById('f-emp').value;
+  var b=document.getElementById('log-body');
+  var ls=logsIn('','',f||null);
+  if(!ls.length){b.innerHTML='<tr><td colspan="13" class="empty">No days logged yet — import a logbook or add a day above.</td></tr>';return;}
+  b.innerHTML=ls.map(function(l){
+    var e=empById(l.empId); if(!e)return '';
+    var d=computeDay(l,e,DB.cfg);
+    var warn=(!d.paid);
+    return '<tr><td style="font-weight:600">'+l.date+'</td><td>'+esc(e.name)+'</td>'+
+    '<td>'+fmt12(d.in)+'</td><td'+(d.open?' style="color:var(--amber)"':'')+'>'+fmt12(d.out)+'</td>'+
+    '<td><span class="pill '+d.ty.cls+'">'+d.ty.label+'</span></td>'+
+    '<td class="amt">'+(d.span?d.span.toFixed(2):'—')+'</td>'+
+    '<td class="amt">'+(d.worked?d.worked.toFixed(2):'—')+'</td>'+
+    '<td class="amt">'+(d.reg?d.reg.toFixed(2):'—')+'</td>'+
+    '<td class="amt" style="color:var(--gold)">'+(d.ot?d.ot.toFixed(2):'0')+'</td>'+
+    '<td class="amt" style="color:var(--blue)">'+(d.night?d.night.toFixed(2):'0')+'</td>'+
+    '<td class="amt" style="font-weight:700">'+(d.paid?peso(d.total):'—')+'</td>'+
+    '<td class="'+(warn?'':'mut')+'" style="white-space:normal;max-width:270px'+(warn?';color:var(--amber)':'')+'">'+esc(d.note||'—')+'</td>'+
+    '<td><button class="btn btn-sm" onclick="editLog(\''+l.id+'\')">Edit</button> '+
+    '<button class="btn btn-sm btn-d" onclick="delLog(\''+l.id+'\')">Del</button></td></tr>';
+  }).join('');
+}
+/* ══════════ PAYSLIP ══════════ */
+function gotoSlip(id){
+  showPane('slip');
+  document.getElementById('s-emp').value=id;
+  document.getElementById('s-from').value=LAST.from||'';
+  document.getElementById('s-to').value=LAST.to||'';
+  renderSlip();
+}
+function renderSlip(){
+  var id=document.getElementById('s-emp').value;
+  var from=document.getElementById('s-from').value,to=document.getElementById('s-to').value;
+  var w=document.getElementById('slip-wrap');
+  if(!id){w.innerHTML='<div class="empty">Pick an employee.</div>';return;}
+  var p=periodFor(id,from,to);
+  if(!p||(!p.n&&!p.open)){w.innerHTML='<div class="empty">No logged days for this employee in that range.</div>';return;}
+  var e=p.emp,hourly=(+e.rate||0)/DB.cfg.work;
+  var li=function(l,v,bold){return '<div class="li'+(bold?' b':'')+'"><span>'+l+'</span><span>'+v+'</span></div>';};
+  var rowsHtml=p.days.filter(function(d){return d.paid;}).map(function(d){
+    return '<tr><td>'+d.date+'</td><td>'+d.ty.label+'</td><td>'+fmt12(d.in)+'</td><td>'+fmt12(d.out)+'</td>'+
+    '<td style="text-align:right">'+(d.worked?d.worked.toFixed(2):'—')+'</td>'+
+    '<td style="text-align:right">'+(d.ot?d.ot.toFixed(2):'0')+'</td>'+
+    '<td style="text-align:right">'+(d.night?d.night.toFixed(2):'0')+'</td>'+
+    '<td style="text-align:right">'+peso(d.total)+'</td></tr>';
+  }).join('');
+  w.innerHTML='<div class="slip">'+
+   '<div style="display:flex;justify-content:space-between;align-items:flex-start">'+
+   '<div><h2>F.A.E. &mdash; PAYSLIP</h2><div class="sub">Fil-Am Elite &middot; computed under the Philippine Labor Code</div></div>'+
+   '<div style="text-align:right" class="sub">Period<br><b style="color:#111;font-size:13px">'+(from||'—')+' to '+(to||'—')+'</b></div></div>'+
+   '<hr>'+
+   '<div style="display:flex;justify-content:space-between"><div><b style="font-size:15px">'+esc(e.name)+'</b>'+
+   '<div class="sub">'+esc(e.pos||'Staff')+(e.hired?' &middot; hired '+e.hired:'')+'</div></div>'+
+   '<div style="text-align:right" class="sub">Daily wage <b style="color:#111">'+peso(e.rate)+'</b><br>'+
+   'Hourly '+peso(hourly)+' &middot; OT '+peso(hourly*DB.cfg.otMult)+'</div></div>'+
+   '<hr>'+
+   '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 26px">'+
+   '<div>'+
+     li('Days paid',String(p.n))+
+     li('Hours worked',p.worked.toFixed(2))+
+     li('Regular hours',p.reg.toFixed(2))+
+     li('Overtime hours',p.ot.toFixed(2))+
+     li('Night hours (10pm&ndash;6am)',p.night.toFixed(2))+
+   '</div><div>'+
+     li('Basic pay',peso(p.basic))+
+     li('Overtime pay (+25%)',peso(p.otp))+
+     li('Night differential (+10%)',peso(p.ndp))+
+     (p.hol?li('Holiday pay (unworked)',peso(p.hol)):'')+
+     li('<b>GROSS PAY</b>','<b>'+peso(p.gross)+'</b>')+
+   '</div></div>'+
+   (p.ded?'<hr>'+li('SSS / PhilHealth / Pag-IBIG','-'+peso(p.ded)):'')+
+   li('NET PAY',peso(p.net),true)+
+   (p.open?'<div class="sub" style="color:#b45309;margin-top:8px">'+p.open+' shift(s) with no time-out are excluded from this payslip.</div>':'')+
+   '<hr><div class="sub" style="margin-bottom:6px"><b style="color:#111">Daily breakdown</b></div>'+
+   '<table><thead><tr><th>Date</th><th>Type</th><th>In</th><th>Out</th>'+
+   '<th style="text-align:right">Worked</th><th style="text-align:right">OT</th>'+
+   '<th style="text-align:right">Night</th><th style="text-align:right">Pay</th></tr></thead><tbody>'+rowsHtml+'</tbody></table>'+
+   '<hr><div class="sub">Gross of withholding tax. Computed per Labor Code Arts. 83&ndash;94. '+
+   'Received by: ______________________ &nbsp; Date: ____________</div>'+
+   '</div>';
+}
+/* ══════════ SETTINGS ══════════ */
+function saveCfg(){
+  var was=JSON.parse(JSON.stringify(DB.cfg));
+  DB.cfg={actor:document.getElementById('c-actor').value.trim(),
+    work:+document.getElementById('c-work').value||8,
+    meal:+document.getElementById('c-meal').value||0,
+    mealAfter:+document.getElementById('c-mealaft').value||5,
+    otMult:+document.getElementById('c-ot').value||1.25,
+    nd:+document.getElementById('c-nd').value||0,
+    ndStart:+document.getElementById('c-nds').value,ndEnd:+document.getElementById('c-nde').value,
+    minWage:+document.getElementById('c-min').value||0,
+    guar:document.getElementById('c-guar').checked};
+  TYPES.ordinary.ot=DB.cfg.otMult;
+  var ch=[];
+  ['work','meal','mealAfter','otMult','nd','ndStart','ndEnd','minWage'].forEach(function(k){
+    if(was[k]!==DB.cfg[k]){ch.push(k+' '+was[k]+' → '+DB.cfg[k]);}
+  });
+  if(was.guar!==DB.cfg.guar){ch.push('full-day guarantee '+(DB.cfg.guar?'on':'off'));}
+  logAudit('settings','Changed rates','',ch.length?ch.join('; '):'saved with no changes');
+  save();renderLog();renderEmps();runPayroll();render13th();renderAudit();toast('Settings saved');
+}
+function resetCfg(){
+  var actor=DB.cfg.actor;
+  DB.cfg=JSON.parse(JSON.stringify(DEF));DB.cfg.actor=actor;TYPES.ordinary.ot=DEF.otMult;
+  logAudit('settings','Restored defaults','','all statutory rates reset to Labor Code minimums');
+  save();fillCfg();renderLog();renderEmps();runPayroll();renderAudit();toast('Legal defaults restored');}
+function fillCfg(){
+  var c=DB.cfg;
+  document.getElementById('c-work').value=c.work;document.getElementById('c-meal').value=c.meal;
+  document.getElementById('c-mealaft').value=c.mealAfter;document.getElementById('c-ot').value=c.otMult;
+  document.getElementById('c-nd').value=c.nd;document.getElementById('c-nds').value=c.ndStart;
+  document.getElementById('c-nde').value=c.ndEnd;document.getElementById('c-min').value=c.minWage;
+  document.getElementById('c-guar').checked=c.guar!==false;
+  document.getElementById('c-actor').value=c.actor||'';
+  TYPES.ordinary.ot=c.otMult;
+}
+/* ══════════ EXPORT / BACKUP ══════════ */
+function dl(name,text,mime){
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([text],{type:mime||'text/csv'}));
+  a.download=name;a.click();
+}
+function exportRegister(){
+  if(!LAST.rows||!LAST.rows.length){toast('Compute a payroll period first');return;}
+  var s='F.A.E. PAYROLL REGISTER,'+(LAST.from||'')+' to '+(LAST.to||'')+'\n\n';
+  s+='Employee,Position,Daily Wage,Days,Hrs Worked,Regular Hrs,OT Hrs,Night Hrs,Basic Pay,OT Pay,Night Diff,Holiday Pay,Gross Pay,Deductions,Net Pay\n';
+  LAST.rows.forEach(function(p){
+    s+='"'+p.emp.name+'","'+(p.emp.pos||'')+'",'+(+p.emp.rate).toFixed(2)+','+p.n+','+p.worked.toFixed(2)+','+
+    p.reg.toFixed(2)+','+p.ot.toFixed(2)+','+p.night.toFixed(2)+','+p.basic.toFixed(2)+','+p.otp.toFixed(2)+','+
+    p.ndp.toFixed(2)+','+p.hol.toFixed(2)+','+p.gross.toFixed(2)+','+p.ded.toFixed(2)+','+p.net.toFixed(2)+'\n';
+  });
+  var T=LAST.T;
+  s+='"TOTAL","",,'+T.n+','+T.worked.toFixed(2)+','+(T.worked-T.ot).toFixed(2)+','+T.ot.toFixed(2)+','+
+  T.night.toFixed(2)+','+T.basic.toFixed(2)+','+T.otp.toFixed(2)+','+T.ndp.toFixed(2)+','+T.hol.toFixed(2)+','+
+  T.gross.toFixed(2)+','+T.ded.toFixed(2)+','+T.net.toFixed(2)+'\n';
+  dl('fae-payroll-'+(LAST.from||'all')+'.csv',s);
+}
+function exportLog(){
+  if(!DB.logs.length){toast('Nothing to export');return;}
+  var s='Date,Employee,Day Type,Time In,Time Out,Span Hrs,Hrs Worked,Regular Hrs,OT Hrs,Night Hrs,Basic,OT Pay,Night Diff,Day Total,Note\n';
+  logsIn('','',null).forEach(function(l){
+    var e=empById(l.empId);if(!e)return;
+    var d=computeDay(l,e,DB.cfg);
+    s+=l.date+',"'+e.name+'","'+d.ty.label+'","'+fmt12(d.in)+'","'+fmt12(d.out)+'",'+d.span.toFixed(2)+','+
+    d.worked.toFixed(2)+','+d.reg.toFixed(2)+','+d.ot.toFixed(2)+','+d.night.toFixed(2)+','+
+    d.basic.toFixed(2)+','+d.otp.toFixed(2)+','+d.ndp.toFixed(2)+','+d.total.toFixed(2)+',"'+(d.note||'')+'"\n';
+  });
+  dl('fae-timelog.csv',s);
+}
+function exportAudit(){
+  if(!DB.audit.length){toast('Nothing to export');return;}
+  var s='F.A.E. PAYROLL — AUDIT TRAIL,exported '+tsFmt(new Date().toISOString())+'\n\n';
+  s+='Timestamp,By,Area,Action,Record,Detail\n';
+  DB.audit.forEach(function(a){
+    s+='"'+tsFmt(a.ts)+'","'+a.by+'","'+a.area+'","'+a.action+'","'+
+       String(a.record).replace(/"/g,'""')+'","'+String(a.detail).replace(/"/g,'""')+'"\n';
+  });
+  dl('fae-audit-trail.csv',s);
+  toast('Audit trail exported');
+}
+function exportOneRun(id){
+  var r=null;DB.runs.forEach(function(x){if(x.id===id){r=x;}});
+  if(!r)return;
+  var s='F.A.E. PAYROLL RUN,"'+r.label+'"\nPeriod,'+r.from+' to '+r.to+'\nSaved,'+tsFmt(r.ts)+'\nSaved by,"'+r.by+'"\n\n';
+  s+='Employee,Position,Daily Wage,Days,Hrs Worked,Regular Hrs,OT Hrs,Night Hrs,Basic Pay,OT Pay,Night Diff,Holiday Pay,Gross Pay,Deductions,Net Pay\n';
+  r.rows.forEach(function(w){
+    s+='"'+w.name+'","'+w.pos+'",'+w.rate.toFixed(2)+','+w.n+','+w.worked.toFixed(2)+','+w.reg.toFixed(2)+','+
+    w.ot.toFixed(2)+','+w.night.toFixed(2)+','+w.basic.toFixed(2)+','+w.otp.toFixed(2)+','+w.ndp.toFixed(2)+','+
+    (w.hol||0).toFixed(2)+','+w.gross.toFixed(2)+','+w.ded.toFixed(2)+','+w.net.toFixed(2)+'\n';
+  });
+  var T=r.T;
+  s+='"TOTAL","",,'+T.n+','+T.worked.toFixed(2)+','+(T.worked-T.ot).toFixed(2)+','+T.ot.toFixed(2)+','+
+  T.night.toFixed(2)+','+T.basic.toFixed(2)+','+T.otp.toFixed(2)+','+T.ndp.toFixed(2)+','+T.hol.toFixed(2)+','+
+  T.gross.toFixed(2)+','+T.ded.toFixed(2)+','+T.net.toFixed(2)+'\n';
+  dl('fae-payroll-'+r.from+'.csv',s);
+}
+function exportRuns(){
+  if(!DB.runs.length){toast('No saved runs yet');return;}
+  var s='F.A.E. PAYROLL — ALL SAVED RUNS,exported '+tsFmt(new Date().toISOString())+'\n\n';
+  s+='Period From,Period To,Label,Saved,Saved By,Employee,Position,Daily Wage,Days,Hrs Worked,OT Hrs,Night Hrs,Basic,OT Pay,Night Diff,Holiday,Gross,Deductions,Net\n';
+  DB.runs.slice().reverse().forEach(function(r){
+    r.rows.forEach(function(w){
+      s+=r.from+','+r.to+',"'+r.label+'","'+tsFmt(r.ts)+'","'+r.by+'","'+w.name+'","'+w.pos+'",'+
+      w.rate.toFixed(2)+','+w.n+','+w.worked.toFixed(2)+','+w.ot.toFixed(2)+','+w.night.toFixed(2)+','+
+      w.basic.toFixed(2)+','+w.otp.toFixed(2)+','+w.ndp.toFixed(2)+','+(w.hol||0).toFixed(2)+','+
+      w.gross.toFixed(2)+','+w.ded.toFixed(2)+','+w.net.toFixed(2)+'\n';
+    });
+  });
+  dl('fae-payroll-all-runs.csv',s);
+  toast('All runs exported');
+}
+function exportSalaryHistory(){
+  if(!DB.runs.length){toast('No saved runs yet');return;}
+  var yf=document.getElementById('h-year').value;
+  var runs=DB.runs.filter(function(r){return !yf||(r.from||r.ts).slice(0,4)===yf;});
+  var by={},periods={};
+  runs.forEach(function(r){
+    periods[r.from+'|'+r.to+'|'+r.label]=1;
+    r.rows.forEach(function(w){
+      var k=w.empId||w.name;
+      if(!by[k]){by[k]={name:w.name,per:{},runs:0,n:0,ot:0,basic:0,otp:0,ndp:0,gross:0,ded:0,net:0};}
+      var t=by[k];t.runs++;t.n+=w.n;t.ot+=w.ot;t.basic+=w.basic;t.otp+=w.otp;
+      t.ndp+=w.ndp;t.gross+=w.gross;t.ded+=w.ded;t.net+=w.net;
+      t.per[r.from+'|'+r.to+'|'+r.label]=w.net;
+    });
+  });
+  var pk=Object.keys(periods).sort();
+  var s='F.A.E. SALARY TRACKER'+(yf?' — '+yf:' — all time')+',exported '+tsFmt(new Date().toISOString())+'\n\n';
+  s+='SUMMARY\nEmployee,Runs,Days,OT Hrs,Basic,OT Pay,Night Diff,Gross,Deductions,Net Received,Avg per Period\n';
+  Object.keys(by).forEach(function(k){
+    var t=by[k];
+    s+='"'+t.name+'",'+t.runs+','+t.n+','+t.ot.toFixed(2)+','+t.basic.toFixed(2)+','+t.otp.toFixed(2)+','+
+    t.ndp.toFixed(2)+','+t.gross.toFixed(2)+','+t.ded.toFixed(2)+','+t.net.toFixed(2)+','+
+    (t.net/Math.max(t.runs,1)).toFixed(2)+'\n';
+  });
+  s+='\nNET PAY BY PERIOD\nEmployee,'+pk.map(function(p){return '"'+p.split('|')[2]+'"';}).join(',')+',TOTAL\n';
+  Object.keys(by).forEach(function(k){
+    var t=by[k];
+    s+='"'+t.name+'",'+pk.map(function(p){return (t.per[p]||0).toFixed(2);}).join(',')+','+t.net.toFixed(2)+'\n';
+  });
+  dl('fae-salary-history'+(yf?'-'+yf:'')+'.csv',s);
+  toast('Salary history exported');
+}
+function backup(){
+  logAudit('data','Backup downloaded','',DB.emps.length+' employees · '+DB.logs.length+' days · '+DB.runs.length+' saved runs');
+  save();renderAudit();
+  dl('fae-payroll-backup-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(DB,null,2),'application/json');
+}
+function doRestore(inp){
+  var f=inp.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(){
+    try{var d=JSON.parse(r.result);
+      if(!d.emps){throw 0;}
+      if(!confirm('Replace all current payroll data with this backup?'))return;
+      DB.cfg=Object.assign({},DEF,d.cfg||{});DB.emps=d.emps||[];DB.logs=d.logs||[];
+      DB.runs=d.runs||[];DB.audit=d.audit||[];
+      logAudit('data','Backup restored','',(DB.emps.length)+' employees · '+DB.logs.length+' days · '+DB.runs.length+' saved runs');
+      save();boot();toast('Backup restored');
+    }catch(e){toast('That file is not a valid payroll backup');}
+  };
+  r.readAsText(f);inp.value='';
+}
+/* ══════════ UI ══════════ */
+function showPane(p){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.dataset.p===p);});
+  document.querySelectorAll('.pane').forEach(function(x){x.classList.toggle('on',x.id==='p-'+p);});
+  if(p==='emp'){render13th();}
+  if(p==='hist'){renderHistory();}
+  if(p==='audit'){renderAudit();}
+}
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click',function(){showPane(t.dataset.p);});
+});
+function fillSelects(){
+  var act=DB.emps.filter(function(e){return e.active!==false;});
+  var opts=act.map(function(e){return '<option value="'+e.id+'">'+esc(e.name)+'</option>';}).join('');
+  ['i-emp','a-emp','s-emp'].forEach(function(id){
+    var el=document.getElementById(id),v=el.value;
+    el.innerHTML=opts||'<option value="">— add an employee first —</option>';
+    if(v){el.value=v;}
+  });
+  var fe=document.getElementById('f-emp'),fv=fe.value;
+  fe.innerHTML='<option value="">All employees</option>'+opts;
+  if(fv){fe.value=fv;}
+  var ty=Object.keys(TYPES).map(function(k){return '<option value="'+k+'">'+TYPES[k].label+'</option>';}).join('');
+  document.getElementById('a-type').innerHTML=ty;
+  var mo=document.getElementById('i-mon');
+  if(!mo.options.length){
+    mo.innerHTML=['January','February','March','April','May','June','July','August','September','October','November','December']
+      .map(function(m,i){return '<option value="'+i+'">'+m+'</option>';}).join('');
+    mo.value=new Date().getMonth();
+  }
+}
+function boot(){
+  fillSelects();fillCfg();renderEmps();renderLog();render13th();renderHistory();renderAudit();
+  var t=new Date().toISOString().slice(0,10);
+  if(!document.getElementById('a-date').value){document.getElementById('a-date').value=t;}
+  document.getElementById('i-year').value=new Date().getFullYear();
+  document.getElementById('th-year').value=new Date().getFullYear();
+  quickPeriod('all');
+}
+load();boot();
+</script></body></html>

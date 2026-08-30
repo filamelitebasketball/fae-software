@@ -1,0 +1,66 @@
+F.A.E. COMMAND CENTER
+=====================
+
+HOW TO USE
+----------
+1. Open this folder.
+2. Double-click  index.html
+3. That's your home base. Everything opens from there.
+
+You (or anyone at the front desk) only ever need to remember ONE thing:
+open index.html. It works offline. No internet or login needed.
+
+
+WHAT'S INSIDE
+-------------
+index.html ........ THE HOME PAGE. Open this one. Live clock, today's date,
+                    the daily front-desk checklist, and buttons to everything.
+
+schedule.html ..... LIVE court schedule — a direct, always-current view of your
+                    Google Sheet renter calendar. Click "Open to edit" to change it.
+
+dashboard.html .... The full business dashboard — incidents, revenue, renters,
+                    payments, payroll, inventory. (Its schedule page now shows the
+                    same live Google Sheet at the top.)
+
+nxgen-stats.html .. NXGEN basketball league stat entry, leaders & standings.
+
+assets/ ........... Logos used by the home page. Leave this folder alone.
+
+
+THE TWO BUTTONS THAT MATTER MOST
+--------------------------------
+- "Today's Court Schedule"  -> shows who is booked, when, and which court.
+                               Check this first every day so there's no
+                               confusion about the day or the time slot.
+
+- "Log an Incident"  -> the moment anything goes wrong (no-show, damage,
+                        injury, argument, overtime), press this and record it
+                        with a photo. Logging it right away is what stops the
+                        mix-ups and missing records.
+
+
+DAILY CHECKLIST
+---------------
+The home page has a 5-step checklist. Tick each step as you go through the
+day. It resets by itself every new morning, so you always start fresh.
+
+
+LIVE WEBSITES
+-------------
+The two "Live Websites" boxes on the home page open your real sites:
+  - F.A.E. Management  -> https://fae-court-connect.lovable.app
+  - NXGEN Premier League -> https://nxgenpremierleague.lovable.app
+These are the SHARED, online source of truth (they sync across devices). The
+local dashboard.html is a fast single-device tool; for records that everyone
+must see (members, payments), use the live site's admin panel.
+
+LOGGING A WALK-IN INCIDENT
+--------------------------
+On "Log an Incident" you no longer need the person to be a saved member. Just
+type their name in the "name / renter" box, add a title, attach a photo, and
+file it. Keep photos to a few small ones so it saves reliably.
+
+
+TIP: Right-click index.html -> Send to -> Desktop (create shortcut)
+     so it's one click away.

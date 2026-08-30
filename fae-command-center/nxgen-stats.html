@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NXGEN Stat Center</title>
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTlhHRU4gU3RhdCBDZW50ZXIiLCJzaG9ydF9uYW1lIjoiTlhHRU4gU3RhdHMiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzA1MDUwNyIsInRoZW1lX2NvbG9yIjoiI2M5YTIyNyJ9">
+<meta name="theme-color" content="#c9a227">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--void:#050507;--gold:#c9a227;--gold-l:#e8c468;--gold-d:#9a7a1a;--silver:#b8bcc4;--paint:#f0f2f5;--bg:#0a0a0f;--card:#111118;--card2:#16161f;--bdr:#222233;--txt:#e8e8f0;--txt2:#8888a0;--txt3:#555566;--grn:#22c55e;--red:#ef4444}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;line-height:1.5}
+.app{max-width:960px;margin:0 auto;padding:12px 16px}
+.hdr{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:2px solid var(--gold);margin-bottom:14px}
+.mark{width:40px;height:40px;background:var(--void);border:1.5px solid var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;font-size:11px;letter-spacing:2px}
+.hdr h1{font-size:18px;font-weight:600;color:var(--txt)}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:12px}
+.live{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--grn);font-weight:500}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--grn);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.install-btn{font-size:11px;padding:4px 12px;background:var(--gold);color:var(--void);border:none;border-radius:6px;cursor:pointer;font-weight:600}
+.install-btn:hover{background:var(--gold-l)}
+.conn{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--card);border:1px solid var(--bdr);border-radius:8px;margin-bottom:12px;font-size:12px;color:var(--txt2)}
+.conn .g{color:var(--grn)}
+.conn .r{margin-left:auto;font-size:11px;font-family:'Cascadia Code','Consolas',monospace;color:var(--txt3)}
+.gs-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--card);border:1px solid var(--bdr);border-radius:8px;margin-bottom:12px;font-size:12px}
+.gs-bar input{flex:1;background:var(--card2);border:1px solid var(--bdr);color:var(--txt);padding:5px 10px;border-radius:6px;font-size:12px;font-family:inherit}
+.gs-bar input:focus{border-color:var(--gold);outline:none}
+.gs-bar button{padding:5px 14px;background:var(--gold-d);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500}
+.gs-bar button:hover{background:var(--gold)}
+.gs-status{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500}
+.gs-on{background:#22c55e22;color:var(--grn)}
+.gs-off{background:#ef444422;color:var(--red)}
+.sel{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:12px}
+.sel label{display:block;font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.sel select{width:100%;background:var(--card2);border:1px solid var(--bdr);color:var(--txt);padding:6px 8px;border-radius:6px;font-size:13px;font-family:inherit}
+.sel select:focus{border-color:var(--gold);outline:none}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+@media(max-width:600px){.metrics{grid-template-columns:repeat(2,1fr)}}
+.mc{background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:10px 14px}
+.mc.g{border-left:3px solid var(--gold)}
+.mc .l{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.3px}
+.mc .v{font-size:24px;font-weight:700;color:var(--txt);line-height:1.2;font-variant-numeric:tabular-nums}
+.mc .v small{font-size:12px;color:var(--txt3);font-weight:400}
+.mc .s{font-size:11px;color:var(--txt2);margin-top:1px}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--bdr);margin-bottom:10px}
+.tab{padding:8px 16px;font-size:12px;color:var(--txt3);cursor:pointer;border:none;border-bottom:2px solid transparent;background:none;font-family:inherit}
+.tab:hover{color:var(--txt2)}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
+.pane{display:none}.pane.vis{display:block}
+.tl{display:flex;align-items:center;gap:8px;margin:10px 0 5px}
+.tl .d{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.tl span{font-size:13px;font-weight:600;color:var(--txt)}
+.tl .sc{margin-left:auto;font-size:22px;font-weight:700;color:var(--gold);font-variant-numeric:tabular-nums}
+.sx{overflow-x:auto}
+table.st{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.st th{text-align:center;font-weight:600;color:var(--txt3);padding:5px 3px;border-bottom:1px solid var(--bdr);font-size:10px;text-transform:uppercase;letter-spacing:.3px}
+.st th:first-child,.st td:first-child{text-align:left}
+.st td{text-align:center;padding:4px 3px;border-bottom:1px solid #1a1a2a;color:var(--txt)}
+.st tr:hover td{background:var(--card2)}
+.pn{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px}
+input.si{width:36px;text-align:center;border:1px solid var(--bdr);border-radius:4px;padding:3px 0;font-size:12px;background:var(--card2);color:var(--txt);font-variant-numeric:tabular-nums;font-family:inherit}
+input.si:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 2px rgba(201,162,39,.15)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid var(--bdr)}
+.acts button{flex:1;min-width:130px;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--bdr);background:var(--card);color:var(--txt);font-family:inherit;transition:all .15s}
+.acts button:hover{border-color:var(--gold);background:var(--card2)}
+.btn-g{background:var(--gold)!important;color:var(--void)!important;border-color:var(--gold)!important;font-weight:700!important}
+.btn-g:hover{background:var(--gold-l)!important}
+.pos{color:var(--grn)}.neg{color:var(--red)}
+.hi{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #1a1a2a;font-size:13px;color:var(--txt2)}
+.hi strong{font-weight:500;color:var(--txt)}
+.hi .t{margin-left:auto;font-size:11px;color:var(--txt3)}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--gold);color:var(--void);padding:10px 20px;border-radius:8px;font-weight:600;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:99}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hdr">
+    <div class="mark">NX</div>
+    <h1>Stat Command Center</h1>
+    <div class="hdr-r">
+      <div class="live"><div class="dot"></div>Ready</div>
+      <button class="install-btn" id="installBtn" style="display:none" onclick="installPWA()">Install App</button>
+    </div>
+  </div>
+
+  <div class="gs-bar">
+    <span style="color:var(--txt2)">Google Sheets</span>
+    <input type="text" id="gsUrl" placeholder="Paste Google Sheet URL or ID...">
+    <button onclick="connectSheet()">Connect</button>
+    <span class="gs-status gs-off" id="gsStatus">Disconnected</span>
+  </div>
+
+  <div class="sel">
+    <div><label>Week</label><select id="sw" onchange="loadWeek()"></select></div>
+    <div><label>Game</label><select id="sg" onchange="loadGame()"></select></div>
+    <div><label>Division</label><select><option>Open</option><option>Elite</option></select></div>
+    <div><label>Status</label><select id="ss"><option>Pending</option><option>In progress</option><option>Final</option></select></div>
+  </div>
+
+  <div class="metrics">
+    <div class="mc g"><div class="l">Home</div><div class="v" id="ht">—</div><div class="s" id="htn"></div></div>
+    <div class="mc g"><div class="l">Away</div><div class="v" id="at">—</div><div class="s" id="atn"></div></div>
+    <div class="mc"><div class="l">Leader</div><div class="v" id="gl">—</div><div class="s" id="gln"></div></div>
+    <div class="mc"><div class="l">Entered</div><div class="v" id="ec">0<small>/24</small></div><div class="s" id="ep">0%</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" onclick="tab(this,0)">Entry</button>
+    <button class="tab" onclick="tab(this,1)">Leaders</button>
+    <button class="tab" onclick="tab(this,2)">Standings</button>
+    <button class="tab" onclick="tab(this,3)">Log</button>
+  </div>
+
+  <div class="pane vis" id="p0">
+    <div class="tl"><div class="d" style="background:var(--gold)"></div><span id="htl">Home</span><span class="sc" id="hts">0</span></div>
+    <div class="sx"><table class="st"><thead><tr><th style="width:24%">Player</th><th>MIN</th><th>PTS</th><th>AST</th><th>REB</th><th>STL</th><th>BLK</th><th>TO</th><th>PF</th></tr></thead><tbody id="hb"></tbody></table></div>
+    <div class="tl" style="margin-top:16px"><div class="d" style="background:var(--silver)"></div><span id="atl">Away</span><span class="sc" id="ats">0</span></div>
+    <div class="sx"><table class="st"><thead><tr><th style="width:24%">Player</th><th>MIN</th><th>PTS</th><th>AST</th><th>REB</th><th>STL</th><th>BLK</th><th>TO</th><th>PF</th></tr></thead><tbody id="ab"></tbody></table></div>
+  </div>
+
+  <div class="pane" id="p1"><div class="sx"><table class="st"><thead><tr><th>Rk</th><th style="width:22%">Player</th><th>Team</th><th>GP</th><th>PPG</th><th>APG</th><th>RPG</th><th>SPG</th><th>BPG</th></tr></thead><tbody id="lb"></tbody></table></div></div>
+
+  <div class="pane" id="p2"><div class="sx"><table class="st"><thead><tr><th style="width:22%">Team</th><th>W</th><th>L</th><th>PCT</th><th>PF</th><th>PA</th><th>DIFF</th></tr></thead><tbody id="stb"></tbody></table></div></div>
+
+  <div class="pane" id="p3"></div>
+
+  <div class="acts">
+    <button class="btn-g" onclick="exportXlsx()">Export Excel</button>
+    <button onclick="pushToSheets()">Sync to Google Sheets</button>
+    <button onclick="saveLocal()">Save Progress</button>
+    <button onclick="loadLocal()">Load Saved</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// Safe storage: never let a blocked localStorage (file:// / private mode) blank the app.
+var LS=(function(){var b={},s=null;try{s=window['localStorage'];s.setItem('__t','1');s.removeItem('__t');}catch(e){s=null;}
+  return {getItem:function(k){try{return s?s.getItem(k):(k in b?b[k]:null);}catch(e){return k in b?b[k]:null;}},
+    setItem:function(k,v){try{if(s)s.setItem(k,v);else b[k]=v;}catch(e){b[k]=v;}},
+    removeItem:function(k){try{if(s)s.removeItem(k);else delete b[k];}catch(e){delete b[k];}}};})();
+var TM=['Blazers','Wolves','Titans','Kings','Raptors','Hawks','Bulls','Thunder','Vipers','Falcons'];
+var RP={};
+TM.forEach(function(t,i){
+  var fn=['J.','A.','D.','K.','L.','T.','B.','S.','C.','R.','M.','P.'];
+  var ln=['Cruz','Rivera','Patel','Okafor','Martinez','Washington','Kim','Nguyen','Brown','Davis','Chen','Adams'];
+  RP[i]=[];for(var p=0;p<12;p++){RP[i].push(fn[(i*3+p)%12]+' '+ln[(i*5+p)%12])}
+});
+var SCH=[];
+var rot=[];for(var i=1;i<10;i++)rot.push(i);
+for(var rd=0;rd<9;rd++){
+  var gms=[];gms.push([0,rot[0]]);
+  for(var j=1;j<5;j++)gms.push([rot[j],rot[8-j]]);
+  SCH.push(gms);rot.unshift(rot.pop());
+}
+var STATS={};
+var gsConnected=false, gsId='';
+
+// PWA install
+var deferredPrompt;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;document.getElementById('installBtn').style.display=''});
+function installPWA(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;document.getElementById('installBtn').style.display='none'}}
+
+function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(function(){el.classList.remove('show')},2500)}
+
+// Week/game selectors
+(function(){var s=document.getElementById('sw');for(var i=0;i<9;i++){var o=document.createElement('option');o.value=i;o.textContent='Week '+(i+1);s.appendChild(o)}})();
+
+function loadWeek(){
+  var w=+document.getElementById('sw').value,sel=document.getElementById('sg');
+  sel.innerHTML='';
+  SCH[w].forEach(function(g,i){var o=document.createElement('option');o.value=i;o.textContent='Game '+(i+1)+' — '+TM[g[0]]+' vs '+TM[g[1]];sel.appendChild(o)});
+  loadGame();
+}
+function loadGame(){
+  var w=+document.getElementById('sw').value,g=+document.getElementById('sg').value,m=SCH[w][g];
+  document.getElementById('htl').textContent=TM[m[0]]+' (home)';
+  document.getElementById('atl').textContent=TM[m[1]]+' (away)';
+  document.getElementById('htn').textContent=TM[m[0]];
+  document.getElementById('atn').textContent=TM[m[1]];
+  buildGrid('hb',m[0],w,g,'h');buildGrid('ab',m[1],w,g,'a');recompute();
+}
+function buildGrid(tbId,teamId,w,g,side){
+  var tb=document.getElementById(tbId),html='',players=RP[teamId];
+  for(var p=0;p<12;p++){
+    var key=w+'-'+g+'-'+side+'-'+p;
+    var s=STATS[key]||{min:0,pts:0,ast:0,reb:0,stl:0,blk:0,to:0,pf:0};
+    html+='<tr><td class="pn">'+players[p]+'</td>';
+    ['min','pts','ast','reb','stl','blk','to','pf'].forEach(function(f){
+      html+='<td><input class="si" type="number" min="0" value="'+s[f]+'" data-k="'+key+'" data-f="'+f+'" oninput="upd(this)"></td>';
+    });html+='</tr>';}
+  tb.innerHTML=html;
+}
+function upd(el){
+  var k=el.dataset.k,f=el.dataset.f;
+  if(!STATS[k])STATS[k]={min:0,pts:0,ast:0,reb:0,stl:0,blk:0,to:0,pf:0};
+  STATS[k][f]=Math.max(0,parseInt(el.value)||0);recompute();
+}
+function recompute(){
+  var w=+document.getElementById('sw').value,g=+document.getElementById('sg').value;
+  var ht=0,at=0,entered=0,bestPts=0,bestName='—',m=SCH[w][g];
+  for(var p=0;p<12;p++){
+    var hs=STATS[w+'-'+g+'-h-'+p],as=STATS[w+'-'+g+'-a-'+p];
+    if(hs){ht+=hs.pts;if(hs.pts>0||hs.min>0)entered++;if(hs.pts>bestPts){bestPts=hs.pts;bestName=RP[m[0]][p]}}
+    if(as){at+=as.pts;if(as.pts>0||as.min>0)entered++;if(as.pts>bestPts){bestPts=as.pts;bestName=RP[m[1]][p]}}
+  }
+  document.getElementById('ht').textContent=ht;document.getElementById('at').textContent=at;
+  document.getElementById('hts').textContent=ht;document.getElementById('ats').textContent=at;
+  document.getElementById('gl').textContent=bestPts>0?bestPts:'—';
+  document.getElementById('gln').textContent=bestPts>0?bestName+' — PTS':'';
+  document.getElementById('ec').innerHTML=entered+'<small>/24</small>';
+  document.getElementById('ep').textContent=Math.round(entered/24*100)+'%';
+}
+
+function tab(btn,idx){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on')});btn.classList.add('on');
+  for(var i=0;i<4;i++){var el=document.getElementById('p'+i);if(el)el.classList.toggle('vis',i===idx)}
+  if(idx===1)buildLeaders();if(idx===2)buildStandings();if(idx===3)buildLog();
+}
+
+function buildLeaders(){
+  var data=[];
+  TM.forEach(function(t,ti){RP[ti].forEach(function(name,pi){
+    var gp=0,tp=0,ta=0,tr=0,ts=0,tb=0;
+    for(var w=0;w<9;w++)for(var g=0;g<5;g++){
+      var m=SCH[w][g],side=m[0]===ti?'h':(m[1]===ti?'a':null);if(!side)continue;
+      var s=STATS[w+'-'+g+'-'+side+'-'+pi];
+      if(s&&(s.pts>0||s.min>0)){gp++;tp+=s.pts;ta+=s.ast;tr+=s.reb;ts+=s.stl;tb+=s.blk}}
+    if(gp>0)data.push({n:name,t:t,gp:gp,ppg:tp/gp,apg:ta/gp,rpg:tr/gp,spg:ts/gp,bpg:tb/gp})})});
+  data.sort(function(a,b){return b.ppg-a.ppg});
+  var html='';data.slice(0,15).forEach(function(d,i){
+    html+='<tr><td>'+(i+1)+'</td><td class="pn">'+d.n+'</td><td>'+d.t+'</td><td>'+d.gp+'</td><td>'+d.ppg.toFixed(1)+'</td><td>'+d.apg.toFixed(1)+'</td><td>'+d.rpg.toFixed(1)+'</td><td>'+d.spg.toFixed(1)+'</td><td>'+d.bpg.toFixed(1)+'</td></tr>'});
+  if(!html)html='<tr><td colspan="9" style="color:var(--txt3);text-align:center;padding:24px">Enter stats to see leaders</td></tr>';
+  document.getElementById('lb').innerHTML=html;
+}
+
+function buildStandings(){
+  var rec={};TM.forEach(function(t,i){rec[i]={w:0,l:0,pf:0,pa:0}});
+  for(var w=0;w<9;w++)for(var g=0;g<5;g++){
+    var m=SCH[w][g],hs=0,as=0,has=false;
+    for(var p=0;p<12;p++){var hk=STATS[w+'-'+g+'-h-'+p],ak=STATS[w+'-'+g+'-a-'+p];if(hk){hs+=hk.pts;has=true}if(ak){as+=ak.pts;has=true}}
+    if(!has)continue;rec[m[0]].pf+=hs;rec[m[0]].pa+=as;rec[m[1]].pf+=as;rec[m[1]].pa+=hs;
+    if(hs>as){rec[m[0]].w++;rec[m[1]].l++}else if(as>hs){rec[m[1]].w++;rec[m[0]].l++}}
+  var arr=[];TM.forEach(function(t,i){var r=rec[i];var gp=r.w+r.l;arr.push({n:t,w:r.w,l:r.l,pct:gp?r.w/gp:0,pf:r.pf,pa:r.pa,d:r.pf-r.pa})});
+  arr.sort(function(a,b){return b.pct-a.pct||b.d-a.d});
+  var html='';arr.forEach(function(r){
+    html+='<tr><td class="pn">'+r.n+'</td><td>'+r.w+'</td><td>'+r.l+'</td><td>'+(r.w+r.l>0?r.pct.toFixed(3):'.000')+'</td><td>'+r.pf+'</td><td>'+r.pa+'</td><td class="'+(r.d>0?'pos':r.d<0?'neg':'')+'">'+(r.d>0?'+':'')+r.d+'</td></tr>'});
+  document.getElementById('stb').innerHTML=html;
+}
+
+function buildLog(){
+  var count=Object.keys(STATS).filter(function(k){var s=STATS[k];return s.pts>0||s.min>0}).length;
+  document.getElementById('p3').innerHTML='<div class="hi"><strong>'+count+'</strong>&nbsp;player stat rows entered this session<span class="t">Live</span></div>'
+    +'<div class="hi" style="color:var(--txt3)">Export or sync to create permanent records</div>';
+}
+
+// EXCEL EXPORT via SheetJS
+function exportXlsx(){
+  if(typeof XLSX==='undefined'){toast('Excel export needs internet the first time it loads.');return;}
+  var wb=XLSX.utils.book_new();
+  // Box score for current game
+  var w=+document.getElementById('sw').value,g=+document.getElementById('sg').value,m=SCH[w][g];
+  var rows=[['NXGEN Premier League — Week '+(w+1)+' Game '+(g+1)],[''],
+    [TM[m[0]]+' (Home)'],['Player','MIN','PTS','AST','REB','STL','BLK','TO','PF']];
+  for(var p=0;p<12;p++){var s=STATS[w+'-'+g+'-h-'+p]||{min:0,pts:0,ast:0,reb:0,stl:0,blk:0,to:0,pf:0};
+    rows.push([RP[m[0]][p],s.min,s.pts,s.ast,s.reb,s.stl,s.blk,s.to,s.pf])}
+  rows.push([''],[TM[m[1]]+' (Away)'],['Player','MIN','PTS','AST','REB','STL','BLK','TO','PF']);
+  for(var p=0;p<12;p++){var s=STATS[w+'-'+g+'-a-'+p]||{min:0,pts:0,ast:0,reb:0,stl:0,blk:0,to:0,pf:0};
+    rows.push([RP[m[1]][p],s.min,s.pts,s.ast,s.reb,s.stl,s.blk,s.to,s.pf])}
+  var ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=[{wch:16},{wch:5},{wch:5},{wch:5},{wch:5},{wch:5},{wch:5},{wch:5},{wch:5}];
+  XLSX.utils.book_append_sheet(wb,ws,'Box Score');
+
+  // Standings sheet
+  var sRows=[['NXGEN Standings'],[''],['Team','W','L','PCT','PF','PA','DIFF']];
+  var rec={};TM.forEach(function(t,i){rec[i]={w:0,l:0,pf:0,pa:0}});
+  for(var wk=0;wk<9;wk++)for(var gm=0;gm<5;gm++){
+    var mt=SCH[wk][gm],hs=0,as=0,has=false;
+    for(var pp=0;pp<12;pp++){var hk=STATS[wk+'-'+gm+'-h-'+pp],ak=STATS[wk+'-'+gm+'-a-'+pp];if(hk){hs+=hk.pts;has=true}if(ak){as+=ak.pts;has=true}}
+    if(!has)continue;rec[mt[0]].pf+=hs;rec[mt[0]].pa+=as;rec[mt[1]].pf+=as;rec[mt[1]].pa+=hs;
+    if(hs>as){rec[mt[0]].w++;rec[mt[1]].l++}else if(as>hs){rec[mt[1]].w++;rec[mt[0]].l++}}
+  var sarr=[];TM.forEach(function(t,i){var r=rec[i];sarr.push([t,r.w,r.l,(r.w+r.l>0?(r.w/(r.w+r.l)).toFixed(3):'.000'),r.pf,r.pa,r.pf-r.pa])});
+  sarr.sort(function(a,b){return parseFloat(b[3])-parseFloat(a[3])});
+  sarr.forEach(function(r){sRows.push(r)});
+  var ws2=XLSX.utils.aoa_to_sheet(sRows);XLSX.utils.book_append_sheet(wb,ws2,'Standings');
+
+  XLSX.writeFile(wb,'NXGEN-Week'+(w+1)+'-Game'+(g+1)+'.xlsx');
+  toast('Excel exported!');
+}
+
+// GOOGLE SHEETS
+function connectSheet(){
+  var url=document.getElementById('gsUrl').value.trim();
+  if(!url){toast('Paste a Google Sheet URL');return}
+  var match=url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  gsId=match?match[1]:url;
+  gsConnected=true;
+  document.getElementById('gsStatus').textContent='Connected';
+  document.getElementById('gsStatus').className='gs-status gs-on';
+  LS.setItem('nxgen_gsId',gsId);
+  toast('Google Sheet connected: '+gsId.substring(0,12)+'...');
+}
+
+function pushToSheets(){
+  if(!gsConnected){toast('Connect a Google Sheet first');return}
+  var w=+document.getElementById('sw').value,g=+document.getElementById('sg').value,m=SCH[w][g];
+  var rows=[];
+  rows.push(['Week '+(w+1),'Game '+(g+1),TM[m[0]]+' vs '+TM[m[1]],new Date().toLocaleDateString()]);
+  rows.push(['Team','Player','MIN','PTS','AST','REB','STL','BLK','TO','PF']);
+  [['h',m[0]],['a',m[1]]].forEach(function(pair){
+    var side=pair[0],ti=pair[1];
+    for(var p=0;p<12;p++){
+      var s=STATS[w+'-'+g+'-'+side+'-'+p]||{min:0,pts:0,ast:0,reb:0,stl:0,blk:0,to:0,pf:0};
+      if(s.pts>0||s.min>0)rows.push([TM[ti],RP[ti][p],s.min,s.pts,s.ast,s.reb,s.stl,s.blk,s.to,s.pf])}});
+
+  var body=JSON.stringify({values:rows});
+  var range='Week'+(w+1)+'!A1';
+  var apiUrl='https://sheets.googleapis.com/v4/spreadsheets/'+gsId+'/values/'+range+':append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS';
+
+  // Try with API key from localStorage
+  var apiKey=LS.getItem('nxgen_gapi_key');
+  if(!apiKey){
+    apiKey=prompt('Enter your Google Sheets API key (one-time setup):');
+    if(!apiKey)return;
+    LS.setItem('nxgen_gapi_key',apiKey);
+  }
+  apiUrl+='&key='+apiKey;
+
+  fetch(apiUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:body})
+    .then(function(r){if(!r.ok)throw new Error('API '+r.status);return r.json()})
+    .then(function(){toast('Synced to Google Sheets!')})
+    .catch(function(e){toast('Sheets error: '+e.message+' — check API key & sharing');console.error(e)});
+}
+
+// LOCAL SAVE/LOAD
+function saveLocal(){LS.setItem('nxgen_stats',JSON.stringify(STATS));toast('Progress saved!')}
+function loadLocal(){
+  var d=LS.getItem('nxgen_stats');
+  if(d){STATS=JSON.parse(d);loadGame();toast('Data loaded!')}
+  else toast('No saved data found');
+}
+
+// Init
+(function(){
+  var savedGs=LS.getItem('nxgen_gsId');
+  if(savedGs){gsId=savedGs;gsConnected=true;document.getElementById('gsUrl').value=gsId;
+    document.getElementById('gsStatus').textContent='Connected';document.getElementById('gsStatus').className='gs-status gs-on'}
+  var savedStats=LS.getItem('nxgen_stats');
+  if(savedStats)STATS=JSON.parse(savedStats);
+  loadWeek();buildStandings();
+})();
+</script>
+</body>
+</html>

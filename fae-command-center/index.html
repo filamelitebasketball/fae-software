@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --void:#050507;--s1:#0d0d10;--s2:#111115;--s3:#16161c;--s4:#1c1c24;
+  --gold:#c9a227;--gold-l:#e8c468;--gold-d:#9a7a1a;--gold-dim:rgba(201,162,39,.12);
+  --paint:#f0f2f5;--txt2:rgba(184,188,200,.62);--txt3:rgba(184,188,200,.34);
+  --bball:#e8843c;--vball:#5b8fe8;--pball:#2ecc71;--red:#ef4444;--red-dim:rgba(239,68,68,.14);--green:#22c55e;
+  --bd:rgba(255,255,255,.07);--bd-g:rgba(201,162,39,.22);
+  --disp:'Archivo',system-ui,sans-serif;--body:'DM Sans',system-ui,-apple-system,"Segoe UI",sans-serif;--mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+}
+body{background:var(--void);color:var(--paint);font-family:var(--body);min-height:100vh;line-height:1.5;
+  background-image:radial-gradient(1100px 600px at 78% -8%,rgba(201,162,39,.10),transparent 60%),radial-gradient(900px 500px at -5% 8%,rgba(91,143,232,.06),transparent 55%);
+  background-attachment:fixed}
+.wrap{max-width:1140px;margin:0 auto;padding:26px 20px 40px}
+a{text-decoration:none;color:inherit}
+
+/* Header */
+.hdr{display:flex;align-items:center;gap:16px;padding-bottom:20px;margin-bottom:8px;border-bottom:1px solid var(--bd);flex-wrap:wrap}
+.hdr .logo{width:52px;height:52px;border-radius:12px;border:1px solid var(--bd-g);background:var(--s1);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hdr .logo img{width:100%;height:100%;object-fit:contain}
+.hdr .titles h1{font-family:var(--disp);font-weight:900;font-size:clamp(20px,3.4vw,30px);letter-spacing:-.5px;line-height:1}
+.hdr .titles .tag{font-family:var(--mono);font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-top:5px}
+.clock{margin-left:auto;text-align:right}
+.clock .day{font-family:var(--disp);font-weight:800;font-size:15px;color:var(--gold);text-transform:uppercase;letter-spacing:2px}
+.clock .date{font-size:12px;color:var(--txt2)}
+.clock .time{font-family:var(--mono);font-size:24px;font-weight:600;line-height:1.15;letter-spacing:-1px}
+
+/* Banner */
+.banner{display:flex;align-items:center;gap:14px;background:linear-gradient(90deg,var(--red-dim),transparent 80%);border:1px solid rgba(239,68,68,.4);border-left:3px solid var(--red);border-radius:14px;padding:14px 18px;margin:22px 0}
+.banner .ic{font-size:22px;line-height:1}
+.banner span{font-size:13.5px;color:var(--paint)}
+.banner b{color:#ff6b6b}
+
+/* Section label */
+.lbl{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--txt3);margin:30px 0 14px;display:flex;align-items:center;gap:10px}
+.lbl::after{content:"";flex:1;height:1px;background:var(--bd)}
+
+/* Grid + cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.card{position:relative;background:linear-gradient(180deg,var(--s2),var(--s1));border:1px solid var(--bd);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:9px;transition:transform .18s,border-color .18s,box-shadow .18s;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;background:var(--ac,var(--gold));opacity:.65;transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.card:hover{transform:translateY(-3px);border-color:var(--acb,var(--bd-g));box-shadow:0 14px 40px rgba(0,0,0,.45)}
+.card:hover::before{transform:scaleX(1)}
+.card .ic{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--acd,var(--gold-dim));color:var(--ac,var(--gold))}
+.card h3{font-family:var(--disp);font-weight:800;font-size:17px;letter-spacing:-.2px}
+.card p{font-size:13px;color:var(--txt2)}
+.card .go{font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.5px;margin-top:auto;padding-top:6px;color:var(--ac,var(--gold));text-transform:uppercase}
+.card.big{grid-column:span 2}
+@media(max-width:620px){.card.big{grid-column:span 1}}
+.card .flag{position:absolute;top:14px;right:14px;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:1.5px;color:var(--red);background:var(--red-dim);border:1px solid rgba(239,68,68,.4);padding:4px 9px;border-radius:20px}
+.gold{--ac:var(--gold);--acb:var(--bd-g);--acd:var(--gold-dim)}
+.blue{--ac:var(--vball);--acb:rgba(91,143,232,.4);--acd:rgba(91,143,232,.12)}
+.orange{--ac:var(--bball);--acb:rgba(232,132,60,.4);--acd:rgba(232,132,60,.12)}
+.green{--ac:var(--pball);--acb:rgba(46,204,113,.4);--acd:rgba(46,204,113,.12)}
+.red{--ac:var(--red);--acb:rgba(239,68,68,.5);--acd:var(--red-dim)}
+
+/* Routine */
+.routine{background:linear-gradient(180deg,var(--s2),var(--s1));border:1px solid var(--bd);border-radius:16px;padding:22px}
+.rhead{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.rhead h3{font-family:var(--disp);font-weight:800;font-size:16px}
+.rhead .reset{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--txt3);background:none;border:1px solid var(--bd);border-radius:7px;padding:5px 11px;cursor:pointer;text-transform:uppercase}
+.rhead .reset:hover{border-color:var(--gold);color:var(--gold)}
+.rsub{font-size:12.5px;color:var(--txt2);margin-bottom:14px}
+.step{display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-bottom:1px solid var(--bd);cursor:pointer}
+.step:last-child{border-bottom:none}
+.step .box{width:23px;height:23px;border-radius:7px;border:2px solid var(--txt3);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:.15s}
+.step:hover .box{border-color:var(--gold)}
+.step .txt strong{font-size:14px;display:block;font-weight:600}
+.step .txt small{font-size:12.5px;color:var(--txt2)}
+.step.done .box{background:var(--green);border-color:var(--green)}
+.step.done .box::after{content:"\2713";color:#04120a;font-weight:900;font-size:13px}
+.step.done .txt strong{color:var(--txt3);text-decoration:line-through}
+.prog{height:6px;background:var(--void);border-radius:5px;margin-top:16px;overflow:hidden;border:1px solid var(--bd)}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-d),var(--gold-l));width:0;transition:.35s}
+
+/* Live sites */
+.live-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:620px){.live-row{grid-template-columns:1fr}}
+.live{background:linear-gradient(180deg,var(--s2),var(--s1));border:1px solid var(--bd);border-radius:16px;overflow:hidden;transition:transform .18s,border-color .18s}
+.live:hover{transform:translateY(-3px);border-color:var(--bd-g)}
+.live .shot{height:150px;background:var(--s3) center/cover no-repeat;border-bottom:1px solid var(--bd);position:relative}
+.live .shot .badge{position:absolute;top:10px;left:10px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:1px;color:var(--green);background:rgba(5,5,7,.75);border:1px solid rgba(34,197,94,.4);padding:4px 9px;border-radius:20px;display:flex;align-items:center;gap:5px}
+.live .shot .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.live .body{padding:16px 18px;display:flex;align-items:center;gap:12px}
+.live .body .info{flex:1;min-width:0}
+.live .body h4{font-family:var(--disp);font-weight:800;font-size:15px}
+.live .body .u{font-family:var(--mono);font-size:11px;color:var(--txt2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.live .body .open{background:var(--gold);color:var(--void);font-weight:700;font-size:12.5px;padding:9px 16px;border-radius:9px;white-space:nowrap}
+.live .body .open:hover{background:var(--gold-l)}
+
+.foot{text-align:center;font-family:var(--mono);font-size:11px;color:var(--txt3);margin-top:34px;letter-spacing:.5px}
+.foot b{color:var(--txt2)}
+
+/* ── High-tech polish ── */
+.card,.live,.routine{backdrop-filter:blur(14px) saturate(135%);-webkit-backdrop-filter:blur(14px) saturate(135%);background:linear-gradient(180deg,rgba(22,22,28,.66),rgba(13,13,16,.62))}
+@property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
+.card.big.gold::after,.card.big.red::after{content:"";position:absolute;inset:-1px;border-radius:17px;padding:1.4px;background:conic-gradient(from var(--ang),transparent 52%,var(--cta,var(--gold)) 80%,transparent 92%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.card.big.red::after{--cta:var(--red)}
+@media (prefers-reduced-motion:no-preference){
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+  .reveal.in{opacity:1;transform:none}
+  .card.big.gold::after,.card.big.red::after{animation:spin 7s linear infinite}
+}
+@keyframes spin{to{--ang:360deg}}
+/* Quick contacts */
+.cc{background:linear-gradient(180deg,rgba(22,22,28,.66),rgba(13,13,16,.62));border:1px solid var(--bd);border-radius:14px;padding:16px;backdrop-filter:blur(14px) saturate(135%);-webkit-backdrop-filter:blur(14px) saturate(135%)}
+.cc-h{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.cc-ic{font-size:16px}
+.cc-l{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--txt2)}
+.cc-edit{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--txt3);background:none;border:1px solid var(--bd);border-radius:6px;padding:3px 9px;cursor:pointer}
+.cc-edit:hover{border-color:var(--gold);color:var(--gold)}
+.cc-nm{font-weight:700;font-size:15px;line-height:1.3}
+.cc-ph{font-family:var(--mono);font-size:13px;color:var(--txt2);margin:2px 0 10px}
+.cc-call{display:inline-block;background:var(--pball);color:#04120a;font-weight:700;font-size:12px;padding:7px 16px;border-radius:8px;text-decoration:none}
+.cc-call:hover{filter:brightness(1.1)}
+.sub-note{font-size:12px;color:var(--txt2);margin:-6px 0 4px}
+.sub-note b{color:var(--pball)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hdr">
+    <div class="logo"><img src="assets/fae-logo.png" alt="FAE" onerror="this.parentNode.style.display='none'"></div>
+    <div class="titles">
+      <h1>F.A.E. COMMAND CENTER</h1>
+      <div class="tag">Court Rentals · NXGEN League · Lipa City</div>
+    </div>
+    <div class="clock">
+      <div class="day" id="day">&mdash;</div>
+      <div class="date" id="date">&mdash;</div>
+      <div class="time" id="time">&mdash;</div>
+    </div>
+  </div>
+
+  <div class="banner">
+    <div class="ic">&#9888;&#65039;</div>
+    <span><b>Golden rule:</b> the moment anything happens on the court &mdash; a no-show, damage, injury, argument, or overtime &mdash; <b>log it right away.</b> A logged incident is a solved incident.</span>
+  </div>
+
+  <div class="lbl">Court Operations</div>
+  <div class="grid">
+    <a class="card gold big" href="schedule.html">
+      <div class="ic">&#128197;</div>
+      <h3>Live Court Schedule</h3>
+      <p>The real renter calendar, straight from your Google Sheet &mdash; always current. Check it first so there's never a mix-up about the day, time, or who's booked.</p>
+      <div class="go">Open live schedule &rarr;</div>
+    </a>
+    <a class="card red big" href="dashboard.html#file-incident">
+      <div class="flag">LOG NOW</div>
+      <div class="ic">&#128680;</div>
+      <h3>Log an Incident</h3>
+      <p>No-show, damage, dispute, injury, or a broken rule? Record it right now with a photo. This is what stops the confusion and missing records.</p>
+      <div class="go">Report incident &rarr;</div>
+    </a>
+  </div>
+
+  <div class="lbl">Today's Front-Desk Routine</div>
+  <div class="routine">
+    <div class="rhead">
+      <h3>&#9989; Today's checklist</h3>
+      <button class="reset" onclick="resetRoutine()">Reset</button>
+    </div>
+    <div class="rsub">Tick each one as you go. It resets on its own every new day.</div>
+    <div id="steps"></div>
+    <div class="prog"><i id="progBar"></i></div>
+  </div>
+
+  <div class="lbl">Business Tools</div>
+  <div class="grid">
+    <a class="card gold" href="../../FAE-NXGEN-MASTER-BLUEPRINT.html">
+      <div class="ic">&#129513;</div>
+      <h3>Master Blueprint</h3>
+      <p>How everything connects &mdash; RFID, door, cafe WiFi, both websites, system IDs and the build checklist. The reference doc.</p>
+      <div class="go">Open blueprint &rarr;</div>
+    </a>
+    <a class="card gold" href="playbook.html">
+      <div class="ic">&#128214;</div>
+      <h3>Front Desk Playbook</h3>
+      <p>The one-page guide for running the desk &mdash; daily steps, the golden rule, rates and contacts. Print it and keep it at the desk.</p>
+      <div class="go">Open playbook &rarr;</div>
+    </a>
+    <a class="card orange" href="dashboard.html">
+      <div class="ic">&#128202;</div>
+      <h3>Business Dashboard</h3>
+      <p>Revenue, renters, payments, invoices, payroll and inventory in one view.</p>
+      <div class="go">Open dashboard &rarr;</div>
+    </a>
+    <a class="card gold" href="nxgen-stats.html">
+      <div class="ic">&#127936;</div>
+      <h3>NXGEN Stat Center</h3>
+      <p>Enter game stats, box scores, league leaders and standings.</p>
+      <div class="go">Open stat center &rarr;</div>
+    </a>
+    <a class="card green" href="payroll.html">
+      <div class="ic">&#8369;</div>
+      <h3>Payroll &amp; Wages</h3>
+      <p>Log staff hours, compute overtime, night differential and holiday pay under the Labor Code, and print payslips.</p>
+      <div class="go">Open payroll &rarr;</div>
+    </a>
+    <a class="card blue" href="dashboard.html#history">
+      <div class="ic">&#128339;</div>
+      <h3>Schedule Logs</h3>
+      <p>Weekly history of bookings, payments and attendance &mdash; the paper trail.</p>
+      <div class="go">Open logs &rarr;</div>
+    </a>
+  </div>
+
+  <div class="lbl">Manage · Syncs Home &harr; Court</div>
+  <div class="sub-note">Records that must match on every device (members, roles, bookings) live on your <b>live site</b>. Open it at home or at the court &mdash; it's the same data. The tools above are this device only.</div>
+  <div class="grid">
+    <a class="card green big" href="https://fae-court-connect.lovable.app/admin" target="_blank" rel="noopener">
+      <div class="ic">&#128101;</div>
+      <h3>Members &amp; Admin &nbsp;<span style="font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--pball);border:1px solid rgba(46,204,113,.45);padding:2px 7px;border-radius:20px">SYNCED</span></h3>
+      <p>Add and manage members, staff roles, bookings and records on your live site &mdash; every change appears on all devices, home and court. Sign in as admin.</p>
+      <div class="go">Open live admin &rarr;</div>
+    </a>
+    <div class="card gold big" style="cursor:default">
+      <div class="ic">&#8369;</div>
+      <h3>Rates &amp; House Rules</h3>
+      <p style="color:var(--paint)"><b>Basketball</b> &#8369;900/hr&nbsp;&nbsp;·&nbsp;&nbsp;<b>Volleyball</b> &#8369;750/hr&nbsp;&nbsp;·&nbsp;&nbsp;<b>Pickleball</b> &#8369;400/hr</p>
+      <p>Open 4 AM&ndash;12 AM · Sundays 24 hours. Court time starts on the hour &mdash; log any overtime or damage as an incident.</p>
+    </div>
+  </div>
+
+  <div class="lbl">Quick Contacts</div>
+  <div class="grid" id="contactGrid"></div>
+
+  <div class="lbl">Live Websites</div>
+  <div class="live-row">
+    <a class="live" href="https://fae-court-connect.lovable.app" target="_blank" rel="noopener">
+      <div class="shot" style="background-image:url('https://screenshot2.lovable.dev/b03360319cdb5a480cd1460339185e03/id-preview-08f82eca--38968c5d-24a7-4370-876b-de82a8383a51.lovable.app-1787536937887.png')">
+        <div class="badge"><span class="dot"></span>LIVE</div>
+      </div>
+      <div class="body">
+        <div class="info"><h4>F.A.E. Management</h4><div class="u">fae-court-connect.lovable.app</div></div>
+        <span class="open">Open &#8599;</span>
+      </div>
+    </a>
+    <a class="live" href="https://nxgenpremierleague.lovable.app" target="_blank" rel="noopener">
+      <div class="shot" style="background-image:url('https://screenshot2.lovable.dev/4d92f8b56936fcd241964381e377d870/id-preview-53a699ab--b6e07c0a-6de8-4333-903f-2c03559cc90e.lovable.app-1787856500001.png')">
+        <div class="badge"><span class="dot"></span>LIVE</div>
+      </div>
+      <div class="body">
+        <div class="info"><h4>NXGEN Premier League</h4><div class="u">nxgenpremierleague.lovable.app</div></div>
+        <span class="open">Open &#8599;</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="foot">F.A.E. COMMAND CENTER · open <b>index.html</b> anytime · checklist works offline</div>
+</div>
+
+<script>
+// ── SAFE STORAGE (falls back to memory if localStorage is blocked, e.g. file://) ──
+var _mem={};
+var store={
+  get:function(k){try{return localStorage.getItem(k);}catch(e){return (k in _mem)?_mem[k]:null;}},
+  set:function(k,v){try{localStorage.setItem(k,v);}catch(e){_mem[k]=v;}},
+  del:function(k){try{localStorage.removeItem(k);}catch(e){delete _mem[k];}}
+};
+
+// ── LIVE CLOCK / DATE ──
+var DAYS=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+function tick(){
+  var d=new Date();
+  document.getElementById('day').textContent=DAYS[d.getDay()];
+  document.getElementById('date').textContent=d.toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric'});
+  var h=d.getHours(),m=d.getMinutes(),ap=h>=12?'PM':'AM';h=h%12||12;
+  document.getElementById('time').textContent=h+':'+(m<10?'0':'')+m+' '+ap;
+}
+tick();setInterval(tick,15000);
+
+// ── DAILY ROUTINE (auto-resets each calendar day) ──
+var STEPS=[
+  {t:"Check today's schedule",s:"Open Live Court Schedule and confirm every booking, time, and court for today."},
+  {t:"Confirm renters as they arrive",s:"Match each person to the schedule. If someone isn't on it, add the booking before they play."},
+  {t:"Collect & mark payment",s:"Cash or GCash — record it so nothing is missed at day's end."},
+  {t:"Log any incident immediately",s:"No-show, damage, injury, dispute, overtime — hit Log an Incident right when it happens."},
+  {t:"End-of-day review",s:"Confirm all payments logged, note any no-shows, and check tomorrow's bookings."}
+];
+function todayKey(){return 'fae_routine_'+new Date().toISOString().slice(0,10);}
+function loadRoutine(){var r=store.get(todayKey());return r?JSON.parse(r):{};}
+function saveRoutine(o){store.set(todayKey(),JSON.stringify(o));}
+function renderSteps(){
+  var st=loadRoutine(),html='',done=0;
+  STEPS.forEach(function(s,i){
+    var d=!!st[i];if(d)done++;
+    html+='<div class="step'+(d?' done':'')+'" onclick="toggleStep('+i+')"><div class="box"></div>'
+      +'<div class="txt"><strong>'+(i+1)+'. '+s.t+'</strong><small>'+s.s+'</small></div></div>';
+  });
+  document.getElementById('steps').innerHTML=html;
+  document.getElementById('progBar').style.width=Math.round(done/STEPS.length*100)+'%';
+}
+function toggleStep(i){var st=loadRoutine();st[i]=!st[i];saveRoutine(st);renderSteps();}
+function resetRoutine(){store.del(todayKey());renderSteps();}
+renderSteps();
+
+// ── QUICK CONTACTS (editable, saved on this device) ──
+var CONTACTS=[
+  {k:'coowner',label:'Co-Owner',icon:'👤'},
+  {k:'maint',label:'Maintenance',icon:'🔧'},
+  {k:'security',label:'Security',icon:'🛡️'},
+  {k:'clinic',label:'Clinic / Emergency',icon:'🚑'}
+];
+function renderContacts(){
+  var html=CONTACTS.map(function(c){
+    var raw=store.get('fae_contact_'+c.k)||'';var p=raw.split('|');
+    var nm=p[0]||'',ph=p[1]||'';
+    var call=ph?'<a class="cc-call" href="tel:'+ph.replace(/[^0-9+]/g,'')+'">📞 Call</a>':'';
+    return '<div class="cc"><div class="cc-h"><span class="cc-ic">'+c.icon+'</span><span class="cc-l">'+c.label+'</span>'
+      +'<button class="cc-edit" onclick="editContact(\''+c.k+'\')">Edit</button></div>'
+      +'<div class="cc-nm">'+(nm||'<span style="color:var(--txt3)">Not set</span>')+'</div>'
+      +'<div class="cc-ph">'+(ph||'—')+'</div>'+call+'</div>';
+  }).join('');
+  document.getElementById('contactGrid').innerHTML=html;
+}
+function editContact(k){
+  var c=CONTACTS.filter(function(x){return x.k===k;})[0];
+  var raw=store.get('fae_contact_'+k)||'';var p=raw.split('|');
+  var nm=prompt(c.label+' — name:',p[0]||'');if(nm===null)return;
+  var ph=prompt(c.label+' — phone number:',p[1]||'');if(ph===null)return;
+  store.set('fae_contact_'+k,nm.trim()+'|'+ph.trim());renderContacts();
+}
+renderContacts();
+
+// ── Scroll-reveal (skipped automatically when reduced-motion is on) ──
+(function(){
+  var els=document.querySelectorAll('.lbl,.card,.live,.routine');
+  if(!('IntersectionObserver' in window)){return;}
+  els.forEach(function(el){el.classList.add('reveal');});
+  var io=new IntersectionObserver(function(ents){
+    ents.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.12});
+  els.forEach(function(el,i){setTimeout(function(){io.observe(el);},i*35);});
+})();
+</script>
+</body>
+</html>

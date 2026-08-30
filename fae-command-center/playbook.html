@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. Front Desk Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--void:#050507;--s1:#0d0d10;--s2:#14141a;--gold:#c9a227;--gold-l:#e8c468;--paint:#f0f2f5;--txt2:rgba(184,188,200,.66);--red:#ef4444;--green:#22c55e;--bd:rgba(255,255,255,.08);--bd-g:rgba(201,162,39,.28);
+--disp:'Archivo',system-ui,sans-serif;--body:'DM Sans',system-ui,-apple-system,"Segoe UI",sans-serif;--mono:'JetBrains Mono',ui-monospace,Consolas,monospace}
+body{background:var(--void);color:var(--paint);font-family:var(--body);line-height:1.5;background-image:radial-gradient(1000px 500px at 80% -10%,rgba(201,162,39,.10),transparent 60%);background-attachment:fixed}
+.sheet{max-width:900px;margin:0 auto;padding:28px 26px 44px}
+.top{display:flex;align-items:flex-end;gap:16px;border-bottom:2px solid var(--gold);padding-bottom:16px;margin-bottom:20px;flex-wrap:wrap}
+.top h1{font-family:var(--disp);font-weight:900;font-size:clamp(24px,4.5vw,38px);letter-spacing:-.5px;line-height:.95}
+.top .sub{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-top:6px}
+.top .print{margin-left:auto;font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--void);background:var(--gold);border:none;border-radius:8px;padding:9px 16px;cursor:pointer;font-weight:600;text-transform:uppercase}
+.top .print:hover{background:var(--gold-l)}
+.rule{display:flex;gap:14px;align-items:center;background:linear-gradient(90deg,rgba(239,68,68,.14),transparent 80%);border:1px solid rgba(239,68,68,.4);border-left:4px solid var(--red);border-radius:12px;padding:14px 18px;margin-bottom:24px}
+.rule .ic{font-size:26px}
+.rule b{color:#ff8080}
+.rule span{font-size:14.5px}
+h2{font-family:var(--disp);font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin:0 0 12px;display:flex;align-items:center;gap:10px}
+h2::after{content:"";flex:1;height:1px;background:var(--bd)}
+.block{margin-bottom:26px}
+.steps{display:grid;gap:10px}
+.st{display:flex;gap:14px;align-items:flex-start;background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:13px 16px}
+.st .n{width:30px;height:30px;flex-shrink:0;border-radius:8px;background:rgba(201,162,39,.14);color:var(--gold);font-family:var(--disp);font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center}
+.st strong{font-size:14.5px;display:block}
+.st small{font-size:13px;color:var(--txt2)}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:640px){.three{grid-template-columns:1fr}}
+.tcard{background:var(--s2);border:1px solid var(--bd);border-top:3px solid var(--gold);border-radius:12px;padding:16px}
+.tcard h3{font-family:var(--disp);font-weight:800;font-size:16px;margin-bottom:4px}
+.tcard .where{font-family:var(--mono);font-size:11px;color:var(--gold);margin-bottom:8px}
+.tcard p{font-size:13px;color:var(--txt2)}
+.big-rule{background:linear-gradient(180deg,rgba(201,162,39,.10),transparent);border:1px solid var(--bd-g);border-radius:12px;padding:18px 20px;text-align:center}
+.big-rule .k{font-family:var(--disp);font-weight:900;font-size:clamp(18px,3vw,24px);color:var(--gold-l);margin-bottom:6px}
+.big-rule p{font-size:14px;color:var(--paint)}
+.info-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.info-row{grid-template-columns:1fr}}
+.info{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:16px}
+.info h3{font-family:var(--disp);font-weight:800;font-size:15px;margin-bottom:10px}
+.rate{display:flex;justify-content:space-between;font-size:14px;padding:6px 0;border-bottom:1px dashed var(--bd)}
+.rate:last-child{border-bottom:none}
+.rate b{color:var(--gold-l);font-family:var(--mono)}
+.hours{font-size:13.5px;color:var(--txt2);margin-top:8px}
+.contact-line{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--bd);font-size:14px}
+.contact-line:last-child{border-bottom:none}
+.contact-line .lab{font-weight:600;min-width:120px}
+.contact-line .fill{flex:1;border-bottom:1px solid var(--txt2);min-height:20px}
+.foot{text-align:center;font-family:var(--mono);font-size:11px;color:var(--txt2);margin-top:30px;letter-spacing:.5px}
+@media print{
+  body{background:#fff;color:#111;background-image:none}
+  .sheet{max-width:100%;padding:0}
+  .top{border-color:#111}.top h1{color:#111}.top .sub{color:#8a6d10}.top .print{display:none}
+  h2{color:#8a6d10}h2::after{background:#ccc}
+  .rule{background:#fff;border-color:#c00}.rule b,.big-rule .k,.tcard .where,.rate b{color:#000}
+  .st,.tcard,.info,.big-rule{background:#fff;border-color:#bbb;color:#111}
+  .st small,.tcard p,.hours,.foot,.rate,.st strong{color:#222}
+  .st .n{background:#f0e6c8;color:#8a6d10}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="top">
+    <div>
+      <h1>FRONT DESK PLAYBOOK</h1>
+      <div class="sub">F.A.E. Court &middot; Lipa City</div>
+    </div>
+    <button class="print" onclick="window.print()">&#128424; Print</button>
+  </div>
+
+  <div class="rule">
+    <div class="ic">&#9888;&#65039;</div>
+    <span><b>THE GOLDEN RULE:</b> The moment anything happens on the court &mdash; a no-show, damage, injury, argument, or overtime &mdash; <b>log it right away</b> in the hub. A logged incident is a solved incident.</span>
+  </div>
+
+  <div class="block">
+    <h2>Your Day in 5 Steps</h2>
+    <div class="steps">
+      <div class="st"><div class="n">1</div><div><strong>Check today's schedule first</strong><small>Open the hub &rarr; <b>Today's Schedule</b>. Know every booking, time, and court before anyone arrives.</small></div></div>
+      <div class="st"><div class="n">2</div><div><strong>Confirm renters as they arrive</strong><small>Match each person to the schedule. If they're not on it, add the booking <b>before</b> they play.</small></div></div>
+      <div class="st"><div class="n">3</div><div><strong>Collect &amp; record payment</strong><small>Cash or GCash &mdash; record it the moment you take it, so nothing is missed at day's end.</small></div></div>
+      <div class="st"><div class="n">4</div><div><strong>Log any incident immediately</strong><small>No-show, damage, injury, dispute, overtime &mdash; tap <b>Log an Incident</b> right when it happens, with a photo.</small></div></div>
+      <div class="st"><div class="n">5</div><div><strong>End-of-day review</strong><small>Confirm all payments are logged, note any no-shows, and glance at tomorrow's bookings.</small></div></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>The 3 Things You Run &mdash; and where each lives</h2>
+    <div class="three">
+      <div class="tcard"><h3>&#128197; Schedule</h3><div class="where">Hub &rarr; Today's Schedule</div><p>Who's on which court, when. This is the truth &mdash; check it first, always.</p></div>
+      <div class="tcard"><h3>&#8369; Payments</h3><div class="where">Hub &rarr; Business Dashboard</div><p>Record every cash/GCash payment as it comes in. No end-of-day guessing.</p></div>
+      <div class="tcard"><h3>&#128680; Incidents</h3><div class="where">Hub &rarr; Log an Incident</div><p>Anything unusual gets logged with a photo, right away.</p></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>The One Rule That Prevents Mix-ups</h2>
+    <div class="big-rule">
+      <div class="k">Edit the schedule in ONE place only</div>
+      <p>Always use the hub's <b>Today's Schedule</b>. The Google Sheet is just a printed copy/backup &mdash; don't edit bookings in two places, or they'll disagree. One place = never confused.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>Rates &amp; Hours &nbsp;|&nbsp; Who to Call</h2>
+    <div class="info-row">
+      <div class="info">
+        <h3>Court Rates</h3>
+        <div class="rate"><span>Basketball</span><b>&#8369;900 / hr</b></div>
+        <div class="rate"><span>Volleyball</span><b>&#8369;750 / hr</b></div>
+        <div class="rate"><span>Pickleball</span><b>&#8369;400 / hr</b></div>
+        <div class="hours">Open <b>4 AM &ndash; 12 AM</b> &middot; Sundays <b>24 hours</b>. Court time starts on the hour &mdash; log overtime as an incident.</div>
+      </div>
+      <div class="info">
+        <h3>Quick Contacts</h3>
+        <div class="contact-line"><span class="lab">Owner</span><span class="fill"></span></div>
+        <div class="contact-line"><span class="lab">Maintenance</span><span class="fill"></span></div>
+        <div class="contact-line"><span class="lab">Security</span><span class="fill"></span></div>
+        <div class="contact-line"><span class="lab">Clinic / 911</span><span class="fill"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">Open the hub anytime: double-click <b>index.html</b> &middot; This playbook prints on one page (tap Print)</div>
+</div>
+</body>
+</html>

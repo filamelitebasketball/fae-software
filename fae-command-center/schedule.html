@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Live Court Schedule — F.A.E.</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--void:#050507;--gold:#c9a227;--gold-l:#e8c468;--paint:#f0f2f5;--txt2:rgba(184,188,200,.6);--surface:#111115;--border:rgba(201,162,39,.18)}
+body{background:var(--void);color:var(--paint);font-family:'DM Sans',system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.bar{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--surface)}
+.bar a.back{color:var(--txt2);text-decoration:none;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.bar a.back:hover{color:var(--gold)}
+.bar h1{font-family:'Archivo',system-ui,sans-serif;font-weight:800;font-size:16px;letter-spacing:.5px}
+.bar .sub{font-size:12px;color:var(--txt2)}
+.bar .right{margin-left:auto;display:flex;gap:10px;align-items:center}
+.bar .live{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#22c55e;text-transform:uppercase;letter-spacing:1px}
+.bar .live .dot{width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.bar .edit{background:var(--gold);color:var(--void);text-decoration:none;font-size:13px;font-weight:700;padding:8px 16px;border-radius:8px}
+.bar .edit:hover{background:var(--gold-l)}
+.today{display:flex;align-items:center;gap:10px;padding:11px 20px;background:linear-gradient(90deg,rgba(201,162,39,.14),transparent 70%);border-bottom:1px solid var(--border);font-size:13px}
+.today .lbl{font-family:'Archivo',sans-serif;font-weight:800;letter-spacing:1px;color:var(--gold)}
+.today .now{font-family:'DM Sans',sans-serif;color:var(--paint)}
+.frame{flex:1;position:relative;background:#fff;margin:14px;border-radius:14px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--border),0 0 60px -20px rgba(201,162,39,.5)}
+.frame iframe{width:100%;height:100%;border:0;display:block}
+.skel{position:absolute;inset:0;background:linear-gradient(100deg,#0d0d10 30%,#1a1a20 50%,#0d0d10 70%);background-size:200% 100%;animation:sh 1.3s linear infinite;display:flex;align-items:center;justify-content:center;color:var(--txt2);font-size:13px;font-family:'DM Sans',sans-serif}
+@keyframes sh{to{background-position:-200% 0}}
+.hint{padding:8px 20px;font-size:11px;color:var(--txt2);background:var(--surface);border-top:1px solid var(--border);text-align:center}
+@media(max-width:560px){.bar .sub{display:none}}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="bar">
+    <a class="back" href="index.html">&#8592; Home</a>
+    <div>
+      <h1>LIVE COURT SCHEDULE</h1>
+      <div class="sub">Renter calendar &middot; always shows the current sheet</div>
+    </div>
+    <div class="right">
+      <div class="live"><span class="dot"></span>Live</div>
+      <a class="edit" href="https://docs.google.com/spreadsheets/d/1lKtBgv9zrIEZz75U_c74inPZRFbXWIIp/edit" target="_blank" rel="noopener">Open to edit &#8599;</a>
+    </div>
+  </div>
+  <div class="today">
+    <span class="lbl" id="todayLbl">TODAY</span>
+    <span class="now" id="todayNow">&mdash;</span>
+  </div>
+  <div class="frame">
+    <div class="skel" id="skel">Loading live schedule&hellip;</div>
+    <iframe src="https://docs.google.com/spreadsheets/d/1lKtBgv9zrIEZz75U_c74inPZRFbXWIIp/preview" title="FAE Court Renter Calendar Schedule" onload="var s=document.getElementById('skel');if(s)s.style.display='none'"></iframe>
+  </div>
+  <div class="hint">This is a live view of your Google Sheet. To add or change a booking, click <b>Open to edit</b> &mdash; changes appear here automatically.</div>
+  <script>
+  (function(){
+    var D=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+    var d=new Date();
+    document.getElementById('todayLbl').textContent='TODAY · '+D[d.getDay()];
+    document.getElementById('todayNow').textContent=d.toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric'})+' — find this date’s column in the sheet below.';
+    // Safety net: hide the loading shimmer even if onload doesn't fire.
+    setTimeout(function(){var s=document.getElementById('skel');if(s)s.style.display='none';},4000);
+  })();
+  </script>
+</body>
+</html>

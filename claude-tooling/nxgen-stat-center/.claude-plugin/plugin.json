@@ -1,0 +1,9 @@
+{
+  "name": "nxgen-stat-center",
+  "version": "1.0.0",
+  "description": "NXGEN Premier League Stat Command Center — game-night stat entry, live Supabase push, Excel export, standings and leader computation",
+  "author": {
+    "name": "NXGEN Premier League"
+  },
+  "keywords": ["basketball", "stats", "supabase", "nxgen"]
+}
