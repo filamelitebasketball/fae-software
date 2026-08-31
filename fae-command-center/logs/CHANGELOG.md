@@ -2,6 +2,45 @@
 
 Every change made to this folder gets recorded here, newest first.
 
+
+---
+
+## 2026-09-01 (session 4) — Staff Hub (employee scheduling & daily flow)
+
+**staff.html — NEW page for employees**
+- Sign-in by name. The roster is read from the Payroll file (`fae-payroll-v1`), so
+  staff are never entered twice. Master unlocks all editing with PIN `2021`.
+- **My Day:** today’s shift block, start, end and computed duration (handles shifts
+  that cross midnight). Employee taps "These hours are correct" or "Something’s
+  wrong" + a note; both go to the Master queue stamped with name and time.
+- **Month:** full month grid, own shifts highlighted, court/league events, weekday
+  repeat-to-month-end, print view. Master-only editing.
+- **Daily Tasks:** 11 default tasks grouped Start / During / End of shift. Submitting
+  locks the day under the submitter’s name and records anything skipped. Only Master
+  can reopen a locked day.
+- **Drinks Count:** start- and end-of-shift fridge count over the 10 real products
+  from dashboard.html. Computes sold and expected pesos, flags impossible counts.
+- **Booking Flow:** the 8-step process for handling a renter.
+- **Master queue:** hour disputes, missed task days and stock shortages in one list.
+- Export / Import JSON backup. Shift blocks give 24-hour coverage:
+  A Morning 06:00–14:00, B Afternoon 14:00–22:00, C Graveyard 22:00–06:00, plus Custom.
+
+**Bugs caught during testing and fixed before release**
+- Review queue flooded with "missed day" alerts for dates before the hub existed.
+  Now only flags days on or after first use, and only when staff were scheduled.
+- An impossible fridge count (more bottles at the end than the start) was being
+  subtracted from the totals, understating expected cash — ₱105 shown where ₱285 was
+  correct. Miscounts are now excluded from totals and flagged for recount instead.
+- Enter key did not submit the Master PIN; group header read "Shift of shift".
+
+**index.html**
+- Added the "Staff Hub" tile under Court Operations.
+
+**Known limits**
+- Saves to one browser on one device. Export a backup to move it. Real multi-device
+  sync is the live site, not this folder.
+- The PIN stops accidental edits; it is not security. Anyone opening the file in a
+  text editor can read it.
 ---
 
 ## 2026-08-28 (session 3) — Admin sign-in, activity log, contacts & sync
