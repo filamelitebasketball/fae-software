@@ -1,0 +1,18 @@
+{
+  "name": "fae-skills",
+  "version": "1.0.0",
+  "description": "F.A.E. league skills for Claude Code: stat command center, Lovable deploys, white-label league template, skill engine, model efficiency, agent execution, auto skill saver.",
+  "author": {
+    "name": "F.A.E. Basketball",
+    "email": "filamelitebasketball@gmail.com"
+  },
+  "repository": "https://github.com/filamelitebasketball/fae-software",
+  "keywords": [
+    "basketball",
+    "nxgen",
+    "fae",
+    "stats",
+    "lovable",
+    "supabase"
+  ]
+}

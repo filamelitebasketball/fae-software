@@ -1,0 +1,32 @@
+{
+  "name": "fae-marketplace",
+  "owner": {
+    "name": "F.A.E. Basketball",
+    "email": "filamelitebasketball@gmail.com"
+  },
+  "metadata": {
+    "description": "F.A.E. Basketball in-house Claude Code plugins — league skills and tooling built for the NXGEN Premier League and the FAE court.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "fae-skills",
+      "source": "./claude-tooling",
+      "description": "F.A.E. league skills: stat command center, Lovable deploys, white-label league template, skill engine, model efficiency, agent execution, auto skill saver. Includes the /stats slash command.",
+      "version": "1.0.0",
+      "category": "business",
+      "tags": [
+        "basketball",
+        "nxgen",
+        "fae",
+        "stats",
+        "lovable",
+        "supabase"
+      ],
+      "author": {
+        "name": "F.A.E. Basketball",
+        "email": "filamelitebasketball@gmail.com"
+      }
+    }
+  ]
+}
