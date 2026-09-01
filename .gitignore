@@ -6,8 +6,9 @@
 *.key
 service-account*.json
 
-# --- Separate repo (has its own origin: filamelitebasketball/nxgenpremierleague) ---
+# --- Separate repos (each has its own origin) ---
 nxgen-premier-league/
+fae-court-connect/
 
 # --- Snapshots / archives (large, regenerable) ---
 *.zip
