@@ -3,12 +3,15 @@
 #   Run from this folder:   .\install.ps1
 #   Preview only:           .\install.ps1 -DryRun
 #   Skip settings merge:    .\install.ps1 -SkillsOnly
+#   Memory for another folder: .\install.ps1 -ProjectPath "D:\work\CLAUDE"
 #
 # What it does:
 #   1. Merges the marketplace + plugin list into ~/.claude/settings.json
 #      (existing settings are backed up first; your own keys are preserved)
 #   2. Copies the F.A.E. skills into ~/.claude/skills
 #   3. Copies the slash commands into ~/.claude/commands
+#   4. Copies the F.A.E. project memory into the memory folder for -ProjectPath
+#   5. Copies the saved scheduled tasks into ~/.claude/scheduled-tasks
 #
 # Claude Code fetches the marketplaces and installs the enabled plugins on its
 # next launch. Nothing here touches credentials or MCP auth.
@@ -16,7 +19,8 @@
 [CmdletBinding()]
 param(
     [switch]$DryRun,
-    [switch]$SkillsOnly
+    [switch]$SkillsOnly,
+    [string]$ProjectPath = (Join-Path $env:USERPROFILE 'Desktop\CLAUDE')
 )
 
 $ErrorActionPreference = 'Stop'
@@ -104,6 +108,31 @@ Say 'Installing F.A.E. skills:'
 Copy-Tree 'skills' 'skills'
 Say 'Installing slash commands:'
 Copy-Tree 'commands' 'commands'
+Say 'Installing saved scheduled tasks:'
+Copy-Tree 'scheduled-tasks' 'scheduled-tasks'
+
+# --- 4. project memory -----------------------------------------------------
+# Claude Code keys memory to the working folder: C:\Users\me\Desktop\CLAUDE
+# becomes ~/.claude/projects/C--Users-me-Desktop-CLAUDE/memory. Rebuild that
+# name for whatever folder this machine will actually work in.
+$memorySrc = Join-Path $here 'memory'
+if (Test-Path $memorySrc) {
+    $slug = $ProjectPath -replace '[:\\/]', '-'
+    $memoryDst = Join-Path $claudeDir "projects\$slug\memory"
+    Say ''
+    Say "Installing F.A.E. memory for $ProjectPath"
+    Say "  -> projects\$slug\memory" DarkGray
+    if (-not $DryRun) { New-Item -ItemType Directory -Path $memoryDst -Force | Out-Null }
+    Get-ChildItem $memorySrc -Filter *.md | ForEach-Object {
+        Say "  $($_.Name)"
+        if (-not $DryRun) { Copy-Item $_.FullName -Destination $memoryDst -Force }
+    }
+    if ($ProjectPath -ne (Join-Path $env:USERPROFILE 'Desktop\CLAUDE')) {
+        Say '  (non-default folder - memory only loads when Claude Code runs there)' Yellow
+    }
+} else {
+    Say 'No memory folder - skipping.' DarkGray
+}
 
 Say ''
 Say 'Done.' Green

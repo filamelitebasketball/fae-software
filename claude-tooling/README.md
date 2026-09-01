@@ -46,8 +46,25 @@ claude plugin list
    already present on that machine is left alone.
 2. **Copies** `skills/` into `~/.claude/skills/`.
 3. **Copies** `commands/` into `~/.claude/commands/`.
+4. **Copies** `scheduled-tasks/` into `~/.claude/scheduled-tasks/`.
+5. **Copies** `memory/` into the memory folder for the working directory.
 
 It never touches credentials, MCP auth tokens, or session data.
+
+### About the memory step
+
+Claude Code keys project memory to the folder it runs in — working in
+`C:\Users\me\Desktop\CLAUDE` means memory lives in
+`~/.claude/projects/C--Users-me-Desktop-CLAUDE/memory/`. The installer rebuilds
+that folder name, defaulting to `<your home>\Desktop\CLAUDE`. If the court
+machine keeps its F.A.E. files somewhere else, say so:
+
+```bash
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -ProjectPath "D:\FAE\CLAUDE"
+```
+
+Memory only loads when Claude Code is started in that folder. Point it at the
+wrong path and the memory sits there unread.
 
 ---
 
@@ -119,12 +136,18 @@ The machine-readable version of all of this is `manifest.json`.
 - **Account-synced skills.** `fae-quote`, `fae-dashboard-builder`, `morning`,
   `schedule` and the rest of the `anthropic-skills:*` set live on the Anthropic
   account, not on disk. They appear automatically once signed in.
-- **Project memory.** `~/.claude/projects/<path>/memory/` is keyed to the folder
-  path, so it doesn't map cleanly onto a different machine. Copy it by hand if
-  the court machine should remember the same context.
-- **Scheduled tasks.** The four under `~/.claude/scheduled-tasks/` are
-  desktop-local; recreate any that matter at the court.
+- **`.env` files.** Excluded by `.gitignore` and staying that way. If the court
+  machine runs `fae-hub` or the NXGEN site locally, carry the Supabase URL and
+  publishable key across by hand.
 - **`local-desktop-app-uploads`** marketplace — a local folder, currently empty.
+
+## What `memory/` contains
+
+The nine project-memory files, carried so the court machine starts with the same
+F.A.E. context instead of blank. No credentials — checked before committing. They
+do hold working handles: Google Drive and Sheet file IDs, Lovable project UUIDs,
+the public `.lovable.app` URLs, and GitHub repo URLs. Anyone with read access to
+this repo can reach those, which is a reason to keep the repo private.
 
 ---
 

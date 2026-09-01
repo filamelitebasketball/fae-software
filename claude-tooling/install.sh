@@ -4,10 +4,12 @@
 #   ./install.sh              install
 #   ./install.sh --dry-run    preview only
 #   ./install.sh --skills-only
+#   ./install.sh --project-path "/d/work/CLAUDE"
 #
 # Same behaviour as install.ps1: merges marketplaces + plugins into
 # ~/.claude/settings.json (backing up first, never dropping your own keys),
-# then copies the F.A.E. skills and slash commands into place.
+# then copies the F.A.E. skills, slash commands, scheduled tasks and project
+# memory into place.
 
 set -euo pipefail
 
@@ -18,12 +20,15 @@ TEMPLATE="$HERE/settings/settings.template.json"
 
 DRY_RUN=0
 SKILLS_ONLY=0
-for arg in "$@"; do
-  case "$arg" in
+PROJECT_PATH="$HOME/Desktop/CLAUDE"
+while [ $# -gt 0 ]; do
+  case "$1" in
     --dry-run) DRY_RUN=1 ;;
     --skills-only) SKILLS_ONLY=1 ;;
-    *) echo "Unknown option: $arg" >&2; exit 2 ;;
+    --project-path) shift; PROJECT_PATH="${1:-}" ;;
+    *) echo "Unknown option: $1" >&2; exit 2 ;;
   esac
+  shift
 done
 
 echo
@@ -99,6 +104,27 @@ echo "Installing F.A.E. skills:"
 copy_tree skills skills
 echo "Installing slash commands:"
 copy_tree commands commands
+echo "Installing saved scheduled tasks:"
+copy_tree scheduled-tasks scheduled-tasks
+
+# Claude Code keys memory to the working folder: C:\Users\me\Desktop\CLAUDE
+# becomes ~/.claude/projects/C--Users-me-Desktop-CLAUDE/memory. Rebuild that
+# name for whatever folder this machine will actually work in.
+if [ -d "$HERE/memory" ]; then
+  SLUG="$(printf '%s' "$PROJECT_PATH" | sed 's#[:\\/]#-#g')"
+  MEM_DST="$CLAUDE_DIR/projects/$SLUG/memory"
+  echo
+  echo "Installing F.A.E. memory for $PROJECT_PATH"
+  echo "  -> projects/$SLUG/memory"
+  [ "$DRY_RUN" = 1 ] || mkdir -p "$MEM_DST"
+  for f in "$HERE"/memory/*.md; do
+    [ -e "$f" ] || continue
+    echo "  $(basename "$f")"
+    [ "$DRY_RUN" = 1 ] || cp "$f" "$MEM_DST/"
+  done
+else
+  echo "No memory folder - skipping."
+fi
 
 echo
 echo "Done."
