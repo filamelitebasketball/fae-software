@@ -1,0 +1,3 @@
+- [FAE league cost parameters](fae-league-cost-parameters.md) — court/referee/photographer/open-run rates, plus the two questions that still swing the total.
+- [Excel via COM on this machine](excel-via-excel-com-on-this-machine.md) — no Python here; drive Excel 16.0 from PowerShell, and the three COM traps that bite.
+- [NXGEN no-credit deploy via GitHub](nxgen-no-credit-deploy-via-github.md) — push to main instead of prompting Lovable; repo, clone path, and the auth that already works.
