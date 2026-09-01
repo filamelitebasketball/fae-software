@@ -1,0 +1,146 @@
+{
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "enableWorkflows": true,
+  "agentPushNotifEnabled": true,
+  "extraKnownMarketplaces": {
+    "addy-agent-skills": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/addyosmani/agent-skills.git"
+      }
+    },
+    "agent-browser": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/vercel-labs/agent-browser.git"
+      }
+    },
+    "awesome-claude-plugins": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/composiohq/awesome-claude-plugins.git"
+      }
+    },
+    "caveman": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/juliusbrussee/caveman.git"
+      }
+    },
+    "claude-plugins-official": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/anthropics/claude-plugins-official.git"
+      }
+    },
+    "ecc": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/affaan-m/ECC.git"
+      }
+    },
+    "impeccable": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/pbakaus/impeccable.git"
+      }
+    },
+    "karpathy-skills": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/forrestchang/andrej-karpathy-skills.git"
+      }
+    },
+    "knowledge-work-plugins": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/anthropics/knowledge-work-plugins.git"
+      }
+    },
+    "mattpocock": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/mattpocock/skills.git"
+      }
+    },
+    "obsidian-skills": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/kepano/obsidian-skills.git"
+      }
+    },
+    "ponytail": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/DietrichGebert/ponytail.git"
+      }
+    },
+    "superpowers-marketplace": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/obra/superpowers-marketplace.git"
+      }
+    },
+    "taste-skill": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/Leonxlnx/taste-skill.git"
+      }
+    },
+    "ui-ux-pro-max-skill": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git"
+      }
+    },
+    "voltagent-subagents": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/VoltAgent/awesome-claude-code-subagents.git"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "agent-browser@agent-browser": true,
+    "agent-sdk-dev@awesome-claude-plugins": true,
+    "andrej-karpathy-skills@karpathy-skills": true,
+    "artifacts-builder@awesome-claude-plugins": true,
+    "audit-project@awesome-claude-plugins": true,
+    "backend-architect@awesome-claude-plugins": true,
+    "bug-fix@awesome-claude-plugins": true,
+    "canvas-design@awesome-claude-plugins": true,
+    "caveman@caveman": true,
+    "changelog-generator@awesome-claude-plugins": true,
+    "code-review@awesome-claude-plugins": true,
+    "commit@awesome-claude-plugins": true,
+    "connect-apps@awesome-claude-plugins": true,
+    "create-pr@awesome-claude-plugins": true,
+    "debugger@awesome-claude-plugins": true,
+    "developer-growth-analysis@awesome-claude-plugins": true,
+    "documentation-generator@awesome-claude-plugins": true,
+    "ecc@ecc": true,
+    "episodic-memory@superpowers-marketplace": true,
+    "frontend-design@awesome-claude-plugins": true,
+    "frontend-developer@awesome-claude-plugins": true,
+    "impeccable@impeccable": true,
+    "mattpocock-skills@mattpocock": true,
+    "mcp-builder@awesome-claude-plugins": true,
+    "obsidian@obsidian-skills": true,
+    "outputai@claude-plugins-official": true,
+    "perf@awesome-claude-plugins": true,
+    "ponytail@ponytail": true,
+    "pr-review@awesome-claude-plugins": true,
+    "security-guidance@awesome-claude-plugins": true,
+    "senior-frontend@awesome-claude-plugins": true,
+    "ship@awesome-claude-plugins": true,
+    "superpowers-dev@superpowers-marketplace": true,
+    "superpowers-developing-for-claude-code@superpowers-marketplace": true,
+    "superpowers-lab@superpowers-marketplace": true,
+    "taste-skill@taste-skill": true,
+    "test-writer-fixer@awesome-claude-plugins": true,
+    "theme-factory@awesome-claude-plugins": true,
+    "ui-ux-pro-max@ui-ux-pro-max-skill": true
+  }
+}
