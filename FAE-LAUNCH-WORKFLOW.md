@@ -1,66 +1,36 @@
-# F.A.E. Launch Workflow
+# F.A.E. Launch Checklist (saved reference)
 
-Goal: one umbrella domain (**faehq.com**) fronting all services, everything off
-Lovable and onto free hosting (Vercel), NXGEN email + phone OTP working, data
-saved locally and online.
+Last updated 2026-09-19. Companion to the `fae-launch-status` memory.
 
-Legend:  🟢 free / no payment · 💳 needs payment · 🧑 you do · 🤖 Claude does
+## NXGEN Premier League — LAUNCHED ✅
+- [x] Drive reorganized (SITES/ + TOOLS/), pushed to GitHub
+- [x] FAE Hub landing built (SITES/faehq/index.html) — professional-modern theme
+- [x] Domain **faeph.com** bought and wired: nxgen.faeph.com → NXGEN, apex+www → fae-hub
+- [x] NXGEN DB migrated to owner's own Supabase (ref lyyvtzdtebsyuoxgakua)
+- [x] NXGEN deployed to Vercel; env vars set (service_role secret only in Vercel + .env.local)
+- [x] **Lovable fully removed** — pure Vite + TanStack Start + Supabase + Vercel (nitro() plugin
+      required for Vercel; deploy = git push)
+- [x] Site assets self-hosted (public/__l5e); site live at nxgen.faeph.com
+- [x] Email login (OTP + password) working; verified end-to-end
+- [x] Google login set up + enabled (publish the Google app for public use)
+- [x] Admins granted: filamelitebasketball@gmail.com, jhoopin3@gmail.com
+- [~] Apple / Facebook login — deferred (Apple needs paid dev acct; both env-gated off)
+- [~] Branded email templates — built but need custom SMTP (Resend free) to apply; DEFERRED
+      (decision: don't email after login; show user email in admin instead)
 
----
+## Next build tasks (in progress / queued)
+- [ ] Admin dashboard: show each user's **email** for lead management
+- [ ] **Free Agent** lead tier: signups = view-only Free Agents (lead capture); rostered
+      division players = full Players
+- [ ] Start social-media marketing (see the NXGEN Marketing Playbook artifact)
 
-## Phase 0 — Do now, no payment needed
+## Build-after (other FAE sites)
+- [ ] Deploy FAE Hub (faeph.com) + Management (fae-court-connect) + LinkMePH
+- [ ] FAE Basketball / Volleyball / Events sites
+- [ ] Swap monogram badges for real logo files
+- [ ] Wire F.A.E. Command Center to update the sites
 
-- [ ] 🟢🤖 Commit the drive reorg (SITES/ TOOLS/ _ARCHIVE/) to GitHub — saves it online
-- [ ] 🟢🤖 Make NXGEN OTP config env-driven so email + phone OTP survive the move
-- [ ] 🟢🤖 Keep the faehq hub landing ready to deploy (built: SITES/faehq/index.html)
-- [x] 🟢🧑 Vercel account connected via GitHub ✅
-- [~] 🟢🧑 Supabase found: project "FAE MANAGEMENT" (vkmhgsprezswfkjdsiir) — but PAUSED;
-        restore it at supabase.com/dashboard so auth/OTP works
-- [ ] 🟢🧑 Email Kualo support for LinkMePH data export (email drafted; send it) — support@kualo.com
-- [ ] 🟢🤖 Recover LinkMePH public pages/content from the Wayback Machine (pending)
-
-## Phase 1 — When you can pay (~$11.25 total)
-
-- [ ] 💳🧑 Buy **faehq.com** — https://vercel.com/domains/search?q=faehq.com
-- [ ] 💳🧑 (Optional) Settle or negotiate Kualo to export the LinkMePH customer/order
-        data (only place that private data exists)
-
-## Phase 2 — Deploy (Claude, after faehq.com is bought)
-
-- [ ] 🤖 Import each GitHub repo into Vercel and deploy:
-        nxgenpremierleague, fae-court-connect, faehq hub, linkmeph
-- [ ] 🤖 Set env vars on each: VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY,
-        VITE_SITE_URL (its own subdomain)
-- [ ] 🤖 Point domain + subdomains:
-        faehq.com → hub · nxgen.faehq.com → NXGEN · basketball / volleyball /
-        events / linkme .faehq.com → their sites
-
-## Phase 3 — Make OTP + auth work on the new domain
-
-- [ ] 🤖 Supabase → Auth → URL config: add faehq.com + all subdomains to redirect URLs
-- [ ] 🧑 Sign up Resend (free 3k emails/mo) — https://resend.com — give Claude the API key
-- [ ] 🤖 Wire Resend as Supabase SMTP so email OTP sends reliably
-- [ ] 🧑 (For phone OTP) Create Twilio account, buy a number, get SID + token
-        — https://twilio.com   (SMS costs per message)
-- [ ] 🤖 Connect Twilio in Supabase → Auth → Phone, so phone OTP sends
-- [ ] 🤖 Test email OTP + phone OTP end-to-end on the live site
-
-## Phase 4 — Go live and clean up
-
-- [ ] 🤖 Verify every subdomain loads and all functions work
-- [ ] 🧑 Cancel Lovable subscription once Vercel is confirmed working
-- [ ] 🤖 Final backup: commit + push all repos, save a local snapshot
-
----
-
-## Costs summary
-- faehq.com: ~$11.25/yr (only required purchase)
-- Hosting (Vercel), database/auth (Supabase), email (Resend): free tiers
-- Phone OTP (Twilio SMS): pay per text (~$0.008/SMS + ~$1-2/mo number) — only if
-  you want phone OTP; email OTP alone is free
-- LinkMePH data: free if Kualo support exports it; otherwise cost of settling Kualo
-
-## Blocked-on-you right now
-1. Vercel + Supabase login (free)
-2. Email Kualo for the LinkMePH data export (time-sensitive)
-Everything in Phase 0 marked 🤖 I can start immediately — just say go.
+## Key facts to remember
+- Deploy NXGEN: `git push origin main` → Vercel auto-builds (see nxgen-lovable-deploy memory).
+- NXGEN Supabase project ref: lyyvtzdtebsyuoxgakua (owner's own).
+- Run NXGEN SQL in the Supabase SQL editor (owner pastes).
