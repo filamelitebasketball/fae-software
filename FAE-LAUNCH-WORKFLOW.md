@@ -13,11 +13,11 @@ Legend:  🟢 free / no payment · 💳 needs payment · 🧑 you do · 🤖 Cla
 - [ ] 🟢🤖 Commit the drive reorg (SITES/ TOOLS/ _ARCHIVE/) to GitHub — saves it online
 - [ ] 🟢🤖 Make NXGEN OTP config env-driven so email + phone OTP survive the move
 - [ ] 🟢🤖 Keep the faehq hub landing ready to deploy (built: SITES/faehq/index.html)
-- [ ] 🟢🧑 Create a free Vercel account with GitHub — https://vercel.com/signup
-- [ ] 🟢🧑 Confirm you can log in to your Supabase account (database/auth lives there)
-- [ ] 🟢🧑 Email Kualo support: request a data/database export of the suspended
-        LinkMePH (WordPress) site before the grace period ends — support@kualo.com
-- [ ] 🟢🤖 Recover LinkMePH public pages/content from the Wayback Machine
+- [x] 🟢🧑 Vercel account connected via GitHub ✅
+- [~] 🟢🧑 Supabase found: project "FAE MANAGEMENT" (vkmhgsprezswfkjdsiir) — but PAUSED;
+        restore it at supabase.com/dashboard so auth/OTP works
+- [ ] 🟢🧑 Email Kualo support for LinkMePH data export (email drafted; send it) — support@kualo.com
+- [ ] 🟢🤖 Recover LinkMePH public pages/content from the Wayback Machine (pending)
 
 ## Phase 1 — When you can pay (~$11.25 total)
 
