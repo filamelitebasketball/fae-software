@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. Command Center — Console (Light)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="assets/fae-core.js?v=6"></script>
+<script src="assets/fae-jump.js?v=1"></script>
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<style>
+:root{
+  /* light modern admin palette */
+  --void:#F5F6F8; --panel:#FFFFFF; --panel2:#EEF0F3; --line:#E4E6EB; --line2:#D2D6DE;
+  --gold:#B8901F; --gold-hi:#8A6D14; --ink:#1B1D23; --mute:#6B6F7A; --dim:#9AA0AB;
+  --red:#D2453B; --green:#2E9E5B; --blue:#3A6FA5;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+/* light-theme fixups: kill dark-assuming colors + swap glow for neutral elevation */
+.mode span{color:#4A4E58}
+.mode code{background:rgba(0,0,0,.05);color:#7a5f10}
+.st,.panel,.card,.tile{box-shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.10)}
+.act{box-shadow:0 1px 2px rgba(16,24,40,.08)}
+.act:hover{box-shadow:0 6px 16px -6px rgba(16,24,40,.22)!important}
+.act.alert:hover{box-shadow:0 6px 16px -6px rgba(210,69,59,.35)!important}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;padding-bottom:60px}
+.wrap{max-width:1320px;margin:0 auto;padding:22px 20px 40px}
+a{color:inherit;text-decoration:none}
+
+/* ---------- header ---------- */
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;
+     padding-bottom:16px;border-bottom:2px solid var(--gold);margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand img{height:44px;width:auto;display:block}
+.brand-tx b{display:block;font-family:var(--disp);font-weight:900;font-size:21px;letter-spacing:.04em;line-height:1}
+.brand-tx span{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;color:var(--gold);margin-top:5px}
+.now{text-align:right}
+.now b{display:block;font-family:var(--mono);font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1}
+.now span{display:block;font-family:var(--disp);font-weight:800;font-size:14px;letter-spacing:.1em;color:var(--gold);margin-top:6px}
+
+/* ---------- data-mode banner ---------- */
+.mode{display:flex;align-items:center;gap:12px;border-radius:10px;padding:11px 15px;margin-bottom:18px;
+      font-size:13px;line-height:1.45;border:1px solid var(--line2);background:var(--panel)}
+.mode.live{border-color:rgba(63,166,106,.45);background:rgba(63,166,106,.08)}
+.mode.offline{border-color:rgba(201,162,39,.45);background:rgba(201,162,39,.08)}
+.mode b{font-family:var(--mono);font-size:10px;letter-spacing:.16em;padding:4px 9px;border-radius:4px;flex:none}
+.mode.live b{background:var(--green);color:#04120a}
+.mode.offline b{background:var(--gold);color:#100c00}
+.mode span{color:#C0C0CB}
+.mode code{font-family:var(--mono);font-size:11.5px;color:var(--gold-hi);background:rgba(0,0,0,.35);padding:2px 6px;border-radius:4px}
+
+/* ---------- status strip ---------- */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+       border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:18px}
+.st{background:var(--panel);padding:15px 16px;min-height:104px;display:flex;flex-direction:column;justify-content:space-between}
+.st dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;color:var(--dim);margin:0}
+.st dd{margin:8px 0 0;font-family:var(--disp);font-weight:900;font-size:30px;letter-spacing:-.025em;line-height:1}
+.st dd small{display:block;font-family:var(--sans);font-weight:500;font-size:12px;letter-spacing:0;color:var(--mute);margin-top:6px}
+.st dd.g{color:var(--gold)} .st dd.r{color:var(--red)} .st dd.ok{color:var(--green)}
+.src{display:inline-block;font-family:var(--mono);font-size:8.5px;letter-spacing:.13em;padding:3px 7px;
+     border-radius:3px;margin-top:10px;align-self:flex-start}
+.src.sheet{background:rgba(74,127,181,.16);color:#7FAEDC}
+.src.device{background:rgba(201,162,39,.15);color:var(--gold-hi)}
+.src.site{background:rgba(63,166,106,.15);color:#6FD79B}
+
+/* ---------- big actions (kiosk sizing) ---------- */
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
+.act{display:block;border-radius:14px;padding:24px 22px;border:2px solid var(--gold);background:var(--gold);color:#0a0800;
+     transition:transform .12s ease, box-shadow .12s ease;min-height:118px}
+.act:hover{transform:translateY(-2px);box-shadow:0 14px 34px -14px rgba(201,162,39,.6)}
+.act.alert{background:var(--red);border-color:var(--red);color:#fff}
+.act.alert:hover{box-shadow:0 14px 34px -14px rgba(210,69,59,.6)}
+.act.ghost{background:transparent;border-color:var(--line2);color:var(--ink)}
+.act.ghost:hover{border-color:var(--gold);box-shadow:none}
+.act .ic{width:27px;height:27px;display:block;margin-bottom:11px}
+.act .ic svg{width:100%;height:100%;display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.act b{display:block;font-family:var(--disp);font-weight:900;font-size:20px;letter-spacing:-.01em;line-height:1.08}
+.act span{display:block;font-size:12.5px;opacity:.75;margin-top:6px;line-height:1.35}
+
+/* ---------- panels ---------- */
+.panel{border:1px solid var(--line);border-radius:12px;background:var(--panel);margin-bottom:18px;overflow:hidden}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ph h2{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--gold);margin:0;font-weight:400}
+.ph .mini{font-family:var(--mono);font-size:10px;color:var(--dim)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-family:var(--mono);font-size:9px;letter-spacing:.13em;color:var(--dim);font-weight:400;padding:9px 16px;border-bottom:1px solid var(--line)}
+td{padding:11px 16px;border-bottom:1px solid #17171e;font-size:13.5px;color:#C6C6D1;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+td.time{font-family:var(--mono);font-size:12.5px;color:var(--gold);white-space:nowrap}
+td.name{color:var(--ink);font-weight:600}
+.pill{display:inline-block;padding:3px 9px;border-radius:4px;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;white-space:nowrap}
+.pill.live{background:rgba(63,166,106,.16);color:var(--green)}
+.pill.soon{background:rgba(201,162,39,.16);color:var(--gold)}
+.pill.done{background:rgba(255,255,255,.06);color:var(--dim)}
+.pill.due{background:rgba(210,69,59,.16);color:var(--red)}
+.pill.paid{background:rgba(63,166,106,.16);color:var(--green)}
+.empty{padding:26px 16px;text-align:center;color:var(--dim);font-size:13.5px}
+tr.nowrow td{background:rgba(201,162,39,.07)}
+
+/* ---------- checklist ---------- */
+.chk{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1px;background:var(--line)}
+.ck{background:var(--panel);padding:13px 15px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;font-size:13px;color:#C6C6D1}
+.ck:hover{background:var(--panel2)}
+.ck i{width:16px;height:16px;border:1.5px solid #3d3d49;border-radius:4px;flex:none;position:relative}
+.ck.on i{background:var(--gold);border-color:var(--gold)}
+.ck.on i::after{content:"";position:absolute;left:5px;top:1px;width:4px;height:9px;border:solid #0a0800;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.ck.on{color:var(--dim);text-decoration:line-through}
+
+/* ---------- tile strip ---------- */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:0}
+.tgroup{margin-bottom:20px}
+.tgroup h3{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--gold);
+  font-weight:400;margin:0 0 9px;display:flex;align-items:center;gap:9px}
+.tgroup h3::after{content:'';flex:1;height:1px;background:var(--line)}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 13px;transition:border-color .12s ease}
+.tile:hover{border-color:var(--gold)}
+.tile b{display:block;font-size:13px;font-weight:600;margin-bottom:4px}
+.tile span{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--dim)}
+.tile.ext b::after{content:" ↗";color:var(--gold);font-size:11px}
+
+/* ---------- jump bar ---------- */
+.jump{position:fixed;left:0;right:0;bottom:0;background:rgba(8,8,11,.96);border-top:1px solid var(--line);
+      backdrop-filter:blur(10px);padding:9px 20px;z-index:60}
+.jump-in{max-width:1320px;margin:0 auto;display:flex;align-items:center;gap:11px;font-family:var(--mono);font-size:11.5px;color:var(--dim);flex-wrap:wrap}
+.jump b{color:var(--gold)}
+.jump input{flex:1;min-width:150px;background:transparent;border:none;outline:none;color:var(--ink);font-family:var(--mono);font-size:12.5px;padding:4px 0}
+.jump input::placeholder{color:var(--dim)}
+.jump .hint{color:var(--dim)}
+.jump .hint em{color:var(--mute);font-style:normal}
+
+.foot{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.08em;padding-top:6px}
+.legend span{margin-right:14px}
+@media(max-width:900px){ .stats{grid-template-columns:1fr 1fr} .acts{grid-template-columns:1fr} .now b{font-size:30px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <img src="assets/fae-logo.png" alt="F.A.E." onerror="this.style.display='none'">
+      <div class="brand-tx"><b>F.A.E.</b><span>COMMAND CENTER</span></div>
+    </div>
+    <div class="now"><b id="clock">--:--</b><span id="today">—</span>
+      <a href="console.html" style="display:inline-block;margin-top:8px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--gold);border:1px solid var(--line2);border-radius:6px;padding:5px 9px">DARK THEME &#8599;</a></div>
+  </div>
+
+  <div class="mode" id="mode"><b>CHECKING</b><span>Working out what data this machine can reach…</span></div>
+
+  <dl class="stats">
+    <div class="st"><dt>COURT RIGHT NOW</dt><dd id="s-now">—</dd><span class="src sheet" id="b-now">SHEET</span></div>
+    <div class="st"><dt>NEXT BOOKING</dt><dd id="s-next">—</dd><span class="src sheet">SHEET</span></div>
+    <div class="st"><dt>BOOKED TODAY</dt><dd id="s-count">—</dd><span class="src sheet">SHEET</span></div>
+    <div class="st"><dt>EXPECTED TODAY</dt><dd id="s-cash">—</dd><span class="src sheet">SHEET</span></div>
+  </dl>
+
+  <div class="acts">
+    <a class="act" href="schedule.html"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 3v4M16 3v4"/></svg></span><b>TODAY'S SCHEDULE</b><span>Who is booked, when, which court</span></a>
+    <a class="act" href="member-portal.html"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15.5 14.2c2.6.2 4.5 2.1 4.5 5"/></svg></span><b>MEMBER PORTAL</b><span>Everyone, minors under guardian, contact &amp; bio</span></a>
+    <a class="act alert" href="dashboard.html#file-incident"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3.2 21.5 20H2.5z"/><path d="M12 10v4.2M12 17.4h.01"/></svg></span><b>LOG AN INCIDENT</b><span>No-show, damage, injury, overtime — file it now</span></a>
+  </div>
+  <div class="acts">
+    <a class="act ghost" href="staff.html"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.2 6-5.2s6 1.9 6 5.2"/><path d="M16.5 5.4a3.2 3.2 0 010 5.6M21 20c0-2.3-1.1-3.9-3-4.8"/></svg></span><b>STAFF HUB</b><span>Clock in · daily tasks · drinks count</span></a>
+    <a class="act ghost" href="take-payment.html"><span class="ic"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="13" rx="2.5"/><path d="M2.5 10.5h19M16.5 15h1.5"/></svg></span><b>TAKE PAYMENT</b><span>Member/non-member rates · issue OR</span></a>
+  </div>
+
+  <div class="panel">
+    <div class="ph"><h2>TODAY — COURT SCHEDULE</h2><span class="mini" id="sched-note">loading…</span></div>
+    <div id="sched"><div class="empty">Loading today's bookings…</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="ph"><h2>ON SHIFT</h2><span class="mini">from Staff Hub · this device only</span></div>
+    <div id="shift"><div class="empty">Loading…</div></div>
+  </div>
+
+  <div class="panel">
+    <div class="ph"><h2>TODAY'S CHECKLIST</h2><span class="mini" id="chk-note">resets every new day · this device only</span></div>
+    <div class="chk" id="chk"></div>
+  </div>
+
+  <!-- Tiles grouped by WHEN you use them, not by what they are. Nineteen equal
+       boxes in one grid meant reading every label to find the one you needed;
+       a new hire now only has to read the first group. -->
+  <div class="tgroup">
+    <h3>&#9679; EVERY SHIFT &mdash; the front desk</h3>
+    <div class="tiles">
+      <a class="tile" href="checkin.html"><b>Who Is In The Building</b><span>CHECK IN &middot; CHECK OUT</span></a>
+      <a class="tile" href="register.html"><b>Visitor Sign-In</b><span>WALK-IN &middot; DEPENDENTS</span></a>
+      <a class="tile" href="tasks.html"><b>Daily Task Ticket</b><span>TIME IN/OUT &middot; PHONE</span></a>
+      <a class="tile" href="worker.html"><b>Worker Submit</b><span>PHONE FORM &middot; QR &middot; OFFLINE</span></a>
+      <a class="tile" href="playbook.html"><b>Front Desk Playbook</b><span>TRAINING &middot; PRINTABLE</span></a>
+    </div>
+  </div>
+
+  <div class="tgroup">
+    <h3>&#9679; TRAINING &amp; PEOPLE &mdash; the F.A.E. Way</h3>
+    <div class="tiles">
+      <a class="tile" href="about.html"><b>About F.A.E.</b><span>PUBLIC INTRO &middot; PROGRAMS</span></a>
+      <a class="tile" href="the-fae-way.html"><b>The F.A.E. Way</b><span>HOW WE TRAIN &amp; DEPLOY</span></a>
+      <a class="tile" href="playbook-coach.html"><b>Coach Playbook</b><span>ENTRY &rarr; SENIOR &middot; SESSIONS</span></a>
+      <a class="tile" href="playbook-admin.html"><b>Admin Playbook</b><span>COH &middot; RECORDS &middot; ORDERS</span></a>
+      <a class="tile" href="playbook-custodian.html"><b>Custodian Playbook</b><span>COURT &middot; CLEANING &middot; READY</span></a>
+      <a class="tile" href="playbook-marketer.html"><b>Marketer Playbook</b><span>POSTS &middot; MESSENGER &middot; RECAPS</span></a>
+      <a class="tile" href="role-template.html"><b>Role Template</b><span>CLONE FOR A NEW ROLE</span></a>
+    </div>
+  </div>
+
+  <div class="tgroup">
+    <h3>&#9679; RECORDS &amp; MONEY &mdash; management</h3>
+    <div class="tiles">
+      <a class="tile" href="dashboard.html"><b>Business Dashboard</b><span>REVENUE &middot; INCIDENTS</span></a>
+      <a class="tile" href="registry.html"><b>Registry Database</b><span>EXPORT &middot; BACKUP &middot; EXCEL</span></a>
+      <a class="tile" href="member-portal.html"><b>Member Portal</b><span>EVERYONE · MINORS UNDER GUARDIAN · CONTACT</span></a>
+      <a class="tile" href="tournament.html"><b>Tournament &amp; Balance</b><span>DOUBLE ELIM · MATCHMAKING · BALANCE SHEET</span></a>
+      <a class="tile" href="batch23-checkout.html"><b>Batch 23 Checkout</b><span>FAEBASKETBALL · CHECK-IN · UNIFORMS · PAID</span></a>
+      <a class="tile" href="member-registry.html"><b>Member Registry</b><span>HEADSHOTS · CONTACT · PRINT</span></a>
+      <a class="tile" href="payroll.html"><b>Payroll &amp; Wages</b><span>DOLE</span></a>
+      <a class="tile" href="scoreboard.html"><b>Scoreboard</b><span>MISSIONS &middot; POINTS &middot; REWARDS</span></a>
+      <a class="tile" href="nxgen-stats.html"><b>NXGEN Stat Center</b><span>LEAGUE</span></a>
+    </div>
+  </div>
+
+  <div class="tgroup">
+    <h3>&#9679; PRINT &amp; POST &mdash; put these on the wall</h3>
+    <div class="tiles">
+      <a class="tile" href="qr-poster.html"><b>Staff QR Sheet</b><span>PRINT &middot; SCAN &middot; PHONE</span></a>
+      <a class="tile" href="terms.html"><b>Terms &amp; Waiver</b><span>PRIVACY &middot; PRINTABLE</span></a>
+      <a class="tile" href="advertise.html"><b>Advertise at F.A.E.</b><span>MEDIA KIT &middot; SPONSORS</span></a>
+    </div>
+  </div>
+
+  <div class="tgroup">
+    <h3>&#9679; SET UP ONCE &mdash; owner only</h3>
+    <div class="tiles">
+      <a class="tile" href="SETUP-GUIDE.html"><b>Setup Guide</b><span>START HERE &middot; STEP BY STEP</span></a>
+      <a class="tile" href="settings.html"><b>Settings</b><span>MASTER &middot; PRICING &amp; INFO</span></a>
+      <a class="tile" href="sync.html"><b>Sync Engine</b><span>PICKLEBALL &middot; MEMBERS &middot; RATES</span></a>
+      <a class="tile" href="blueprint.html"><b>Master Blueprint</b><span>REFERENCE</span></a>
+    </div>
+  </div>
+
+  <div class="tgroup">
+    <h3>&#9679; LIVE ONLINE &mdash; opens in a browser tab</h3>
+    <div class="tiles">
+      <a class="tile ext" href="https://fae-court-connect.lovable.app/admin" target="_blank" rel="noopener"><b>Members &amp; Admin</b><span>LIVE SITE &middot; ALL DEVICES</span></a>
+      <a class="tile ext" href="https://nxgenpremierleague.lovable.app" target="_blank" rel="noopener"><b>NXGEN Premier League</b><span>LIVE SITE</span></a>
+      <a class="tile ext" href="https://docs.google.com/spreadsheets/d/1lKtBgv9zrIEZz75U_c74inPZRFbXWIIp/edit" target="_blank" rel="noopener"><b>Edit the Schedule</b><span>GOOGLE SHEET</span></a>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="legend">
+      <span style="color:#7FAEDC">■ SHEET — same on every device</span>
+      <span style="color:#6FD79B">■ LIVE SITE — same on every device</span>
+      <span style="color:#E8C766">■ THIS DEVICE — local only</span>
+    </div>
+    <div id="ver">—</div>
+  </div>
+</div>
+
+<div class="jump">
+  <div class="jump-in">
+    <b>›</b>
+    <input id="jump" placeholder="type to jump — schedule · incident · staff · payroll · dashboard · nxgen · playbook · rates · sheet" autocomplete="off" spellcheck="false">
+    <span class="hint">press <em>Enter</em></span>
+  </div>
+</div>
+
+<script>
+/* ==========================================================================
+   F.A.E. Command Center — Console
+   Version stamp: bump this whenever the file changes, so a stale copy on
+   another PC is obvious at a glance.
+   ========================================================================== */
+var VERSION = 'console v1.1 · 2026-09-04';
+
+var SHEET_ID = '1lKtBgv9zrIEZz75U_c74inPZRFbXWIIp';
+
+/* One tab per week in the renter calendar. Key = Monday-or-Sunday start label
+   that appears in the tab's "WEEK OF:" cell. When a new week tab is added to
+   the Sheet, add its gid here (open the tab, read gid=... from the URL). */
+var WEEK_TABS = [
+  {from:'2026-06-07', gid:'310777771'},
+  {from:'2026-06-14', gid:'338526107'},
+  {from:'2026-06-21', gid:'1139204069'},
+  {from:'2026-06-28', gid:'511759187'},
+  {from:'2026-07-05', gid:'900647447'},
+  {from:'2026-07-12', gid:'3741166'},
+  {from:'2026-07-19', gid:'1908300764'},
+  {from:'2026-07-26', gid:'1811388071'},
+  {from:'2026-08-02', gid:'314305438'},
+  {from:'2026-08-09', gid:'247160593'},
+  {from:'2026-08-16', gid:'662882401'},
+  {from:'2026-08-23', gid:'98040403'},
+  {from:'2026-08-30', gid:'1010353382'},
+  {from:'2026-09-06', gid:'199557498'},
+  {from:'2026-09-13', gid:'589464510'}
+];
+
+var CHECKLIST = [
+  'Open courts — lights, fans, doors',
+  "Check today's bookings against the Sheet",
+  'Fridge count — start of shift',
+  'Collect payments, issue OR',
+  'End-of-day count, lock up'
+];
+
+/* ---------- tiny helpers ---------- */
+function $(id){ return document.getElementById(id); }
+function pad(n){ return n<10 ? '0'+n : ''+n; }
+function isoDay(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+var store = {
+  get:function(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
+  set:function(k,v){ try{ localStorage.setItem(k,v); return true; }catch(e){ return false; } }
+};
+
+/* ---------- clock ---------- */
+var DAYS=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+var MONS=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+function tick(){
+  var d=new Date();
+  var h=d.getHours(), ap=h<12?'AM':'PM', h12=h%12; if(h12===0)h12=12;
+  $('clock').textContent = h12+':'+pad(d.getMinutes())+' '+ap;
+  $('today').textContent = DAYS[d.getDay()]+' · '+d.getDate()+' '+MONS[d.getMonth()]+' '+d.getFullYear();
+}
+tick(); setInterval(tick, 10000);
+$('ver').textContent = VERSION;
+
+/* ---------- CSV parser (handles quoted fields and embedded commas) ---------- */
+function parseCSV(text){
+  var rows=[], row=[], cur='', q=false, i=0;
+  while(i<text.length){
+    var c=text[i];
+    if(q){
+      if(c==='"'){ if(text[i+1]==='"'){ cur+='"'; i++; } else { q=false; } }
+      else cur+=c;
+    } else {
+      if(c==='"') q=true;
+      else if(c===','){ row.push(cur); cur=''; }
+      else if(c==='\n'){ row.push(cur); rows.push(row); row=[]; cur=''; }
+      else if(c!=='\r') cur+=c;
+    }
+    i++;
+  }
+  row.push(cur); rows.push(row);
+  return rows;
+}
+
+/* ---------- which week tab covers today ---------- */
+function gidForToday(){
+  var t=isoDay(new Date()), best=null;
+  for(var i=0;i<WEEK_TABS.length;i++){
+    if(WEEK_TABS[i].from <= t){ best=WEEK_TABS[i]; } else break;
+  }
+  return best;
+}
+
+/* ---------- minutes from a "7:00 PM" style label ---------- */
+function toMins(label){
+  var m=String(label||'').trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if(!m) return null;
+  var h=+m[1]%12; if(/PM/i.test(m[3])) h+=12;
+  return h*60 + (+m[2]);
+}
+
+/* ---------- pull today's bookings out of the week tab ---------- */
+function bookingsFromCSV(text){
+  var rows = parseCSV(text);
+  var today = new Date();
+  var wantDay = DAYS[today.getDay()];          // e.g. THURSDAY
+  var dayRow=-1, colStart=-1;
+
+  /* find the weekday header row, then which column block is today */
+  for(var r=0;r<Math.min(rows.length,12);r++){
+    for(var c=0;c<rows[r].length;c++){
+      if(String(rows[r][c]).trim().toUpperCase()===wantDay){ dayRow=r; colStart=c; break; }
+    }
+    if(colStart>-1) break;
+  }
+  if(colStart<0) return null;
+
+  /* slot rows begin after the RENTER NAME / AMOUNT / STATUS header line */
+  var startRow = dayRow+2;
+  var slots=[];
+  for(var i=startRow;i<rows.length;i++){
+    var row=rows[i];
+    if(!row || row.length<=colStart+2) continue;
+    var time=String(row[1]||'').trim();
+    if(!toMins(time)) continue;
+    slots.push({
+      time: time,
+      mins: toMins(time),
+      name: String(row[colStart]||'').trim(),
+      amount: String(row[colStart+1]||'').trim(),
+      status: String(row[colStart+2]||'').trim()
+    });
+  }
+
+  /* merge consecutive rows with the same renter into one block */
+  var out=[], cur=null;
+  for(var j=0;j<slots.length;j++){
+    var s=slots[j];
+    if(!s.name){ if(cur){ out.push(cur); cur=null; } continue; }
+    if(cur && cur.name===s.name){
+      cur.endMins = s.mins+30;
+      if(s.amount && !cur.amount) cur.amount=s.amount;
+      if(s.status && !cur.status) cur.status=s.status;
+    } else {
+      if(cur) out.push(cur);
+      cur={ name:s.name, start:s.time, startMins:s.mins, endMins:s.mins+30,
+            amount:s.amount, status:s.status };
+    }
+  }
+  if(cur) out.push(cur);
+  return out;
+}
+
+function minsLabel(m){
+  var h=Math.floor(m/60)%24, mm=m%60, ap=h<12?'AM':'PM', h12=h%12; if(h12===0)h12=12;
+  return h12+':'+pad(mm)+' '+ap;
+}
+
+/* ---------- render ---------- */
+function renderSchedule(list){
+  var nowM = (new Date()).getHours()*60 + (new Date()).getMinutes();
+  if(!list || !list.length){
+    $('sched').innerHTML = '<div class="empty">No bookings on the Sheet for today.</div>';
+    $('s-now').innerHTML = 'FREE'; $('s-now').className='ok';
+    $('s-next').innerHTML = '—<small>nothing booked</small>';
+    $('s-count').textContent = '0';
+    $('s-cash').innerHTML = canSeeMoney()?'₱0':'•••<small>owner view only</small>';
+    return;
+  }
+  var html='<table><tr><th>TIME</th><th>RENTER</th><th>AMOUNT</th><th>STATUS</th></tr>';
+  var onNow=null, next=null, total=0;
+  for(var i=0;i<list.length;i++){
+    var b=list[i], cls='', state='';
+    if(nowM>=b.startMins && nowM<b.endMins){ cls='nowrow'; state='<span class="pill live">ON COURT</span>'; onNow=b; }
+    else if(b.startMins>nowM){
+      var inMin=b.startMins-nowM;
+      state='<span class="pill soon">IN '+(inMin>=60 ? Math.round(inMin/60)+' HR' : inMin+' MIN')+'</span>';
+      if(!next) next=b;
+    } else state='<span class="pill done">DONE</span>';
+
+    var pay='';
+    if(/paid/i.test(b.status)) pay='<span class="pill paid">'+esc(b.status)+'</span>';
+    else if(b.status) pay='<span class="pill due">'+esc(b.status)+'</span>';
+    else if(b.amount) pay='<span class="pill due">UNPAID?</span>';
+
+    var amt=(b.amount||'').replace(/\s+/g,'');
+    if(amt){ var n=parseFloat(amt.replace(/[^\d.]/g,'')); if(!isNaN(n)) total+=n; }
+
+    html += '<tr class="'+cls+'"><td class="time">'+esc(b.start)+' – '+esc(minsLabel(b.endMins))+'</td>'
+          + '<td class="name">'+esc(b.name)+'</td>'
+          + '<td>'+esc(b.amount||'—')+'</td>'
+          + '<td>'+state+' '+pay+'</td></tr>';
+  }
+  $('sched').innerHTML = html+'</table>';
+
+  if(onNow){ $('s-now').innerHTML='IN USE<small>'+esc(onNow.name)+'</small>'; $('s-now').className='g'; }
+  else { $('s-now').innerHTML='FREE<small>no booking right now</small>'; $('s-now').className='ok'; }
+
+  if(next) $('s-next').innerHTML = esc(next.start)+'<small>'+esc(next.name)+'</small>';
+  else $('s-next').innerHTML = '—<small>nothing left today</small>';
+
+  $('s-count').textContent = list.length;
+  if(canSeeMoney()){
+    $('s-cash').innerHTML = '₱'+total.toLocaleString()+'<small>from the Sheet’s amount column</small>';
+    $('s-cash').className='g';
+  } else {
+    $('s-cash').innerHTML = '•••<small>owner view only</small>';
+    $('s-cash').className='';
+  }
+}
+/* money visibility — owner (master) sees figures; admin per Settings; front desk never */
+function canSeeMoney(){ try{ return (window.FAE && FAE.canSeeMoney()); }catch(e){ return false; } }
+
+function schedFallback(msg){
+  $('sched').innerHTML = '<div class="empty">'+esc(msg)+'<br><br>'
+    + '<a href="schedule.html" style="color:var(--gold)">Open the live schedule page →</a></div>';
+  ['s-now','s-next','s-count','s-cash'].forEach(function(id){
+    $(id).innerHTML='<small style="margin-top:0">needs live mode</small>'; });
+}
+
+/* ---------- load the sheet ---------- */
+function loadSchedule(){
+  var tab = gidForToday();
+  if(!tab){
+    $('sched-note').textContent='no week tab for today';
+    schedFallback('This week has no tab listed in the console yet. Add its gid to WEEK_TABS.');
+    return;
+  }
+  var url='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/export?format=csv&gid='+tab.gid;
+  fetch(url, {cache:'no-store'})
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
+    .then(function(t){
+      var list = bookingsFromCSV(t);
+      if(list===null){ $('sched-note').textContent='could not find today in the tab';
+        schedFallback('Read the Sheet, but could not find a column for today.'); return; }
+      $('sched-note').textContent='live from the Google Sheet · week of '+tab.from;
+      renderSchedule(list);
+    })
+    .catch(function(e){
+      $('sched-note').textContent='could not reach the Sheet';
+      schedFallback('Could not read the Sheet from this machine. ' +
+        (location.protocol==='file:' ? 'Start live mode to enable it.' : String(e.message||e)));
+    });
+}
+
+/* ---------- on shift (device-local, from Staff Hub) ----------
+   Staff Hub (staff.html) stores DB.shifts as an OBJECT keyed by date:
+     DB.shifts["2026-09-03"] = [ {id, empId, name, blockId, start, end, note}, ... ]
+   blockId is A (Morning 06-14), B (Afternoon 14-22), C (Graveyard 22-06) or X (Custom). */
+var BLOCK_LABEL={ A:'A · Morning', B:'B · Afternoon', C:'C · Graveyard', X:'Custom' };
+function loadShift(){
+  var names={}, out=[];
+  try{
+    var p=store.get('fae-payroll-v1');
+    if(p){ (JSON.parse(p).emps||[]).forEach(function(e){
+      if(e && e.name && e.active!==false) names[e.id]={name:e.name,pos:e.pos||'Staff'}; }); }
+  }catch(e){}
+  try{
+    var s=store.get('fae-staff-v1');
+    if(s){
+      var db=JSON.parse(s), today=isoDay(new Date());
+      var todays=(db.shifts && db.shifts[today]) ? db.shifts[today] : [];
+      todays.forEach(function(sh){
+        if(!sh) return;
+        var who = sh.name || (names[sh.empId]||{}).name || 'Staff';
+        out.push({
+          name: who,
+          block: BLOCK_LABEL[sh.blockId] || sh.blockId || '—',
+          start: sh.start || '—',
+          end: sh.end || '—'
+        });
+      });
+    }
+  }catch(e){}
+
+  if(!out.length){
+    $('shift').innerHTML='<div class="empty">No shifts set for today on this machine.<br><br>'
+      + '<a href="staff.html" style="color:var(--gold)">Open Staff Hub →</a></div>';
+    return;
+  }
+  var h='<table><tr><th>NAME</th><th>BLOCK</th><th>START</th><th>END</th></tr>';
+  out.forEach(function(r){
+    h+='<tr><td class="name">'+esc(r.name)+'</td><td>'+esc(r.block)+'</td>'
+      +'<td class="time">'+esc(r.start)+'</td><td class="time">'+esc(r.end)+'</td></tr>';
+  });
+  $('shift').innerHTML=h+'</table>';
+}
+
+/* ---------- checklist (device-local, self-resetting) ---------- */
+var CK_KEY='fae-console-checklist';
+function loadChecklist(){
+  var today=isoDay(new Date()), state={};
+  try{ var raw=store.get(CK_KEY); if(raw){ var d=JSON.parse(raw); if(d.date===today) state=d.done||{}; } }catch(e){}
+  var html='';
+  CHECKLIST.forEach(function(txt,i){
+    html+='<div class="ck'+(state[i]?' on':'')+'" data-i="'+i+'"><i></i><span>'+esc(txt)+'</span></div>';
+  });
+  $('chk').innerHTML=html;
+  Array.prototype.forEach.call($('chk').children, function(el){
+    el.addEventListener('click', function(){
+      el.classList.toggle('on');
+      var done={};
+      Array.prototype.forEach.call($('chk').children, function(c){
+        if(c.classList.contains('on')) done[c.getAttribute('data-i')]=1; });
+      if(!store.set(CK_KEY, JSON.stringify({date:isoDay(new Date()), done:done}))){
+        $('chk-note').textContent='could not save — browser storage blocked';
+      }
+    });
+  });
+}
+
+/* jump bar is handled by assets/fae-jump.js — a live command palette that
+   lists every page and filters as you type. */
+
+/* ---------- data mode ---------- */
+function setMode(){
+  var el=$('mode');
+  if(location.protocol==='file:'){
+    el.className='mode offline';
+    el.innerHTML='<b>LOCAL ONLY</b><span>Opened straight from the folder, so Google blocks the live '
+      + 'schedule read. Close this and double-click <code>START-COMMAND-CENTER.bat</code> to get live '
+      + 'court status. Everything else on this page still works.</span>';
+    return false;
+  }
+  el.className='mode live';
+  el.innerHTML='<b>LIVE</b><span>Reading the court schedule straight from the Google Sheet. '
+    + 'Blue items are the same on every device; gold items are saved on this machine only.</span>';
+  return true;
+}
+
+/* ---------- boot ---------- */
+var canLive = setMode();
+loadChecklist();
+loadShift();
+if(canLive) loadSchedule(); else schedFallback('Live mode is off, so today’s bookings cannot be read here.');
+if(canLive) setInterval(loadSchedule, 5*60*1000);
+setInterval(function(){ loadChecklist(); }, 60*60*1000);
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

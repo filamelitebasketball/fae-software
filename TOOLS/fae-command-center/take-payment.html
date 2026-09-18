@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. Take Payment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="assets/fae-core.js?v=6"></script>
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<style>
+:root{
+  --void:#050507; --panel:#0d0d12; --panel2:#131319; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#E8C766; --ink:#F4F4F6; --mute:#8B8B98; --dim:#61616f;
+  --red:#D2453B; --green:#3FA66A; --blue:#4A7FB5;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:560px;margin:0 auto;padding:18px 16px 60px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:2px solid var(--gold);margin-bottom:18px}
+.brand{font-family:var(--disp);font-weight:900;font-size:17px;letter-spacing:.03em}
+.brand small{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--gold);font-weight:400;margin-top:3px}
+.home{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--mute);border:1px solid var(--line);border-radius:7px;padding:6px 10px}
+
+.lab{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;margin:0 0 8px}
+.field{margin-bottom:16px}
+.field input{width:100%;background:var(--panel);border:1px solid var(--line2);color:var(--ink);border-radius:10px;padding:13px;font-family:var(--sans);font-size:16px}
+
+.sports{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px}
+.sport{background:var(--panel);border:1px solid var(--line2);border-radius:12px;padding:15px 10px;text-align:center;cursor:pointer}
+.sport.on{border-color:var(--gold);background:linear-gradient(155deg,rgba(201,162,39,.14),transparent)}
+.sport b{display:block;font-family:var(--disp);font-weight:800;font-size:14px}
+.sport span{font-family:var(--mono);font-size:11px;color:var(--gold)}
+
+.hours{display:flex;align-items:center;gap:14px;margin-bottom:18px;justify-content:center}
+.hours button{width:52px;height:52px;border-radius:50%;background:var(--panel);border:1px solid var(--line2);color:var(--gold);font-size:26px;cursor:pointer;line-height:1}
+.hours .val{font-family:var(--disp);font-weight:900;font-size:34px;min-width:96px;text-align:center}
+.hours .val small{display:block;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.1em;font-weight:400}
+
+.total{border:1px solid var(--gold);border-radius:14px;background:linear-gradient(155deg,rgba(201,162,39,.12),transparent);
+  padding:18px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.total .t{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--gold)}
+.total .amt{font-family:var(--disp);font-weight:900;font-size:36px;letter-spacing:-.02em}
+
+.methods{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.method{background:var(--panel);border:1px solid var(--line2);border-radius:11px;padding:14px;text-align:center;cursor:pointer;font-weight:600}
+.method.on{border-color:var(--gold);background:linear-gradient(155deg,rgba(201,162,39,.14),transparent);color:var(--gold-hi)}
+
+.collect{width:100%;background:var(--gold);color:#0a0800;border:none;border-radius:12px;padding:16px;font-family:var(--sans);font-weight:700;font-size:17px;cursor:pointer}
+.collect:active{transform:translateY(1px)}
+
+.done{display:none;border:1px solid var(--green);border-radius:13px;background:rgba(63,166,106,.08);padding:18px;margin-top:16px}
+.done.show{display:block}
+.done h3{font-family:var(--disp);font-weight:900;font-size:18px;margin:0 0 8px;color:#6FD79B}
+.done .or{border:1px dashed rgba(201,162,39,.5);border-radius:9px;padding:12px;margin-top:12px;font-size:13.5px;color:var(--gold-hi);background:rgba(201,162,39,.06)}
+.done button{margin-top:14px;width:100%;background:none;border:1px solid var(--line2);color:var(--mute);border-radius:10px;padding:12px;font-family:var(--mono);font-size:11px;cursor:pointer}
+
+.log{margin-top:26px}
+.log h2{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--gold);margin:0 0 12px}
+.lrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--panel);margin-bottom:8px;font-size:13px}
+.lrow .who b{color:var(--ink)} .lrow .who span{display:block;font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:2px}
+.lrow .amt{font-family:var(--disp);font-weight:800;color:var(--gold)}
+.lrow .m{font-family:var(--mono);font-size:9px;letter-spacing:.08em;padding:3px 7px;border-radius:4px;background:rgba(63,166,106,.14);color:#6FD79B}
+.lrow .m.cash{background:rgba(201,162,39,.14);color:var(--gold-hi)}
+.empty{color:var(--dim);font-size:13px;text-align:center;padding:16px}
+.summ{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.06em;margin-top:6px;text-align:right}
+.foot{margin-top:22px;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.06em;text-align:center;line-height:1.6}
+
+/* ---------- invoice ---------- */
+#invoice{display:none;background:#fff;color:#111;border-radius:12px;padding:24px;margin-top:14px}
+#invoice.show{display:block}
+.inv-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:14px}
+.inv-top .biz b{display:block;font-family:var(--disp);font-weight:900;font-size:15px;line-height:1.2}
+.inv-top .biz span{display:block;font-size:10.5px;color:#555;line-height:1.5;margin-top:3px}
+.inv-top .no{text-align:right;white-space:nowrap}
+.inv-top .no b{display:block;font-family:var(--mono);font-size:12px}
+.inv-top .no span{font-size:10px;color:#555}
+.inv-title{font-family:var(--disp);font-weight:900;font-size:19px;margin-bottom:12px;letter-spacing:.02em}
+.inv-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #e3e3e3;font-size:13px}
+.inv-row .k{color:#666}
+.inv-row .v{font-weight:600;text-align:right}
+.inv-total{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:2px solid #111}
+.inv-total span{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:#666}
+.inv-total b{font-family:var(--disp);font-weight:900;font-size:26px}
+.inv-note{margin-top:14px;font-size:10.5px;color:#666;line-height:1.6;border-top:1px dashed #ccc;padding-top:10px}
+.inv-acts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+.inv-acts a,.inv-acts button{display:block;text-align:center;border-radius:10px;padding:13px;font-family:var(--sans);font-size:13.5px;font-weight:700;cursor:pointer;border:none}
+.inv-acts .mail{background:#1B2A55;color:#fff}
+.inv-acts .print{background:var(--gold);color:#0a0800}
+
+@media print{
+  body{background:#fff}
+  body > .wrap > *:not(#invoiceWrap){display:none!important}
+  #invoiceWrap,#invoice{display:block!important;margin:0;padding:0}
+  #invoice{border-radius:0;padding:0}
+  .inv-acts{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">F.A.E.<small>TAKE PAYMENT</small></div>
+    <a class="home" href="console.html">← HOME</a>
+  </div>
+
+  <div class="field"><p class="lab">Renter</p><input id="renter" placeholder="Name (or “walk-in”)"></div>
+
+  <div class="field"><p class="lab">Member (for Tab) — optional</p>
+    <select id="member" style="width:100%;background:var(--panel);border:1px solid var(--line2);color:var(--ink);border-radius:10px;padding:13px;font-family:var(--sans);font-size:15px"><option value="">— walk-in / not a member —</option></select>
+  </div>
+
+  <p class="lab">Sport &amp; rate</p>
+  <div class="sports" id="sports">
+    <div class="sport on" data-s="Basketball" data-r="900" onclick="pickSport(this)"><b>Basketball</b><span>₱900/hr</span></div>
+    <div class="sport" data-s="Volleyball" data-r="750" onclick="pickSport(this)"><b>Volleyball</b><span>₱750/hr</span></div>
+    <div class="sport" data-s="Pickleball" data-r="400" onclick="pickSport(this)"><b>Pickleball</b><span>₱400/hr</span></div>
+  </div>
+
+  <p class="lab">Member type</p>
+  <div class="methods" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
+    <div class="method mtoggle" onclick="setMember(true,this)">Member</div>
+    <div class="method mtoggle on" onclick="setMember(false,this)">Non-member</div>
+  </div>
+
+  <p class="lab">Hours</p>
+  <div class="hours">
+    <button onclick="stepH(-1)">−</button>
+    <div class="val"><span id="hVal">1</span><small id="hHalf">hour</small></div>
+    <button onclick="stepH(1)">+</button>
+  </div>
+
+  <div class="total"><span class="t">TOTAL DUE</span><span class="amt" id="total">₱900</span></div>
+
+  <p class="lab">Method</p>
+  <div class="methods" id="methods">
+    <div class="method on" data-m="Cash" onclick="pickMethod(this)">Cash</div>
+    <div class="method" data-m="GCash" onclick="pickMethod(this)">GCash</div>
+    <div class="method" data-m="Tab" onclick="pickMethod(this)">Charge to Tab</div>
+  </div>
+
+  <button class="collect" onclick="collect()">Mark collected →</button>
+
+  <div class="done" id="done">
+    <h3 id="doneMsg">Collected ✓</h3>
+    <div id="doneDetail" style="font-size:13.5px;color:#CFCFD8"></div>
+    <div class="or">⚠ Issue the Official Receipt now. Never skip the OR, even if the renter says not to bother.</div>
+    <button onclick="reset()">↺ New payment</button>
+  </div>
+
+  <div id="invoiceWrap">
+    <div id="invoice">
+      <div class="inv-top">
+        <div class="biz"><b id="iBiz">F.A.E. SPORTS MANAGEMENT SERVICES</b><span id="iBizMeta"></span></div>
+        <div class="no"><b id="iNo">—</b><span id="iDate"></span></div>
+      </div>
+      <div class="inv-title">TRANSACTION INVOICE</div>
+      <div class="inv-row"><span class="k">Renter</span><span class="v" id="iRenter">—</span></div>
+      <div class="inv-row"><span class="k">Service</span><span class="v" id="iService">—</span></div>
+      <div class="inv-row"><span class="k">Rate</span><span class="v" id="iRate">—</span></div>
+      <div class="inv-row"><span class="k">Payment method</span><span class="v" id="iMethod">—</span></div>
+      <div class="inv-total"><span>TOTAL PAID</span><b id="iTotal">₱0</b></div>
+      <div class="inv-note" id="iNote"></div>
+      <div class="inv-acts">
+        <a class="mail" id="iMail" href="#">✉ Email Digital Copy</a>
+        <button class="print" onclick="window.print()">🖨 Print Physical Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="log">
+    <h2>TODAY'S COLLECTIONS · THIS DEVICE</h2>
+    <div id="logList"></div>
+    <div class="summ" id="logSumm"></div>
+  </div>
+
+  <div class="foot">take-payment v1.0 · 2026-09-04 · saved on this device<br>For the shared record, also mark it paid on the Google Sheet / live site.</div>
+</div>
+
+<script>
+/* F.A.E. Take Payment — a quick desk calculator + local log.
+   Rates come from Settings (fae-config-v1) when set, else these defaults. */
+var LOG_KEY='fae-takepayment-log';
+var sport='Basketball', hours=1, method='Cash', isMember=false;
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function isoDay(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+var store={get:function(k){try{return localStorage.getItem(k);}catch(e){return null;}},set:function(k,v){try{localStorage.setItem(k,v);return true;}catch(e){return false;}}};
+
+/* rate for a sport at member/non-member price (via shared core, falls back to defaults) */
+var DEF={basketball:{member:1000,nonMember:1200},volleyball:{member:1000,nonMember:1200},pickleball:{member:500,nonMember:700}};
+function priceFor(sportName, memberFlag){
+  var key=String(sportName).toLowerCase();
+  if(window.FAE&&FAE.rate) return FAE.rate(key, memberFlag);
+  var v=DEF[key]||{member:0,nonMember:0}; return memberFlag?v.member:v.nonMember;
+}
+function curRate(){ return priceFor(sport, isMember); }
+
+function pickSport(el){document.querySelectorAll('.sport').forEach(function(s){s.classList.remove('on');});el.classList.add('on');sport=el.dataset.s;render();}
+function pickMethod(el){document.querySelectorAll('.method').forEach(function(m){m.classList.remove('on');});el.classList.add('on');method=el.dataset.m;}
+function setMember(flag,el){isMember=flag;document.querySelectorAll('.mtoggle').forEach(function(b){b.classList.remove('on');});if(el)el.classList.add('on');syncSportPrices();render();}
+function stepH(d){hours=Math.max(0.5,Math.round((hours+d*0.5)*2)/2);render();}
+function syncSportPrices(){
+  document.querySelectorAll('.sport').forEach(function(el){
+    var m=priceFor(el.dataset.s,true), n=priceFor(el.dataset.s,false), sp=el.querySelector('span');
+    if(sp) sp.innerHTML='<b style="color:var(--gold-hi)">₱'+m+'</b> M · ₱'+n+' N';
+  });
+}
+function render(){
+  $('hVal').textContent=(hours%1===0)?hours:hours;
+  $('hHalf').textContent=(hours===1)?'hour':'hours';
+  $('total').textContent='₱'+(curRate()*hours).toLocaleString();
+}
+/* ---- members (for charging a court payment to a tab) ---- */
+/* one shared definition of "where did this member come from" — the same one the
+   dashboard members tab and the registry use, so the tags never drift apart */
+function memberSource(m, fallback){
+  try{ return FAE.catLabel(FAE.memberCategory(m, fallback||'member')); }catch(e){}
+  return (fallback||'member').toUpperCase();
+}
+function loadMembersList(){
+  var out=[], seen={}, sel=$('member'); if(!sel) return;
+  // dashboard members (the real tab/ledger store)
+  try{var d=JSON.parse(store.get('fae-dashboard-data'));(d&&d.members||[]).forEach(function(m){ if(m&&m.id&&!seen[m.id]){out.push({id:m.id,name:FAE.memberName(m),src:memberSource(m,'court')});seen[m.id]=1;} });}catch(e){}
+  // synced pickleball workbook members
+  try{var s=JSON.parse(store.get('fae-members-v1'));(s||[]).forEach(function(m){ if(m&&m.id&&!seen[m.id]){out.push({id:m.id,name:FAE.memberName(m),src:memberSource(m,'pickleball')});seen[m.id]=1;} });}catch(e){}
+  out.sort(function(a,b){return String(a.name||'').localeCompare(String(b.name||''));});
+  if(!out.length){
+    sel.innerHTML='<option value="">— no members on this device yet —</option>';
+    sel.title='Open the Business Dashboard or run the Sync Engine once so members load here.';
+  } else {
+    sel.innerHTML='<option value="">— walk-in / not a member —</option>'+out.map(function(m){return '<option value="'+esc(m.id)+'" data-name="'+esc(m.name)+'">'+esc(m.name)+' · '+esc((m.src||'member').toUpperCase())+'</option>';}).join('');
+  }
+  sel.addEventListener('change',function(){ var o=this.options[this.selectedIndex];
+    if(this.value){ $('renter').value=(o.dataset.name||o.text).replace(/\s*·.*$/,'').replace(/\s*\([^)]*\)\s*$/,'');
+      // a chosen member gets the member rate
+      isMember=true; document.querySelectorAll('.mtoggle').forEach(function(b){b.classList.toggle('on', /Member/.test(b.textContent)&&!/Non/.test(b.textContent));});
+      syncSportPrices(); render();
+    }
+  });
+}
+/* charge a court payment to a member's tab in the dashboard data (keeps it synced + voidable there) */
+function chargeToTab(memberId, amount, desc){
+  var d; try{ d=JSON.parse(store.get('fae-dashboard-data'))||{}; }catch(e){ d={}; }
+  if(!d.members){ return false; }
+  var m=d.members.find(function(x){return x.id===memberId;});
+  if(!m) return false;
+  m.tabBalance=(m.tabBalance||0)+amount*100;
+  d.ledgerEntries=d.ledgerEntries||[];
+  d.ledgerEntries.push({ id:'le_'+Date.now()+'_'+Math.random().toString(36).slice(2,6), memberId:memberId, amountCents:amount*100,
+    entryType:'court', paymentMethod:'tab', description:desc, itemId:null, braceletUid:'', recordedBy:'Front Desk (Take Payment)',
+    createdAt:new Date().toISOString().slice(0,16).replace('T',' ') });
+  return store.set('fae-dashboard-data',JSON.stringify(d));
+}
+
+function collect(){
+  var amount=curRate()*hours;
+  var memberId=$('member')?$('member').value:'';
+  if(method==='Tab' && !memberId){ alert('Pick a member to charge the tab, or choose Cash/GCash.'); return; }
+  var entry={renter:$('renter').value.trim()||'walk-in',sport:sport,hours:hours,amount:amount,method:method,memberId:memberId,ts:new Date().toISOString()};
+  if(method==='Tab'){
+    var ok=chargeToTab(memberId, amount, sport+' court · '+hours+'h (Take Payment)');
+    if(!ok){ alert('Could not charge this tab. The member must exist in the dashboard (open the dashboard once so its data is on this device).'); return; }
+  }
+  var log=[];try{log=JSON.parse(store.get(LOG_KEY))||[];}catch(e){}
+  log.unshift(entry); store.set(LOG_KEY,JSON.stringify(log));
+  $('doneMsg').textContent='Collected ₱'+amount.toLocaleString()+' ✓';
+  $('doneDetail').innerHTML=esc(entry.renter)+' · '+esc(sport)+' · '+hours+'h · '+esc(method);
+  $('done').classList.add('show');
+  buildInvoice(entry);
+  $('done').scrollIntoView({behavior:'smooth',block:'center'});
+  renderLog();
+}
+
+/* ---- invoice: auto-generated on checkout ---- */
+var INV_KEY='fae-invoices-v1';
+function invoiceNo(d){
+  var ymd=d.getFullYear()+pad2(d.getMonth()+1)+pad2(d.getDate());
+  var all=[];try{all=JSON.parse(store.get(INV_KEY))||[];}catch(e){}
+  var todays=all.filter(function(x){return (x.no||'').indexOf('FAE-INV-'+ymd)===0;});
+  return 'FAE-INV-'+ymd+'-'+pad2(todays.length+1);
+}
+function pad2(n){return n<10?'0'+n:''+n;}
+function bizInfo(){
+  var d={regName:'F.A.E. SPORTS MANAGEMENT SERVICES',phone:'0917 501 8835',
+    email:'filamelitebasketball@gmail.com',address:'Purok 4, San Vicente, Brgy. Banaybanay, Lipa City, Batangas',
+    tagline:'EARNED NOT GIVEN'};
+  try{var c=JSON.parse(store.get('fae-config-v1'));if(c&&c.business)return Object.assign(d,c.business);}catch(e){}
+  return d;
+}
+function buildInvoice(entry){
+  var d=new Date(entry.ts), b=bizInfo();
+  var inv={no:invoiceNo(d), ts:entry.ts, renter:entry.renter, sport:entry.sport,
+    hours:entry.hours, rate:entry.amount/entry.hours, amount:entry.amount, method:entry.method};
+  var all=[];try{all=JSON.parse(store.get(INV_KEY))||[];}catch(e){}
+  all.unshift(inv); store.set(INV_KEY,JSON.stringify(all));
+
+  $('iBiz').textContent=b.regName||'F.A.E. SPORTS MANAGEMENT SERVICES';
+  $('iBizMeta').innerHTML=esc(b.address||'')+'<br>'+esc(b.phone||'')+' · '+esc(b.email||'');
+  $('iNo').textContent=inv.no;
+  $('iDate').textContent=d.toLocaleString();
+  $('iRenter').textContent=inv.renter;
+  $('iService').textContent=inv.sport+' court rental · '+inv.hours+(inv.hours===1?' hour':' hours');
+  $('iRate').textContent='₱'+inv.rate.toLocaleString()+' / hour';
+  $('iMethod').textContent=inv.method;
+  $('iTotal').textContent='₱'+inv.amount.toLocaleString();
+  $('iNote').textContent='Issue the Official Receipt with this invoice. '+(b.tagline||'');
+
+  var subj='F.A.E. Invoice '+inv.no;
+  var body='Invoice '+inv.no+'%0D%0A'+encodeURIComponent(d.toLocaleString())+'%0D%0A%0D%0A'
+    +'Renter: '+encodeURIComponent(inv.renter)+'%0D%0A'
+    +'Service: '+encodeURIComponent(inv.sport+' court rental - '+inv.hours+'h')+'%0D%0A'
+    +'Rate: PHP '+inv.rate+' / hour%0D%0A'
+    +'Method: '+encodeURIComponent(inv.method)+'%0D%0A'
+    +'TOTAL PAID: PHP '+inv.amount+'%0D%0A%0D%0A'
+    +encodeURIComponent(b.regName||'')+'%0D%0A'+encodeURIComponent(b.phone||'');
+  $('iMail').href='mailto:?subject='+encodeURIComponent(subj)+'&body='+body;
+  $('invoice').classList.add('show');
+}
+function reset(){$('done').classList.remove('show');$('invoice').classList.remove('show');$('renter').value='';hours=1;render();window.scrollTo({top:0,behavior:'smooth'});}
+function renderLog(){
+  var log=[];try{log=JSON.parse(store.get(LOG_KEY))||[];}catch(e){}
+  var today=isoDay(new Date());
+  var todays=log.filter(function(e){return isoDay(new Date(e.ts))===today;});
+  if(!todays.length){$('logList').innerHTML='<div class="empty">No payments logged yet today.</div>';$('logSumm').textContent='';return;}
+  var cash=0,gcash=0,h='';
+  todays.forEach(function(e){
+    if(e.method==='Cash')cash+=e.amount;else gcash+=e.amount;
+    h+='<div class="lrow"><div class="who"><b>'+esc(e.renter)+'</b><span>'+esc(e.sport)+' · '+e.hours+'h · '+new Date(e.ts).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+'</span></div>'
+      +'<div style="text-align:right"><div class="amt">₱'+e.amount.toLocaleString()+'</div></div>'
+      +'<span class="m'+(e.method==='Cash'?' cash':'')+'">'+esc(e.method)+'</span></div>';
+  });
+  $('logList').innerHTML=h;
+  $('logSumm').textContent='Today: ₱'+(cash+gcash).toLocaleString()+'  ·  Cash ₱'+cash.toLocaleString()+'  ·  GCash ₱'+gcash.toLocaleString();
+}
+var onEl=document.querySelector('.sport.on'); if(onEl) sport=onEl.dataset.s;
+syncSportPrices();
+render();renderLog();loadMembersList();
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

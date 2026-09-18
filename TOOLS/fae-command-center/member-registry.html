@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. — Member Registry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<script src="assets/fae-core.js?v=6"></script>
+<script src="assets/fae-export.js?v=1"></script>
+<style>
+:root{
+  --void:#050507; --panel:#0d0d12; --panel2:#121218; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#E8C766; --ink:#F4F4F6; --mute:#8B8B98; --dim:#5f5f6d;
+  --red:#D2453B; --green:#3FA66A; --blue:#4A7FB5; --purple:#8C6BD4;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;padding-bottom:40px}
+.wrap{max-width:1200px;margin:0 auto;padding:20px 18px 40px}
+a{color:inherit;text-decoration:none}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+     padding-bottom:14px;border-bottom:2px solid var(--gold);margin-bottom:16px}
+.brand b{display:block;font-family:var(--disp);font-weight:900;font-size:20px;letter-spacing:.03em;line-height:1.1}
+.brand span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--gold);margin-top:5px}
+.home{font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--gold);border:1px solid var(--line2);border-radius:6px;padding:8px 12px;white-space:nowrap}
+.bar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+input[type=text]{background:var(--panel);border:1px solid var(--line2);color:var(--ink);border-radius:9px;padding:10px 13px;font-size:14px;min-width:230px}
+.btn{border:1px solid var(--line2);background:var(--panel2);color:var(--ink);border-radius:9px;padding:10px 15px;font-family:var(--disp);font-weight:700;font-size:12.5px;letter-spacing:.03em;cursor:pointer}
+.btn.go{background:var(--gold);border-color:var(--gold);color:#100c00}
+.count{font-family:var(--mono);font-size:11px;color:var(--mute);margin-left:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px;display:flex;gap:13px;align-items:flex-start}
+.pic{width:66px;height:66px;border-radius:13px;overflow:hidden;flex:none;background:var(--panel2);
+  display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-weight:900;font-size:22px;color:var(--gold)}
+.pic img{width:100%;height:100%;object-fit:cover;display:block}
+.who b{font-size:15px;display:block;line-height:1.2}
+.who .id{font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:2px}
+.tier{display:inline-block;font-size:8.5px;font-weight:800;letter-spacing:.06em;padding:2px 7px;border-radius:9px;margin-top:6px;text-transform:uppercase}
+.tier.guest{background:var(--line2);color:var(--mute)}
+.tier.verified{background:rgba(74,127,181,.2);color:#7FAEDC}
+.tier.full-member{background:rgba(63,166,106,.2);color:#6FD79B}
+.ct{font-size:12px;color:#C0C0CB;line-height:1.7;margin-top:8px}
+.ct .k{color:var(--dim);font-family:var(--mono);font-size:9px;letter-spacing:.1em}
+.empty{grid-column:1/-1;padding:40px;text-align:center;color:var(--mute);font-size:14px;border:1px dashed var(--line2);border-radius:12px}
+.note{font-size:12px;color:var(--mute);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:14px;line-height:1.5}
+@media print{
+  body{background:#fff;color:#111;padding:0}.wrap{max-width:none;padding:0}
+  .top,.bar,.note,.home{display:none!important}
+  .card{background:#fff;border:1px solid #ccc;page-break-inside:avoid}
+  .who b,.ct{color:#111}.pic{background:#eee;color:#333}
+  .grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><b>MEMBER REGISTRY</b><span>F.A.E. SPORTS · HEADSHOTS &amp; CONTACT</span></div>
+    <a class="home" href="console.html">&#8592; HOME</a>
+  </div>
+
+  <div class="note" id="roleNote"></div>
+
+  <div class="bar">
+    <input type="text" id="q" placeholder="Search name, ID, phone, email..." oninput="render()">
+    <button class="btn" onclick="copyAll()">&#128203; Copy all</button>
+    <button class="btn" onclick="window.print()">&#128424; Print</button>
+    <button class="btn go" onclick="FAEExport.open(this,'memreg')">&#8681; Export</button>
+    <span class="count" id="count"></span>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="toast" id="toast" style="position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--gold);color:var(--ink);border-radius:10px;padding:12px 18px;font-size:13px;z-index:60;display:none"></div>
+
+<script>
+/* Member registry: a card per member with headshot + contact, read from the
+   dashboard's member store. View, search, copy, print, export. Read-only —
+   members are created and edited on the Business Dashboard. */
+var $ = id => document.getElementById(id);
+function toast(m){ var t=$('toast'); t.textContent=m; t.style.display='block'; setTimeout(()=>t.style.display='none',2600); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function allMembers(){
+  var out=[];
+  try{ var d=JSON.parse(localStorage.getItem('fae-dashboard-data')); (d&&d.members||[]).forEach(m=>out.push(m)); }catch(e){}
+  return out;
+}
+function tierOf(m){ return m.tier || ((m.bracelets||[]).some(b=>b.active)?'full-member':(m.email&&m.phone?'verified':'guest')); }
+function rows(){
+  var q=($('q').value||'').toLowerCase().trim();
+  return allMembers().filter(m=>{
+    if(!q) return true;
+    return [FAE.memberName(m),m.id,m.phone,m.email].join(' ').toLowerCase().indexOf(q)>=0;
+  }).sort((a,b)=>String(FAE.memberName(a)).localeCompare(String(FAE.memberName(b))));
+}
+function initials(n){ return String(n||'?').split(' ').map(x=>x[0]||'').join('').slice(0,2).toUpperCase(); }
+
+function render(){
+  var list=rows(), total=allMembers().length;
+  $('count').textContent=list.length+' of '+total+' members';
+  $('grid').innerHTML = list.length ? list.map(m=>{
+    var nm=FAE.memberName(m), t=tierOf(m);
+    var pic = m.photo ? `<img src="${m.photo}" alt="">` : initials(nm);
+    return `<div class="card">
+      <div class="pic">${pic}</div>
+      <div style="min-width:0;flex:1">
+        <div class="who"><b>${esc(nm)}</b><span class="id">${esc(m.id)}</span>
+          <span class="tier ${t}">${t.replace('-',' ')}</span></div>
+        <div class="ct">
+          <div><span class="k">PHONE</span> ${esc(m.phone||'—')}</div>
+          <div><span class="k">EMAIL</span> ${esc(m.email||'—')}</div>
+          ${m.address?`<div><span class="k">ADDRESS</span> ${esc(m.address)}</div>`:''}
+          <div><span class="k">TYPE</span> ${esc((m.memberType||'regular'))}${m.visits?` · ${m.visits} visits`:''}${m.joinDate?` · joined ${esc(m.joinDate)}`:''}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('') : `<div class="empty">No members yet.<br><span style="font-size:12px">Add them on the Business Dashboard → Members, or convert a walk-in on the Visitors tab.</span></div>`;
+}
+
+function exportRows(){
+  return rows().map(m=>({
+    ID:m.id, Name:FAE.memberName(m), Tier:tierOf(m), Type:m.memberType||'regular',
+    Phone:m.phone||'', Email:m.email||'', Address:m.address||'',
+    Visits:m.visits||'', Joined:m.joinDate||'', Programs:(m.programs||[]).join(' | '),
+    Source:m.source||'', HasPhoto:m.photo?'yes':'no'
+  }));
+}
+FAEExport.define('memreg',{ label:'Members', file:'member-registry', sheet:'MEMBERS',
+  rows:exportRows, formats:['csv','xls','folder'] });   // no photos in the sheet; headshots stay local
+
+function copyAll(){
+  var lines=rows().map(m=>`${FAE.memberName(m)}\t${m.id}\t${tierOf(m)}\t${m.phone||''}\t${m.email||''}`);
+  var text='Name\tID\tTier\tPhone\tEmail\n'+lines.join('\n');
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>toast(rows().length+' members copied — paste into a sheet'),()=>toast('Copy failed'));
+  } else { toast('Clipboard not available'); }
+}
+
+(function(){
+  var r=FAE.role();
+  $('roleNote').innerHTML = r
+    ? `Signed in as <b style="color:var(--gold-hi)">${r.toUpperCase()}</b>. This registry is for reference — headshots and contact details are personal data, keep them on the office computer.`
+    : `<b style="color:var(--gold-hi)">Reference registry.</b> Headshots and contact details are personal data — keep them on the office computer, do not post them online.`;
+  render();
+})();
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

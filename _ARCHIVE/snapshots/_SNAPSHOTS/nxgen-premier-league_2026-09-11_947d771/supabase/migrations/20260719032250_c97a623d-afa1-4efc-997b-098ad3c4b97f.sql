@@ -1,0 +1,1 @@
+CREATE POLICY "Users delete own pending registration" ON public.registrations FOR DELETE TO authenticated USING (auth.uid() = user_id AND status = 'pending');

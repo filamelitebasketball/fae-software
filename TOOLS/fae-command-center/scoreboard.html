@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. Scoreboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#050507; --panel:#0d0d12; --panel2:#131319; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#E8C766; --ink:#F4F4F6; --mute:#8B8B98; --dim:#61616f;
+  --red:#D2453B; --green:#3FA66A; --blue:#4A7FB5;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1040px;margin:0 auto;padding:22px 18px 70px}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+     padding-bottom:14px;border-bottom:2px solid var(--gold);margin-bottom:18px}
+.brand{font-family:var(--disp);font-weight:900;font-size:19px;letter-spacing:.03em}
+.brand small{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:.22em;color:var(--gold);font-weight:400;margin-top:4px}
+.home{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--mute);border:1px solid var(--line);border-radius:7px;padding:7px 11px}
+.home:hover{color:var(--gold);border-color:var(--gold)}
+
+.intro{font-size:14px;line-height:1.55;color:#B9B9C6;max-width:70ch;margin:0 0 18px}
+.intro b{color:var(--gold-hi)}
+
+.whobar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.whobar label{font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--dim)}
+.whobar select{background:var(--panel);border:1px solid var(--line2);color:var(--ink);font-family:var(--sans);
+  font-size:14px;padding:9px 12px;border-radius:9px;min-width:200px}
+.whobar .role{margin-left:auto}
+.whobar button{background:none;border:1px solid var(--line);color:var(--mute);font-family:var(--mono);
+  font-size:10px;letter-spacing:.1em;padding:8px 12px;border-radius:8px;cursor:pointer}
+.whobar button:hover{border-color:var(--gold);color:var(--gold)}
+
+.grid{display:grid;grid-template-columns:1.1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden}
+.ch{padding:12px 15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.ch h2{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--gold);margin:0;font-weight:400}
+.ch .mini{font-family:var(--mono);font-size:9.5px;color:var(--dim)}
+.cb{padding:15px}
+
+/* level + points */
+.lvltop{display:flex;align-items:center;gap:15px;margin-bottom:14px}
+.lvlring{width:72px;height:72px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;background:#17171e}
+.lvlring b{position:relative;font-family:var(--disp);font-weight:900;font-size:24px;color:var(--gold)}
+.lvlmeta{flex:1}
+.lvlmeta .nm{font-family:var(--disp);font-weight:800;font-size:16px}
+.lvlmeta .pt{font-family:var(--mono);font-size:11px;color:var(--gold-hi);margin-top:2px}
+.xpbar{height:9px;border-radius:6px;background:#1c1c24;overflow:hidden;margin-top:9px}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-hi));width:0}
+.xpsub{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--mute);margin-top:6px}
+
+/* missions */
+.mission{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #16161d;font-size:13.5px}
+.mission:last-child{border:none}
+.mbox{width:16px;height:16px;border-radius:4px;border:1.5px solid #3a3a46;flex:none;position:relative}
+.mbox.on{background:var(--gold);border-color:var(--gold)}
+.mbox.on::after{content:"";position:absolute;left:5px;top:1px;width:4px;height:9px;border:solid #0a0800;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.mission.on{color:var(--dim)}
+.mission.on .mtx{text-decoration:line-through}
+.mission .ph{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--dim);border:1px solid var(--line);border-radius:4px;padding:1px 5px;margin-left:2px}
+.xp{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--gold)}
+.mnote{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.45}
+
+/* streak */
+.streaktop{display:flex;align-items:baseline;gap:9px;margin-bottom:12px}
+.streaktop b{font-family:var(--disp);font-weight:900;font-size:32px;color:var(--gold)}
+.streaktop span{font-size:12px;color:var(--mute)}
+.heat{display:grid;grid-template-columns:repeat(14,1fr);gap:3px}
+.heat i{aspect-ratio:1;border-radius:2px;background:#17171e;position:relative}
+.heat i.l1{background:rgba(201,162,39,.32)} .heat i.l2{background:rgba(201,162,39,.62)} .heat i.l3{background:var(--gold)}
+.heat i.miss{background:rgba(210,69,59,.5)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:8.5px;color:var(--dim);margin-top:9px}
+.legend span{display:flex;align-items:center;gap:4px}
+.legend i{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+/* reward ladder */
+.rung{display:flex;align-items:center;gap:12px;padding:12px 13px;border:1px solid var(--line);border-radius:11px;margin-bottom:9px;background:var(--panel2)}
+.rung:last-child{margin:0}
+.rung.hit{border-color:var(--gold);background:linear-gradient(150deg,rgba(201,162,39,.12),transparent)}
+.rung .pts{font-family:var(--disp);font-weight:900;font-size:17px;color:var(--gold);width:74px;flex:none}
+.rung .rw{flex:1;font-size:13.5px}
+.rung .rw small{display:block;font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:2px;letter-spacing:.05em}
+.rung .tick{font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:4px 8px;border-radius:5px}
+.rung.hit .tick{background:var(--gold);color:#0a0800}
+.rung .tick.lock{background:#1c1c24;color:var(--dim)}
+.nextrw{font-size:12px;color:#B9B9C6;margin-top:12px;line-height:1.5}
+.nextrw b{color:var(--gold-hi)}
+
+/* owner overview */
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--dim);font-weight:400;padding:8px 12px;border-bottom:1px solid var(--line)}
+td{padding:10px 12px;border-bottom:1px solid #16161d;font-size:13px;color:#C6C6D1}
+tr:last-child td{border-bottom:none}
+td.nm{color:var(--ink);font-weight:600}
+td.pt{font-family:var(--mono);color:var(--gold)}
+.rk{font-family:var(--disp);font-weight:900;color:var(--dim)}
+.rk.g{color:var(--gold)}
+
+.empty{padding:22px 14px;text-align:center;color:var(--dim);font-size:13px;line-height:1.5}
+.empty a{color:var(--gold)}
+
+/* edit modal */
+.ov{position:fixed;inset:0;background:rgba(4,4,6,.72);backdrop-filter:blur(3px);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}
+.ov.open{display:flex}
+.sheet{background:var(--panel);border:1px solid var(--line2);border-top:2px solid var(--gold);border-radius:14px;
+  width:100%;max-width:460px;max-height:86vh;overflow:auto;padding:20px}
+.sheet h3{font-family:var(--disp);font-weight:900;font-size:18px;margin:0 0 4px}
+.sheet p{font-size:12.5px;color:var(--mute);margin:0 0 16px;line-height:1.5}
+.rr{display:flex;gap:8px;margin-bottom:8px}
+.rr input{background:var(--void);border:1px solid var(--line2);color:var(--ink);border-radius:8px;padding:9px 10px;font-family:var(--sans);font-size:13px}
+.rr input.p{width:90px;font-family:var(--mono)} .rr input.t{flex:1}
+.rr button{background:none;border:1px solid var(--line);color:var(--red);border-radius:8px;padding:0 11px;cursor:pointer;font-size:16px}
+.sheet .add{background:none;border:1px dashed var(--line2);color:var(--mute);width:100%;padding:9px;border-radius:8px;cursor:pointer;font-family:var(--mono);font-size:11px;margin:4px 0 16px}
+.sheet .save{background:var(--gold);color:#0a0800;border:none;width:100%;padding:11px;border-radius:9px;font-weight:700;cursor:pointer;font-family:var(--sans)}
+.sheet .cancel{background:none;border:none;color:var(--mute);width:100%;padding:10px;cursor:pointer;margin-top:6px;font-family:var(--mono);font-size:11px}
+.pinrow{display:flex;gap:8px;margin-bottom:14px}
+.pinrow input{flex:1;background:var(--void);border:1px solid var(--line2);color:var(--ink);border-radius:8px;padding:10px;font-family:var(--mono)}
+
+.foot{margin-top:26px;font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.08em;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px}
+</style>
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<script src="assets/fae-core.js?v=6"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">F.A.E. SCOREBOARD<small>DO GOOD · EARN POINTS · KEEP THE PLACE RUNNING</small></div>
+    <a class="home" href="console.html">← COMMAND CENTER</a>
+  </div>
+
+  <p class="intro">Every clean shift earns points. Points climb the <b>reward ladder</b> your owner sets — real perks for keeping the building running nicely. Finish your daily missions, keep your streak alive, and watch your level rise.</p>
+
+  <div class="whobar">
+    <label>YOU ARE</label>
+    <select id="who"></select>
+    <span class="role"></span>
+    <button id="ownerBtn" onclick="openEdit()">⚙ Owner: edit rewards</button>
+  </div>
+
+  <div class="grid">
+    <!-- level -->
+    <div class="card">
+      <div class="ch"><h2>YOUR LEVEL</h2><span class="mini" id="ptTotal">—</span></div>
+      <div class="cb">
+        <div class="lvltop">
+          <div class="lvlring"><b id="lvlNum">1</b></div>
+          <div class="lvlmeta">
+            <div class="nm" id="lvlName">—</div>
+            <div class="pt" id="lvlPts">0 points</div>
+            <div class="xpbar"><i id="xpFill"></i></div>
+            <div class="xpsub"><span id="xpNow">0 XP</span><span id="xpNext">next level</span></div>
+          </div>
+        </div>
+        <div class="mnote" id="ptBreak">—</div>
+      </div>
+    </div>
+    <!-- streak -->
+    <div class="card">
+      <div class="ch"><h2>YOUR STREAK</h2><span class="mini">last 14 days</span></div>
+      <div class="cb">
+        <div class="streaktop"><b id="streakN">0</b><span id="streakL">day streak</span></div>
+        <div class="heat" id="heat"></div>
+        <div class="legend">
+          <span><i style="background:var(--gold)"></i>clean day</span>
+          <span><i style="background:rgba(201,162,39,.62)"></i>submitted</span>
+          <span><i style="background:rgba(210,69,59,.5)"></i>missed</span>
+          <span><i style="background:#17171e"></i>off</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- missions -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="ch"><h2>TODAY'S MISSIONS</h2><span class="mini" id="mXp">0 XP today</span></div>
+    <div class="cb">
+      <div id="missions"></div>
+      <div class="mnote">Missions mirror your Start / Shift / End tasks in the Staff Hub. Tick them there — this reads the same list. A fully-completed, submitted day is worth a bonus.</div>
+    </div>
+  </div>
+
+  <!-- reward ladder -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="ch"><h2>REWARD LADDER</h2><span class="mini" id="ladderMini">set by the owner</span></div>
+    <div class="cb">
+      <div id="ladder"></div>
+      <div class="nextrw" id="nextRw"></div>
+    </div>
+  </div>
+
+  <!-- owner overview -->
+  <div class="card" id="ownerCard" style="display:none">
+    <div class="ch"><h2>TEAM — OWNER VIEW</h2><span class="mini">points on this device</span></div>
+    <div class="cb" style="padding:0"><div id="team"></div></div>
+  </div>
+
+  <div class="foot">
+    <div id="ver">scoreboard v1.0 · 2026-09-04</div>
+    <div>POINTS ARE SAVED ON THIS DEVICE · CROSS-DEVICE FAIRNESS COMES WITH SYNC</div>
+  </div>
+</div>
+
+<!-- edit rewards modal -->
+<div class="ov" id="ov">
+  <div class="sheet">
+    <h3>Edit the reward ladder</h3>
+    <p>Owner only. Set the points each reward costs and what it is. Staff see this and strive for it.</p>
+    <div id="pinGate">
+      <div class="pinrow"><input id="pin" type="password" placeholder="Master PIN" inputmode="numeric"><button class="save" style="width:auto;padding:10px 16px" onclick="checkPin()">Unlock</button></div>
+    </div>
+    <div id="editBody" style="display:none">
+      <div id="rungs"></div>
+      <button class="add" onclick="addRung()">+ add a reward</button>
+      <button class="save" onclick="saveLadder()">Save ladder</button>
+    </div>
+    <button class="cancel" onclick="closeEdit()">Close</button>
+  </div>
+</div>
+
+<script>
+/* ================= F.A.E. Scoreboard =================
+   Reads (never writes) the Staff Hub + Payroll data to score real activity.
+   Writes only its own config (reward ladder + point weights) to fae-scoreboard-v1. */
+var VERSION='scoreboard v1.0 · 2026-09-04';
+var SB_KEY='fae-scoreboard-v1', STAFF_KEY='fae-staff-v1', PAY_KEY='fae-payroll-v1', WHO_KEY='fae-scoreboard-who';
+var MASTER_PIN='2021';
+
+var DEFAULT_LADDER=[
+  {pts:300,  reward:'Free drink of choice',        note:'from the fridge'},
+  {pts:600,  reward:'₱200 snack / load',           note:'owner provides'},
+  {pts:1000, reward:'Half-day off or ₱500 bonus',  note:'owner picks'},
+  {pts:1800, reward:'Employee of the month',        note:'+ ₱1,000'}
+];
+var WEIGHTS={task:10, perfectDay:30, confirm:5, streakStep:10};
+/* Fallback task list — mirrors DEFTASKS in staff.html, so missions show even before
+   the Staff Hub has been opened on this device (which is what saves taskDefs). */
+var DEFTASKS=[
+  {id:'t1',phase:'Start',t:'Check today’s schedule board'},
+  {id:'t2',phase:'Start',t:'Count the drinks fridge'},
+  {id:'t3',phase:'Start',t:'Walk the court'},
+  {id:'t4',phase:'Start',t:'Confirm the cash float'},
+  {id:'t5',phase:'Shift',t:'Confirm every renter on arrival'},
+  {id:'t6',phase:'Shift',t:'Mark each payment immediately'},
+  {id:'t7',phase:'Shift',t:'Log incidents as they happen'},
+  {id:'t8',phase:'End',t:'Count the drinks fridge again'},
+  {id:'t9',phase:'End',t:'Reconcile cash against records'},
+  {id:'t10',phase:'End',t:'Note no-shows and tomorrow’s first booking'},
+  {id:'t11',phase:'End',t:'Secure the court'}
+];
+var LEVEL_SIZE=500;
+var LEVEL_NAMES=['Rookie','Front Desk','Front Desk Pro','Shift Leader','Floor Captain','Veteran','Legend'];
+
+function $(id){return document.getElementById(id);}
+function pad(n){return n<10?'0'+n:''+n;}
+function isoDay(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+var store={get:function(k){try{return localStorage.getItem(k);}catch(e){return null;}},
+           set:function(k,v){try{localStorage.setItem(k,v);return true;}catch(e){return false;}}};
+function parse(k){try{var r=store.get(k);return r?JSON.parse(r):null;}catch(e){return null;}}
+
+$('ver').textContent=VERSION;
+
+/* ---- config (ladder + weights) ---- */
+var CFG=parse(SB_KEY)||{};
+if(!CFG.ladder||!CFG.ladder.length) CFG.ladder=JSON.parse(JSON.stringify(DEFAULT_LADDER));
+if(!CFG.weights) CFG.weights=JSON.parse(JSON.stringify(WEIGHTS));
+function saveCfg(){store.set(SB_KEY,JSON.stringify(CFG));}
+
+/* ---- roster (payroll first, then staff-local) ---- */
+function roster(){
+  var out=[],seen={};
+  var pay=parse(PAY_KEY);
+  if(pay&&pay.emps) pay.emps.forEach(function(e){ if(e&&e.name&&e.active!==false){out.push({id:e.id,name:e.name,pos:e.pos||'Staff'});seen[e.name.toLowerCase()]=1;} });
+  var st=parse(STAFF_KEY);
+  if(st&&st.staff) st.staff.forEach(function(s){ if(s&&s.name&&!seen[String(s.name).toLowerCase()]) out.push({id:s.id,name:s.name,pos:s.pos||'Staff'}); });
+  return out;
+}
+
+/* ---- scoring from real Staff Hub data ---- */
+function scoreFor(empId){
+  var st=parse(STAFF_KEY)||{};
+  var tasks=st.tasks||{}, confirms=st.confirms||{}, shifts=st.shifts||{}, defs=st.taskDefs;
+  var totalTasks=(defs&&defs.length)?defs.length:11;
+  var W=CFG.weights, pts=0, doneTasks=0, perfectDays=0, okConfirms=0, submittedDates=[];
+
+  for(var d in tasks){ var r=tasks[d];
+    if(!r||!r.submittedBy) continue;
+    if(empId && r.empId && r.empId!==empId) continue;      // attribute when known
+    submittedDates.push(d);
+    var done=(typeof r.doneCount==='number')?r.doneCount:(r.items?Object.keys(r.items).filter(function(k){return r.items[k];}).length:0);
+    var tot=r.total||totalTasks;
+    doneTasks+=done; pts+=done*W.task;
+    if(done>=tot){perfectDays++; pts+=W.perfectDay;}
+  }
+  for(var k in confirms){ var c=confirms[k];
+    if(!c) continue; if(empId&&c.empId&&c.empId!==empId) continue;
+    if(c.status==='ok'){okConfirms++; pts+=W.confirm;}
+  }
+  // streak: consecutive days up to today with a submitted day
+  var subset={}; submittedDates.forEach(function(d){subset[d]=1;});
+  var streak=0, cur=new Date();
+  // allow today not yet submitted: start from yesterday if today missing
+  if(!subset[isoDay(cur)]) cur.setDate(cur.getDate()-1);
+  while(subset[isoDay(cur)]){streak++; cur.setDate(cur.getDate()-1);}
+  if(streak>=5) pts+=Math.floor(streak/5)*W.streakStep*5;
+
+  return {pts:pts, doneTasks:doneTasks, perfectDays:perfectDays, okConfirms:okConfirms, streak:streak, submitted:subset, totalTasks:totalTasks};
+}
+
+/* ---- render ---- */
+var CURRENT=null;
+function levelOf(pts){var l=Math.floor(pts/LEVEL_SIZE); return {n:l+1, name:LEVEL_NAMES[Math.min(l,LEVEL_NAMES.length-1)], inLvl:pts%LEVEL_SIZE};}
+
+function renderWho(){
+  var r=roster(), sel=$('who');
+  if(!r.length){ sel.innerHTML='<option>— no staff yet —</option>'; return; }
+  var saved=store.get(WHO_KEY);
+  sel.innerHTML=r.map(function(e){return '<option value="'+esc(e.id)+'">'+esc(e.name)+' · '+esc(e.pos)+'</option>';}).join('');
+  if(saved && r.some(function(e){return e.id===saved;})) sel.value=saved;
+  CURRENT=r.find(function(e){return e.id===sel.value;})||r[0];
+  document.querySelector('.role').textContent=CURRENT?CURRENT.pos:'';
+}
+
+function renderAll(){
+  /* No roster yet (fresh device): still show the missions and the reward ladder so the
+     page explains itself, instead of rendering nothing. */
+  if(!CURRENT){
+    var st0=parse(STAFF_KEY)||{};
+    var defs0=(st0.taskDefs&&st0.taskDefs.length)?st0.taskDefs:DEFTASKS;
+    $('ptTotal').textContent='0 pts';
+    $('lvlNum').textContent='1'; $('lvlName').textContent='—';
+    $('lvlPts').textContent='0 points'; $('xpFill').style.width='0%';
+    $('xpNow').textContent='0 / '+LEVEL_SIZE+' XP'; $('xpNext').textContent='Level 2';
+    $('ptBreak').innerHTML='No staff on this device yet. Add employees in <a href="payroll.html" style="color:var(--gold)">Payroll</a> and points start counting.';
+    $('streakN').textContent='0'; $('streakL').textContent='day streak';
+    var hh0=''; for(var i0=0;i0<14;i0++) hh0+='<i></i>';
+    $('heat').innerHTML=hh0;
+    $('missions').innerHTML=defs0.map(function(d){
+      return '<div class="mission"><i class="mbox"></i><span class="mtx">'+esc(d.t)+'</span>'
+        +'<span class="ph">'+esc(d.phase)+'</span><span class="xp">+'+CFG.weights.task+'</span></div>';}).join('');
+    $('mXp').textContent='0 XP today';
+    renderLadder(0);
+    $('ownerCard').style.display='none';
+    return;
+  }
+  var s=scoreFor(CURRENT.id);
+  var lv=levelOf(s.pts);
+  $('ptTotal').textContent=s.pts.toLocaleString()+' pts';
+  $('lvlNum').textContent=lv.n;
+  $('lvlName').textContent=lv.name;
+  $('lvlPts').textContent=s.pts.toLocaleString()+' points';
+  $('xpFill').style.width=Math.round(lv.inLvl/LEVEL_SIZE*100)+'%';
+  $('xpNow').textContent=lv.inLvl+' / '+LEVEL_SIZE+' XP';
+  $('xpNext').textContent='Level '+(lv.n+1);
+  $('ptBreak').innerHTML='From <b style="color:var(--gold-hi)">'+s.doneTasks+'</b> tasks done, <b style="color:var(--gold-hi)">'+s.perfectDays+'</b> perfect days, <b style="color:var(--gold-hi)">'+s.okConfirms+'</b> confirmed shifts.';
+
+  // streak + heatmap
+  $('streakN').textContent=s.streak;
+  $('streakL').textContent=(s.streak===1?'day streak':'day streak')+(s.streak>=5?' 🔥':'');
+  var st=parse(STAFF_KEY)||{}, shifts=st.shifts||{}, tasks=st.tasks||{};
+  var hh='', today=new Date();
+  for(var i=13;i>=0;i--){ var dd=new Date(today); dd.setDate(dd.getDate()-i); var key=isoDay(dd);
+    var rec=tasks[key], sched=shifts[key]&&shifts[key].length;
+    var cls='';
+    if(rec&&rec.submittedBy&&(!CURRENT.id||!rec.empId||rec.empId===CURRENT.id)){
+      var done=(typeof rec.doneCount==='number')?rec.doneCount:0, tot=rec.total||s.totalTasks;
+      cls=(done>=tot)?'l3':'l2';
+    } else if(sched){ cls='miss'; }
+    hh+='<i class="'+cls+'" title="'+key+'"></i>';
+  }
+  $('heat').innerHTML=hh;
+
+  // missions today
+  var defs=(st.taskDefs&&st.taskDefs.length)?st.taskDefs:DEFTASKS, todayISO=isoDay(new Date());
+  var trec=tasks[todayISO]||{items:{}}, items=trec.items||{};
+  if(!defs.length){
+    $('missions').innerHTML='<div class="empty">No task list found on this device yet.<br><a href="staff.html">Open the Staff Hub →</a></div>';
+    $('mXp').textContent='0 XP today';
+  } else {
+    var xp=0, mh='';
+    defs.forEach(function(d){
+      var on=!!items[d.id]; if(on) xp+=CFG.weights.task;
+      mh+='<div class="mission'+(on?' on':'')+'"><i class="mbox'+(on?' on':'')+'"></i>'
+        +'<span class="mtx">'+esc(d.t)+'</span><span class="ph">'+esc(d.phase)+'</span>'
+        +'<span class="xp">+'+CFG.weights.task+'</span></div>';
+    });
+    $('missions').innerHTML=mh;
+    $('mXp').textContent=xp+' XP today';
+  }
+
+  renderLadder(s.pts);
+  renderTeam();
+}
+
+function renderLadder(pts){
+  var L=CFG.ladder.slice().sort(function(a,b){return a.pts-b.pts;});
+  var h='', next=null;
+  L.forEach(function(r){
+    var hit=pts>=r.pts;
+    if(!hit&&!next) next=r;
+    h+='<div class="rung'+(hit?' hit':'')+'"><div class="pts">'+r.pts.toLocaleString()+'</div>'
+      +'<div class="rw">'+esc(r.reward)+(r.note?'<small>'+esc(r.note)+'</small>':'')+'</div>'
+      +'<div class="tick'+(hit?'':' lock')+'">'+(hit?'UNLOCKED':'LOCKED')+'</div></div>';
+  });
+  $('ladder').innerHTML=h;
+  if(next){ var need=next.pts-pts;
+    $('nextRw').innerHTML='<b>'+need.toLocaleString()+' points</b> to go for <b>'+esc(next.reward)+'</b>. Keep the streak alive.';
+  } else { $('nextRw').innerHTML='<b>Every reward unlocked.</b> Talk to the owner about what is next.'; }
+}
+
+function renderTeam(){
+  // owner view: show if current role looks like owner/master, or always as a quiet section
+  var r=roster();
+  if(!r.length){ $('ownerCard').style.display='none'; return; }
+  var rows=r.map(function(e){var s=scoreFor(e.id); return {name:e.name,pos:e.pos,pts:s.pts,streak:s.streak};});
+  rows.sort(function(a,b){return b.pts-a.pts;});
+  var h='<table><tr><th>#</th><th>NAME</th><th>STREAK</th><th>POINTS</th></tr>';
+  rows.forEach(function(x,i){
+    h+='<tr><td class="rk'+(i<2?' g':'')+'">'+(i+1)+'</td><td class="nm">'+esc(x.name)+'</td>'
+      +'<td>'+x.streak+'d</td><td class="pt">'+x.pts.toLocaleString()+'</td></tr>';
+  });
+  $('team').innerHTML=h+'</table>';
+  $('ownerCard').style.display='';
+}
+
+/* ---- owner: edit ladder (PIN gated) ---- */
+function openEdit(){ $('ov').classList.add('open'); $('pinGate').style.display=''; $('editBody').style.display='none'; $('pin').value=''; setTimeout(function(){$('pin').focus();},50); }
+function closeEdit(){ $('ov').classList.remove('open'); }
+function checkPin(){ if($('pin').value===MASTER_PIN){ $('pinGate').style.display='none'; $('editBody').style.display=''; renderRungs(); } else { $('pin').value=''; $('pin').placeholder='Wrong PIN — try again'; } }
+$('ov').addEventListener('click',function(e){ if(e.target===this) closeEdit(); });
+document.addEventListener('keydown',function(e){ if(e.key==='Enter'&&$('pinGate').style.display!=='none'&&$('ov').classList.contains('open')) checkPin(); });
+
+function renderRungs(){
+  var h='';
+  CFG.ladder.forEach(function(r,i){
+    h+='<div class="rr"><input class="p" type="number" value="'+r.pts+'" data-i="'+i+'" data-f="pts">'
+      +'<input class="t" value="'+esc(r.reward)+'" data-i="'+i+'" data-f="reward" placeholder="reward">'
+      +'<button onclick="delRung('+i+')">&times;</button></div>';
+  });
+  $('rungs').innerHTML=h;
+}
+function readRungs(){
+  var arr=[];
+  $('rungs').querySelectorAll('.rr').forEach(function(row){
+    var p=row.querySelector('[data-f=pts]').value, t=row.querySelector('[data-f=reward]').value.trim();
+    if(t&&p!=='') arr.push({pts:parseInt(p,10)||0, reward:t, note:''});
+  });
+  return arr;
+}
+function addRung(){ CFG.ladder=readRungs(); CFG.ladder.push({pts:0,reward:'',note:''}); renderRungs(); }
+function delRung(i){ CFG.ladder=readRungs(); CFG.ladder.splice(i,1); renderRungs(); }
+function saveLadder(){ var a=readRungs(); if(!a.length){a=JSON.parse(JSON.stringify(DEFAULT_LADDER));} CFG.ladder=a.sort(function(x,y){return x.pts-y.pts;}); saveCfg(); closeEdit(); renderAll(); }
+
+/* ---- boot ---- */
+$('who').addEventListener('change',function(){ store.set(WHO_KEY,this.value); var r=roster(); CURRENT=r.find(function(e){return e.id===this.value;}.bind(this))||r[0]; document.querySelector('.role').textContent=CURRENT?CURRENT.pos:''; renderAll(); });
+renderWho();
+renderAll();
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

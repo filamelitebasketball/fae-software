@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "sdk_version": "0.23.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://lpsjbgdxkguouryexoth.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "nxgen-premiere-league",
+      "version": "0.1.0",
+      "title": "NXGEN Premier League"
+    },
+    "tools": [
+      {
+        "name": "list_upcoming_games",
+        "title": "List upcoming games",
+        "description": "Return the next NXGEN Premier League games, optionally filtered by division.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "division": {
+              "type": "string",
+              "description": "Optional division filter: Rising Stars, Legacy, 3x3, or King of the Court."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Maximum games to return (default 10)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_leaderboard",
+        "title": "List division leaderboard",
+        "description": "Return the top players in a division ranked by a chosen stat.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "division": {
+              "type": "string",
+              "description": "Division name: Rising Stars, Legacy, 3x3, or King of the Court."
+            },
+            "stat": {
+              "type": "string",
+              "enum": [
+                "ppg",
+                "rpg",
+                "apg",
+                "spg",
+                "bpg",
+                "total_points"
+              ],
+              "description": "Stat to rank by (default ppg)."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "How many players to return (default 10)."
+            }
+          },
+          "required": [
+            "division"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "my_profile",
+        "title": "Get my profile",
+        "description": "Return the signed-in NXGEN player's profile (name, division, position, jersey, socials).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "my_registrations",
+        "title": "List my division registrations",
+        "description": "Return the signed-in user's division registrations and their approval status.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "my_wallet",
+        "title": "Get my wallet balance",
+        "description": "Return the signed-in user's NXGEN wallet balance, tab balance, and credit limit (in pesos).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

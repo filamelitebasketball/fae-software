@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. — Staff QR Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="assets/vendor/qrcode.min.js"></script>
+<script src="assets/fae-core.js?v=6"></script>
+<style>
+:root{
+  --void:#050507; --panel:#0d0d12; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#E8C766; --ink:#F4F4F6; --mute:#8B8B98; --green:#3FA66A; --red:#D2453B;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--ink);font-family:var(--sans)}
+.wrap{max-width:820px;margin:0 auto;padding:20px 18px 50px}
+a{color:inherit;text-decoration:none}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;
+     padding-bottom:13px;border-bottom:2px solid var(--gold);margin-bottom:18px}
+.top b{font-family:var(--disp);font-weight:900;font-size:19px;letter-spacing:.03em}
+.top small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--gold);margin-top:4px}
+.home{font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--gold);border:1px solid var(--line2);border-radius:6px;padding:8px 12px}
+.setup{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+.setup h2{font-family:var(--disp);font-weight:800;font-size:12.5px;letter-spacing:.1em;color:var(--gold);margin:0 0 10px}
+.setup p{font-size:13px;line-height:1.6;color:#C0C0CB;margin:0 0 12px}
+label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--mute);margin-bottom:5px}
+input,select{width:100%;background:#08080c;border:1px solid var(--line2);color:var(--ink);border-radius:9px;
+  padding:11px;font-family:var(--mono);font-size:15px}
+input:focus,select:focus{outline:none;border-color:var(--gold)}
+.two{display:grid;grid-template-columns:1fr 200px;gap:11px;margin-bottom:12px}
+.btn{border:1px solid var(--line2);background:#121218;color:var(--ink);border-radius:9px;padding:11px 16px;
+  font-family:var(--disp);font-weight:700;font-size:12.5px;letter-spacing:.05em;cursor:pointer}
+.btn.go{background:var(--gold);border-color:var(--gold);color:#100c00}
+.state{font-size:12.5px;margin-top:11px;line-height:1.5}
+.state.ok{color:#6FD79B} .state.warn{color:var(--gold-hi)} .state.bad{color:#E88A83}
+
+/* ---------- the printable sheet: white, so it survives a mono printer ------- */
+.sheet{background:#fff;color:#111;border-radius:12px;padding:34px 30px;text-align:center}
+.sheet .logo{font-family:var(--disp);font-weight:900;font-size:15px;letter-spacing:.22em;color:#8a6f0f}
+.sheet h1{font-family:var(--disp);font-weight:900;font-size:36px;line-height:1.05;margin:14px 0 6px;letter-spacing:-.02em}
+.sheet .sub{font-size:15px;color:#444;margin-bottom:22px}
+.qr{width:300px;height:300px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center}
+.qr svg{width:100%;height:100%}
+.url{font-family:var(--mono);font-size:15px;font-weight:700;color:#111;background:#f1f1f1;
+  border-radius:8px;padding:11px 14px;display:inline-block;margin:6px 0 22px;word-break:break-all}
+.steps{text-align:left;max-width:470px;margin:0 auto;font-size:15px;line-height:1.85;color:#222}
+.steps li{margin-bottom:5px}
+.foot{margin-top:24px;padding-top:16px;border-top:2px solid #ddd;font-size:12.5px;color:#555;line-height:1.6}
+.foot b{color:#111}
+
+@media print{
+  @page{ size:A4; margin:14mm }
+  body{background:#fff}
+  .wrap{max-width:none;padding:0}
+  .top,.setup,.noprint{display:none !important}
+  .sheet{border-radius:0;padding:0;page-break-inside:avoid}
+  .sheet h1{font-size:40px}
+  .qr{width:340px;height:340px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top noprint">
+    <div><b>STAFF QR SHEET</b><small>PRINT IT · TAPE IT BY THE DOOR</small></div>
+    <a class="home" href="console.html">&#8592; HOME</a>
+  </div>
+
+  <div class="setup noprint">
+    <h2>1 &#183; CHECK THE ADDRESS</h2>
+    <p>This is what the staff phones will open. It is filled in automatically when you open this page
+      from the office computer in <b>Wi-Fi mode</b>. If it shows <code>127.0.0.1</code> or
+      <code>localhost</code>, the phones cannot reach it — start the Command Center with
+      <b>START-COMMAND-CENTER-WIFI.bat</b>, then reload this page.</p>
+    <div class="two">
+      <div><label>ADDRESS THE PHONES OPEN</label><input id="url" oninput="draw()"></div>
+      <div><label>SHEET</label>
+        <select id="page" onchange="draw()">
+          <option value="register.html">Visitor Sign-In (door)</option>
+          <option value="tasks.html">Daily Task Ticket</option>
+          <option value="worker.html">Worker Submit (incidents)</option>
+          <option value="console.html">Whole Command Center</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn go" onclick="window.print()">&#128424; PRINT THIS SHEET</button>
+    <button class="btn" onclick="probe()">TEST THE LINK</button>
+    <div class="state" id="state"></div>
+  </div>
+
+  <!-- ---------- what actually prints ---------- -->
+  <div class="sheet">
+    <div class="logo">F.A.E. SPORTS MANAGEMENT</div>
+    <h1 id="title">DAILY TASK TICKET</h1>
+    <div class="sub" id="subtitle">Scan before you start your shift</div>
+    <div class="qr" id="qr"></div>
+    <div class="url" id="urlOut">—</div>
+    <ol class="steps" id="steps"></ol>
+    <div class="foot">
+      <b>No internet needed</b> — this works on the office Wi-Fi alone.<br>
+      If the page will not open: you are on mobile data or the wrong Wi-Fi. Switch to the office
+      network and scan again.<br>
+      If you are off-site, fill it in anyway — the phone gives you a <b>code</b> to send to the office.
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ===========================================================================
+   Builds the QR from whatever address this page was itself opened at, so it is
+   always the address that actually works for the phones. Nothing is sent
+   anywhere — the QR is drawn on this machine.
+   ========================================================================= */
+var $ = function(id){ return document.getElementById(id); };
+var TITLES = {
+  'register.html':['SIGN IN HERE', 'Scan to register - first visit only'],
+  'tasks.html':   ['DAILY TASK TICKET', 'Scan before you start your shift'],
+  'worker.html':  ['REPORT AN INCIDENT', 'Scan to send it to the office'],
+  'console.html': ['F.A.E. COMMAND CENTER', 'Scan to open the front-desk tools']
+};
+
+function base(){
+  try{
+    if(location.protocol === 'http:' || location.protocol === 'https:') return location.origin + '/';
+  }catch(e){}
+  return 'http://192.168.1.10:8765/';       /* a sensible guess to edit by hand */
+}
+/* Each sheet needs its own instructions. A visitor reading "tap TIME IN" would
+   just walk away, so the steps are swapped with the QR. */
+var STEPS = {
+  'register.html': [
+    'Connect to the <b>F.A.E. Wi-Fi</b>.',
+    'Open your camera and point it at the square above.',
+    'Tap the link that appears.',
+    'Fill in your name and mobile number.',
+    'Add the children you brought, if any.',
+    'Tick the box and press <b>REGISTER</b>. First visit only.'
+  ],
+  'tasks.html': [
+    'Connect your phone to the <b>office Wi-Fi</b> first.',
+    'Open the camera and point it at the square above.',
+    'Tap the link that pops up.',
+    'Pick your name, tap <b>TIME IN</b> when you arrive.',
+    'Tick your tasks through the shift.',
+    'Tap <b>TIME OUT</b> and <b>SUBMIT</b> before you leave.'
+  ],
+  'worker.html': [
+    'Connect to the <b>office Wi-Fi</b>.',
+    'Scan the square above and tap the link.',
+    'Choose what you are reporting.',
+    'Fill in what happened, with the time.',
+    'Press <b>SEND</b>.',
+    'Tell the front desk if it is urgent - do not only report it here.'
+  ],
+  'console.html': [
+    'Connect to the <b>office Wi-Fi</b>.',
+    'Scan the square above and tap the link.',
+    'Bookmark it so you do not need this sheet again.'
+  ]
+};
+var FOOTERS = {
+  'register.html': '<b>Why we ask.</b> Your details let us reach you in an emergency and keep '
+    + 'track of who is in the building - especially the children. We do not sell or share them. '
+    + 'Ask the front desk any time to see or delete your record.',
+  'default': '<b>No internet needed</b> - this works on the office Wi-Fi alone.<br>'
+    + 'If the page will not open: you are on mobile data or the wrong Wi-Fi. Switch to the office '
+    + 'network and scan again.<br>If you are off-site, fill it in anyway - the phone gives you a '
+    + '<b>code</b> to send to the office.'
+};
+function draw(){
+  var u = ($('url').value || '').trim().replace(/\/+$/, '') + '/' + $('page').value;
+  $('urlOut').textContent = u;
+  var page = $('page').value;
+  var t = TITLES[page] || TITLES['tasks.html'];
+  $('title').textContent = t[0];
+  $('subtitle').textContent = t[1];
+  $('steps').innerHTML = (STEPS[page] || STEPS['tasks.html']).map(function(x){ return '<li>' + x + '</li>'; }).join('');
+  var foot = document.querySelector('.foot');
+  if(foot) foot.innerHTML = FOOTERS[page] || FOOTERS['default'];
+  try{
+    var qr = qrcode(0, 'M'); qr.addData(u); qr.make();
+    $('qr').innerHTML = qr.createSvgTag({ cellSize:6, margin:1, scalable:true });
+  }catch(e){
+    $('qr').innerHTML = '<div style="font-size:13px;color:#a00;padding:20px">Address too long for a QR — shorten it.</div>';
+  }
+  checkAddress();
+}
+function checkAddress(){
+  var v = $('url').value;
+  if(/127\.0\.0\.1|localhost/.test(v)){
+    $('state').className = 'state bad';
+    $('state').innerHTML = '&#9888; This address only works on THIS computer. Phones will not open it. '
+      + 'Close the Command Center and start it again with <b>START-COMMAND-CENTER-WIFI.bat</b>, then reload this page.';
+  } else if(/^https?:\/\/(\d+\.){3}\d+/.test(v)){
+    $('state').className = 'state ok';
+    $('state').innerHTML = '&#10003; Looks right — that is a network address the phones can reach.';
+  } else if(/^file:/.test(v) || !v){
+    $('state').className = 'state warn';
+    $('state').innerHTML = 'Type the office computer\'s address, e.g. <b>http://192.168.1.10:8765</b>. '
+      + 'The black launcher window prints it when Wi-Fi mode starts.';
+  } else {
+    $('state').className = 'state warn';
+    $('state').innerHTML = 'Make sure the phones can reach that address on the office Wi-Fi.';
+  }
+}
+/* Ask the office receiver whether it is actually listening. */
+function probe(){
+  $('state').className = 'state warn';
+  $('state').textContent = 'Testing…';
+  FAE.officeOnline().then(function(ok){
+    if(ok){
+      if(/127\.0\.0\.1|localhost/.test($('url').value)){
+        /* the receiver answers, but the printed address only works on this PC */
+        $('state').className = 'state bad';
+        $('state').innerHTML = '&#9888; The receiver is running, but the address above is <b>this computer only</b> — '
+          + 'a phone cannot open it. Look at the black launcher window: it prints the '
+          + '<b>On a PHONE</b> address (something like http://192.168.x.x:8765). Type that in above, then print.';
+        return;
+      }
+      $('state').className = 'state ok';
+      $('state').innerHTML = '&#10003; The office receiver is running. Tickets scanned from this sheet will land in <b>data\\tickets\\</b>.';
+    } else {
+      $('state').className = 'state bad';
+      $('state').innerHTML = '&#9888; The receiver did not answer. Start the Command Center with '
+        + '<b>START-COMMAND-CENTER-WIFI.bat</b> (not the plain launcher), then test again.';
+    }
+  });
+}
+$('url').value = base().replace(/\/+$/, '');
+draw();
+</script>
+</body>
+</html>

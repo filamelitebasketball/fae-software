@@ -1,0 +1,182 @@
+/* ============================================================================
+   F.A.E. Motion Layer — adds movement and depth on top of each page's own CSS.
+   Drop-in: <link rel="stylesheet" href="assets/fae-motion.css?v=1">
+
+   Level is set by fae-core.js on <html data-motion="full|subtle|off">
+   (Settings → Interface → Motion). The operating system's "reduce motion"
+   accessibility setting always wins, no matter what is picked here.
+   Nothing in this file changes layout or colour — remove the <link> and every
+   page still works exactly as before.
+   ========================================================================== */
+
+:root{
+  --fae-fast: 140ms;
+  --fae-med: 260ms;
+  --fae-slow: 460ms;
+  --fae-ease: cubic-bezier(.22,.68,.36,1);      /* soft landing */
+  --fae-pop:  cubic-bezier(.34,1.42,.52,1);     /* slight overshoot */
+}
+
+/* ---------------------------------------------------------------- keyframes */
+@keyframes faeRise   { from{ opacity:0; transform:translateY(14px) } to{ opacity:1; transform:none } }
+@keyframes faeFade   { from{ opacity:0 } to{ opacity:1 } }
+@keyframes faeSlideL { from{ opacity:0; transform:translateX(-16px) } to{ opacity:1; transform:none } }
+@keyframes faePop    { from{ opacity:0; transform:scale(.94) } to{ opacity:1; transform:none } }
+@keyframes faeSheen  { 0%{ background-position:-360px 0 } 100%{ background-position:520px 0 } }
+@keyframes faePulse  { 0%,100%{ opacity:1 } 50%{ opacity:.45 } }
+@keyframes faeRing   { 0%{ box-shadow:0 0 0 0 rgba(201,162,39,.45) } 100%{ box-shadow:0 0 0 12px rgba(201,162,39,0) } }
+@keyframes faeBar    { from{ transform:scaleX(0) } to{ transform:scaleX(1) } }
+
+/* --------------------------------------------------------- entrance motion */
+/* Page shells. Selectors are deliberately broad so every existing page picks
+   this up without being rewritten. */
+[data-motion="full"] body > .wrap,
+[data-motion="full"] .page.active,
+[data-motion="full"] main,
+[data-motion="full"] .content{
+  animation: faeRise var(--fae-slow) var(--fae-ease) both;
+}
+[data-motion="subtle"] body > .wrap,
+[data-motion="subtle"] .page.active,
+[data-motion="subtle"] main,
+[data-motion="subtle"] .content{
+  animation: faeFade var(--fae-med) ease both;
+}
+
+/* Cards, tiles, KPIs stagger in instead of snapping all at once. */
+[data-motion="full"] .card,
+[data-motion="full"] .kpi,
+[data-motion="full"] .st,
+[data-motion="full"] .tile,
+[data-motion="full"] .act,
+[data-motion="full"] .member-card,
+[data-motion="full"] .fae-row{
+  animation: faeRise var(--fae-med) var(--fae-ease) both;
+}
+[data-motion="full"] .kpi:nth-child(2),  [data-motion="full"] .st:nth-child(2),  [data-motion="full"] .tile:nth-child(2)  { animation-delay:40ms }
+[data-motion="full"] .kpi:nth-child(3),  [data-motion="full"] .st:nth-child(3),  [data-motion="full"] .tile:nth-child(3)  { animation-delay:80ms }
+[data-motion="full"] .kpi:nth-child(4),  [data-motion="full"] .st:nth-child(4),  [data-motion="full"] .tile:nth-child(4)  { animation-delay:120ms }
+[data-motion="full"] .kpi:nth-child(5),  [data-motion="full"] .tile:nth-child(5) { animation-delay:160ms }
+[data-motion="full"] .kpi:nth-child(6),  [data-motion="full"] .tile:nth-child(6) { animation-delay:200ms }
+[data-motion="full"] .tile:nth-child(7)  { animation-delay:240ms }
+[data-motion="full"] .tile:nth-child(8)  { animation-delay:270ms }
+[data-motion="full"] .tile:nth-child(n+9){ animation-delay:300ms }
+
+/* Table rows fade in a beat behind their header. */
+[data-motion="full"] tbody tr{ animation: faeFade var(--fae-med) ease both }
+[data-motion="full"] tbody tr:nth-child(2){ animation-delay:30ms }
+[data-motion="full"] tbody tr:nth-child(3){ animation-delay:60ms }
+[data-motion="full"] tbody tr:nth-child(4){ animation-delay:90ms }
+[data-motion="full"] tbody tr:nth-child(n+5){ animation-delay:110ms }
+
+/* Modals / overlays. */
+[data-motion="full"] .modal.active .modal-box,
+[data-motion="full"] .modal.show .modal-box,
+[data-motion="full"] .modal-content,
+[data-motion="full"] .sheet{
+  animation: faePop var(--fae-med) var(--fae-pop) both;
+}
+[data-motion="full"] .modal.active,
+[data-motion="full"] .modal.show{ animation: faeFade var(--fae-fast) ease both }
+
+/* Toasts slide in from the side. */
+[data-motion="full"] .toast,
+[data-motion="full"] #toast{ animation: faeSlideL var(--fae-med) var(--fae-pop) both }
+
+/* --------------------------------------------------------------- hover feel */
+[data-motion="full"] .tile,
+[data-motion="full"] .act,
+[data-motion="full"] .card,
+[data-motion="full"] .member-card,
+[data-motion="full"] .btn,
+[data-motion="full"] button,
+[data-motion="full"] .fae-chip{
+  transition: transform var(--fae-fast) var(--fae-ease),
+              box-shadow var(--fae-fast) var(--fae-ease),
+              border-color var(--fae-fast) ease,
+              background-color var(--fae-fast) ease,
+              color var(--fae-fast) ease;
+}
+[data-motion="full"] .tile:hover,
+[data-motion="full"] .act:hover,
+[data-motion="full"] .member-card:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 10px 26px -12px rgba(0,0,0,.8), 0 0 0 1px rgba(201,162,39,.28);
+}
+[data-motion="full"] .card:hover{ box-shadow: 0 8px 22px -14px rgba(0,0,0,.75) }
+[data-motion="full"] .btn:hover,
+[data-motion="full"] button:hover:not(:disabled){ transform: translateY(-1px) }
+
+/* Press feedback — every level except "off" keeps this, it is the one bit of
+   motion that tells staff the tap registered on a touchscreen. */
+[data-motion="full"] .btn:active,
+[data-motion="full"] button:active:not(:disabled),
+[data-motion="subtle"] .btn:active,
+[data-motion="subtle"] button:active:not(:disabled),
+[data-motion="full"] .tile:active,
+[data-motion="full"] .act:active{
+  transform: scale(.975);
+  transition-duration: 60ms;
+}
+
+/* Keyboard focus stays obvious at every motion level. */
+:focus-visible{ outline:2px solid var(--gold, #C9A227); outline-offset:2px; border-radius:4px }
+
+/* ------------------------------------------------------------ utility bits */
+/* Live/refreshing dot. */
+.fae-live-dot{ display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--green,#3FA66A); vertical-align:middle }
+[data-motion="full"] .fae-live-dot,
+[data-motion="subtle"] .fae-live-dot{ animation: faePulse 1.8s ease-in-out infinite }
+
+/* Attention ring — put class="fae-ping" on a button to draw the eye once. */
+[data-motion="full"] .fae-ping{ animation: faeRing 1.6s var(--fae-ease) 3 }
+
+/* Loading shimmer for anything still fetching. */
+.fae-skel{
+  color: transparent !important;
+  background: linear-gradient(90deg, rgba(255,255,255,.04) 0%, rgba(255,255,255,.11) 42%, rgba(255,255,255,.04) 84%);
+  background-size: 620px 100%;
+  border-radius: 5px;
+}
+[data-motion="full"] .fae-skel,
+[data-motion="subtle"] .fae-skel{ animation: faeSheen 1.25s linear infinite }
+
+/* Growing bar for progress / capacity meters. */
+[data-motion="full"] .pc-fill,
+[data-motion="full"] .fae-bar > i{ transform-origin:left center; animation: faeBar var(--fae-slow) var(--fae-ease) both }
+
+/* Numbers counting up are handled by fae-motion.js; this just stops the text
+   from reflowing while the digits change. */
+.fae-count{ font-variant-numeric: tabular-nums }
+
+/* Row-reveal helper used by the new members list + ticket list. */
+[data-motion="full"] .fae-stagger > *{ animation: faeRise 320ms var(--fae-ease) both }
+[data-motion="full"] .fae-stagger > *:nth-child(1){ animation-delay:0ms }
+[data-motion="full"] .fae-stagger > *:nth-child(2){ animation-delay:26ms }
+[data-motion="full"] .fae-stagger > *:nth-child(3){ animation-delay:52ms }
+[data-motion="full"] .fae-stagger > *:nth-child(4){ animation-delay:78ms }
+[data-motion="full"] .fae-stagger > *:nth-child(5){ animation-delay:104ms }
+[data-motion="full"] .fae-stagger > *:nth-child(6){ animation-delay:130ms }
+[data-motion="full"] .fae-stagger > *:nth-child(7){ animation-delay:156ms }
+[data-motion="full"] .fae-stagger > *:nth-child(n+8){ animation-delay:180ms }
+
+/* Smooth in-page jumps (top tab strip, back-to-top). */
+[data-motion="full"] html, [data-motion="subtle"] html{ scroll-behavior:smooth }
+
+/* ------------------------------------------------------------------- "off" */
+[data-motion="off"] *,
+[data-motion="off"] *::before,
+[data-motion="off"] *::after{
+  animation: none !important;
+  transition: none !important;
+}
+
+/* --------------------------------------------- accessibility override (wins) */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

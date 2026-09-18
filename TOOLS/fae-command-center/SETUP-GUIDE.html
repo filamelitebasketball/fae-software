@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. — Office Setup Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<script src="assets/fae-core.js?v=6"></script>
+<style>
+:root{
+  --void:#050507; --panel:#0d0d12; --panel2:#121218; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#E8C766; --ink:#F4F4F6; --mute:#8B8B98; --dim:#5f5f6d;
+  --red:#D2453B; --green:#3FA66A; --blue:#4A7FB5; --purple:#8C6BD4;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;padding-bottom:50px}
+.wrap{max-width:840px;margin:0 auto;padding:18px 16px 40px}
+a{color:var(--gold-hi)}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;
+     padding-bottom:13px;border-bottom:2px solid var(--gold);margin-bottom:16px}
+.top b{display:block;font-family:var(--disp);font-weight:900;font-size:19px;letter-spacing:.02em;line-height:1.15}
+.top small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--gold);margin-top:5px}
+.home{font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--gold);
+      border:1px solid var(--line2);border-radius:6px;padding:8px 11px;text-decoration:none;white-space:nowrap}
+
+.intro{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:15px 17px;
+  margin-bottom:16px;font-size:14px;line-height:1.65;color:#D5D5DE}
+.intro b{color:var(--gold-hi)}
+
+.toc{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
+.toc a{font-family:var(--mono);font-size:10px;letter-spacing:.1em;padding:6px 11px;border-radius:14px;
+  border:1px solid var(--line2);color:var(--mute);text-decoration:none}
+.toc a:hover{border-color:var(--gold);color:var(--gold-hi)}
+
+.step{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:15px}
+.step > h2{font-family:var(--disp);font-weight:800;font-size:18px;margin:0 0 5px;display:flex;align-items:baseline;gap:11px}
+.step > h2 .n{flex:none;width:31px;height:31px;border-radius:50%;background:var(--gold);color:#100c00;
+  font-family:var(--mono);font-size:14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;align-self:center}
+.when{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;color:var(--dim);margin:0 0 14px 42px}
+p,li{font-size:14.5px;line-height:1.68;color:#D5D5DE}
+p{margin:0 0 11px}
+ol,ul{margin:0 0 12px;padding-left:22px}
+li{margin-bottom:7px}
+strong{color:var(--ink)}
+h3{font-family:var(--disp);font-weight:800;font-size:14px;margin:18px 0 8px;color:var(--gold-hi)}
+code,kbd{font-family:var(--mono);font-size:12.5px;background:rgba(0,0,0,.45);color:var(--gold-hi);
+  padding:2px 6px;border-radius:4px;border:1px solid var(--line)}
+kbd{border-bottom-width:2px}
+
+.key{border-left:3px solid var(--gold);background:rgba(201,162,39,.07);padding:12px 15px;border-radius:0 9px 9px 0;margin:14px 0}
+.warn{border-left:3px solid var(--red);background:rgba(210,69,59,.08);padding:12px 15px;border-radius:0 9px 9px 0;margin:14px 0}
+.ok{border-left:3px solid var(--green);background:rgba(63,166,106,.08);padding:12px 15px;border-radius:0 9px 9px 0;margin:14px 0}
+.key p:last-child,.warn p:last-child,.ok p:last-child{margin-bottom:0}
+
+figure{margin:16px 0;background:#08080c;border:1px solid var(--line2);border-radius:11px;padding:15px;overflow-x:auto}
+figure svg{display:block;margin:0 auto;max-width:100%;height:auto}
+figcaption{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--dim);text-align:center;margin-top:11px}
+
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+th{text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--dim);
+   padding:8px 9px;border-bottom:1px solid var(--line2);vertical-align:bottom}
+td{padding:9px;border-bottom:1px solid var(--line);color:#D5D5DE;vertical-align:top}
+
+/* a fake terminal, so they recognise the real black window */
+.term{background:#000;border:1px solid var(--line2);border-radius:9px;padding:14px 16px;
+  font-family:var(--mono);font-size:12px;line-height:1.75;color:#C9C9D4;overflow-x:auto;white-space:pre}
+.term .g{color:var(--gold-hi)} .term .gr{color:#6FD79B} .term .r{color:#E88A83} .term .d{color:#6a6a78}
+
+.check{list-style:none;padding:0;margin:0}
+.check li{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line)}
+.check li:last-child{border-bottom:0}
+.check .box{flex:none;width:19px;height:19px;border:1.5px solid var(--line2);border-radius:4px;margin-top:2px}
+
+.foot{font-size:12px;color:var(--dim);line-height:1.7;text-align:center;margin-top:26px}
+.actions{position:sticky;bottom:0;background:linear-gradient(0deg,var(--void) 72%,transparent);
+  padding:15px 0 8px;display:flex;gap:9px;flex-wrap:wrap}
+.btn{border:1px solid var(--line2);background:var(--panel2);color:var(--ink);border-radius:10px;
+  padding:12px 18px;font-family:var(--disp);font-weight:700;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.go{background:var(--gold);border-color:var(--gold);color:#100c00}
+
+@media print{
+  body{background:#fff;color:#111;padding:0}
+  .wrap{max-width:none;padding:0}
+  .top,.toc,.actions,.home{display:none!important}
+  .step{background:#fff;border:0;border-bottom:2px solid #ddd;border-radius:0;padding:14px 0;page-break-inside:avoid}
+  .step > h2{color:#111} .step > h2 .n{background:#111;color:#fff}
+  p,li,td{color:#222} .when{color:#666}
+  figure{background:#fff;border-color:#ccc}
+  .term{background:#f2f2f2;color:#111;border-color:#bbb}
+  .term .g,.term .gr,.term .r{color:#111;font-weight:700}
+  code,kbd{background:#eee;color:#111;border-color:#ccc}
+  .key,.warn,.ok{background:#f5f5f5;border-left-color:#666}
+  h3{color:#111}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div><b>OFFICE SETUP GUIDE</b><small>F.A.E. COMMAND CENTER &middot; FIRST-DAY INSTALL</small></div>
+    <a class="home" href="console.html">&#8592; HOME</a>
+  </div>
+
+  <div class="intro">
+    Everything to get the Command Center running in the office, in order.
+    <b>Steps 1 to 6 are the whole job</b> &mdash; about 45 minutes. Steps 7 onward are the
+    extras you can do in the first week. Print this and tick as you go.
+    <br><br>
+    <b>What you need:</b> the office computer (Windows), the office Wi-Fi password, a printer,
+    and one staff phone to test with.
+  </div>
+
+  <div class="toc">
+    <a href="#s1">1 · COPY THE FOLDER</a>
+    <a href="#s2">2 · PYTHON</a>
+    <a href="#s3">3 · FIRST START</a>
+    <a href="#s4">4 · FIREWALL</a>
+    <a href="#s5">5 · SETTINGS</a>
+    <a href="#s6">6 · PRINT QR</a>
+    <a href="#s7">7 · DOOR TABLET</a>
+    <a href="#s8">8 · TEST IT</a>
+    <a href="#s9">9 · GOOGLE SHEET</a>
+    <a href="#s10">10 · BACKUP</a>
+    <a href="#help">TROUBLE</a>
+    <a href="#card">WALL CARD</a>
+  </div>
+
+  <!-- ── the picture of the whole thing ─────────────────────────── -->
+  <figure>
+    <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="How the pieces connect">
+      <defs>
+        <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
+          <path d="M0,0 L7,3.2 L0,6.4 z" fill="#C9A227"/>
+        </marker>
+      </defs>
+      <!-- router -->
+      <rect x="310" y="16" width="140" height="52" rx="9" fill="#121218" stroke="#C9A227" stroke-width="1.5"/>
+      <text x="380" y="39" text-anchor="middle" fill="#E8C766" font-family="Archivo,sans-serif" font-size="13" font-weight="800">OFFICE WI-FI</text>
+      <text x="380" y="55" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="9.5">your existing router</text>
+
+      <!-- office pc -->
+      <rect x="285" y="122" width="190" height="86" rx="10" fill="#121218" stroke="#3FA66A" stroke-width="2"/>
+      <text x="380" y="146" text-anchor="middle" fill="#6FD79B" font-family="Archivo,sans-serif" font-size="13" font-weight="800">OFFICE COMPUTER</text>
+      <text x="380" y="164" text-anchor="middle" fill="#C9C9D4" font-family="monospace" font-size="9.5">START-COMMAND-CENTER-WIFI.bat</text>
+      <text x="380" y="180" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="9">holds all the records</text>
+      <text x="380" y="196" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="9">writes files into data\\</text>
+
+      <!-- phones -->
+      <rect x="40" y="122" width="150" height="86" rx="10" fill="#121218" stroke="#4A7FB5" stroke-width="1.5"/>
+      <text x="115" y="146" text-anchor="middle" fill="#7FAEDC" font-family="Archivo,sans-serif" font-size="12" font-weight="800">STAFF PHONES</text>
+      <text x="115" y="164" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="9">tasks.html</text>
+      <text x="115" y="179" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="9">time in / out</text>
+      <text x="115" y="194" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="9">needs office code</text>
+
+      <rect x="570" y="122" width="150" height="86" rx="10" fill="#121218" stroke="#8C6BD4" stroke-width="1.5"/>
+      <text x="645" y="146" text-anchor="middle" fill="#B49BE8" font-family="Archivo,sans-serif" font-size="12" font-weight="800">VISITOR PHONES</text>
+      <text x="645" y="164" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="9">register.html</text>
+      <text x="645" y="179" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="9">scan QR by the door</text>
+      <text x="645" y="194" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="9">no code needed</text>
+
+      <!-- door tablet -->
+      <rect x="285" y="240" width="190" height="46" rx="9" fill="#121218" stroke="#C9A227" stroke-width="1.5"/>
+      <text x="380" y="260" text-anchor="middle" fill="#E8C766" font-family="Archivo,sans-serif" font-size="12" font-weight="800">DOOR SCREEN</text>
+      <text x="380" y="275" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="9">checkin.html · staff sign-in</text>
+
+      <!-- lines -->
+      <line x1="380" y1="68" x2="380" y2="120" stroke="#C9A227" stroke-width="1.6" marker-end="url(#ar)"/>
+      <line x1="190" y1="150" x2="283" y2="150" stroke="#C9A227" stroke-width="1.6" marker-end="url(#ar)"/>
+      <line x1="570" y1="150" x2="477" y2="150" stroke="#C9A227" stroke-width="1.6" marker-end="url(#ar)"/>
+      <line x1="380" y1="208" x2="380" y2="238" stroke="#C9A227" stroke-width="1.6" marker-end="url(#ar)"/>
+      <text x="236" y="142" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="8.5">sends</text>
+      <text x="524" y="142" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="8.5">sends</text>
+    </svg>
+    <figcaption>EVERYTHING TALKS TO THE OFFICE COMPUTER · NO INTERNET NEEDED</figcaption>
+  </figure>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="step" id="s1">
+    <h2><span class="n">1</span>Copy the folder to the office computer</h2>
+    <div class="when">5 MINUTES · DO THIS FIRST</div>
+    <ol>
+      <li>Copy the whole <code>fae-command-center</code> folder onto the office computer.</li>
+      <li>Put it somewhere permanent &mdash; <code>C:\FAE\fae-command-center</code> or the Desktop.
+          <strong>Not</strong> in Downloads, and <strong>not</strong> inside a synced OneDrive folder.</li>
+      <li>Open the folder. You should see <code>console.html</code>, the two
+          <code>START-COMMAND-CENTER</code> files, and folders called <code>assets</code>,
+          <code>data</code> and <code>logs</code>.</li>
+    </ol>
+    <div class="warn">
+      <p><strong>Why not OneDrive:</strong> it syncs files while the software is writing them,
+      which can corrupt a record halfway through a save. Keep the working folder local and use
+      the backup step (10) to get copies off the machine.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="step" id="s2">
+    <h2><span class="n">2</span>Install Python</h2>
+    <div class="when">10 MINUTES · ONE TIME ONLY</div>
+    <p>Python is what lets the office computer serve the pages to the staff phones. Without it
+       the Command Center still works on that one computer, but no phone can reach it.</p>
+    <ol>
+      <li>Go to <a href="https://python.org/downloads" target="_blank" rel="noopener">python.org/downloads</a>
+          and download the Windows installer.</li>
+      <li>Run it. <strong>Tick "Add python.exe to PATH"</strong> on the very first screen &mdash;
+          this is the step everyone misses, and nothing works without it.</li>
+      <li>Click Install Now, then Close.</li>
+    </ol>
+    <div class="key">
+      <p><strong>Check it worked:</strong> press <kbd>Win</kbd>+<kbd>R</kbd>, type <code>cmd</code>,
+      press Enter, then type <code>python --version</code>. You should see a version number.
+      If it says "not recognised", run the installer again and choose <em>Modify</em> &rarr; tick
+      "Add to environment variables".</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="step" id="s3">
+    <h2><span class="n">3</span>Start it for the first time</h2>
+    <div class="when">2 MINUTES · YOU WILL DO THIS EVERY MORNING</div>
+    <p>Double-click <code>START-COMMAND-CENTER-WIFI.bat</code>.</p>
+    <p>Two things happen: a black window opens, and your browser opens the Console.
+       <strong>The black window must stay open all day.</strong> Closing it stops the phones
+       from being able to send anything. Minimise it, do not close it.</p>
+
+    <h3>Read the black window &mdash; these five lines matter</h3>
+    <div class="term">   F.A.E. COMMAND CENTER  -  office Wi-Fi mode
+   ====================================================
+
+   On THIS computer :  http://127.0.0.1:8765/console.html
+<span class="g">   On a PHONE       :  http://192.168.1.10:8765/tasks.html</span>   <span class="d">&lt;-- WRITE THIS DOWN</span>
+
+   Staff must be on the same Wi-Fi. Print the QR sheet from
+   qr-poster.html so nobody has to type that address.
+
+<span class="g">   OFFICE CODE for phones :  9881</span>                       <span class="d">&lt;-- AND THIS</span>
+   Each phone types it once. Give it only to staff.
+   To change it, edit  data\staff-code.txt  and restart.
+
+   Visitors -> data\visitors    In/out -> data\checkins
+   Keep this window OPEN. Close it to stop.
+   ----------------------------------------------------</div>
+
+    <div class="ok">
+      <p><strong>Write down two things</strong> before you go further:</p>
+      <p>① the <strong>On a PHONE</strong> address (like <code>192.168.1.10:8765</code>)<br>
+         ② the <strong>OFFICE CODE</strong> (4 digits)</p>
+    </div>
+
+    <div class="warn">
+      <p><strong>If the phone address starts with anything other than <code>192.168.</code> or
+      <code>10.</code></strong> the window will say so in a warning. That usually means the
+      computer is on a VPN. Turn the VPN off and restart the launcher &mdash; a phone cannot
+      reach any other kind of address.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="step" id="s4">
+    <h2><span class="n">4</span>Let the phones through the firewall</h2>
+    <div class="when">1 MINUTE · ONE TIME ONLY</div>
+    <p>The first time you start Wi-Fi mode, Windows asks <em>"Allow access?"</em></p>
+    <ul>
+      <li>Tick <strong>Private networks</strong></li>
+      <li>Leave <strong>Public networks</strong> unticked</li>
+      <li>Click <strong>Allow access</strong></li>
+    </ul>
+    <p>Missed the box, or clicked Cancel? Right-click <code>ALLOW-WIFI-FIREWALL.bat</code> &rarr;
+       <strong>Run as administrator</strong>. That adds the same rule.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="step" id="s5">
+    <h2><span class="n">5</span>Fill in Settings</h2>
+    <div class="when">10 MINUTES · DO IT PROPERLY ONCE</div>
+    <p>On the Console, open <strong>Setup once &rarr; Settings</strong>. The master PIN is
+       <code>2021</code>. These numbers feed every other screen &mdash; Take Payment, the worker
+       form, the receipts, the advertiser pack &mdash; so getting them right here fixes them
+       everywhere.</p>
+
+    <table>
+      <thead><tr><th>Section</th><th>Fill in</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Business info</strong></td><td>Registered name, owner, phone, email, address</td><td>Prints on every receipt and on the privacy notice</td></tr>
+        <tr><td><strong>Court rates</strong></td><td>Member and non-member price per sport</td><td>Basketball/volleyball ₱1000/₱1200, pickleball ₱500/₱700 are already set &mdash; change if yours differ</td></tr>
+        <tr><td><strong>Access &amp; roles</strong></td><td>Admin PIN, front-desk PIN</td><td><strong>Change the admin PIN from 1212.</strong> Set a front-desk PIN if the door tablet is somewhere public</td></tr>
+        <tr><td><strong>Data privacy</strong></td><td>Person responsible, contact, retention months</td><td>Legally required, and it appears on the public privacy notice. Do not leave blank</td></tr>
+        <tr><td><strong>Interface</strong></td><td>Motion: Full / Subtle / Off</td><td>Set to Off if the office PC is old and feels slow</td></tr>
+        <tr><td><strong>Online sync</strong></td><td>Leave blank for now</td><td>That is step 9, and it is optional</td></tr>
+      </tbody>
+    </table>
+
+    <div class="warn">
+      <p><strong>Change the PINs today.</strong> Master <code>2021</code> and admin <code>1212</code>
+      are in this guide, which means they are not secrets. The master PIN is fixed in the code, so
+      treat the whole folder as sensitive &mdash; anyone with a copy of it can read the data.
+      This gate stops staff seeing figures they should not; it is not protection against someone
+      who has the folder.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="step" id="s6">
+    <h2><span class="n">6</span>Print the two QR sheets</h2>
+    <div class="when">10 MINUTES · THEN TAPE THEM UP</div>
+    <p>Console &rarr; <strong>Print &amp; post &rarr; Staff QR Sheet</strong>. You print this page
+       <strong>twice</strong>, changing the dropdown between prints.</p>
+
+    <table>
+      <thead><tr><th>Dropdown choice</th><th>Who it is for</th><th>Where it goes</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Visitor Sign-In (door)</strong></td><td>Customers walking in</td><td>At the entrance, eye level</td></tr>
+        <tr><td><strong>Daily Task Ticket</strong></td><td>Staff, start and end of shift</td><td>Inside the office, not public</td></tr>
+      </tbody>
+    </table>
+
+    <ol>
+      <li>Check the address at the top matches the <strong>On a PHONE</strong> line you wrote down.</li>
+      <li>Press <strong>TEST THE LINK</strong>. It should go green.</li>
+      <li>Press <strong>PRINT THIS SHEET</strong>.</li>
+      <li>Change the dropdown, print the second one.</li>
+    </ol>
+
+    <div class="warn">
+      <p><strong>If the address shows <code>127.0.0.1</code> or <code>localhost</code>, do not print.</strong>
+      That address only works on the office computer itself, and the poster would be useless.
+      The page turns red and tells you. Restart with the Wi-Fi launcher and reload the page.</p>
+    </div>
+
+    <p>Also print <strong>Terms &amp; Waiver</strong> once and keep it in a folder at the desk,
+       for anyone without a phone.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="step" id="s7">
+    <h2><span class="n">7</span>Set up the door screen</h2>
+    <div class="when">5 MINUTES · OPTIONAL BUT WORTH IT</div>
+    <p>Any spare tablet or a second monitor at the desk. On it, open the phone address but ending
+       in <code>/checkin.html</code>, for example
+       <code>http://192.168.1.10:8765/checkin.html</code>.</p>
+    <ol>
+      <li>Sign in as <strong>Front desk</strong> (PIN only if you set one).</li>
+      <li>Bookmark it, and set it as the browser home page.</li>
+      <li>At the end of the day press <strong>🔒 LOCK</strong>.</li>
+    </ol>
+    <div class="key">
+      <p><strong>Why it locks:</strong> this screen lists every registered child by name with the
+      adult responsible for them. It must not sit unlocked facing the public. Nothing shows until
+      someone signs in.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="step" id="s8">
+    <h2><span class="n">8</span>Test the whole loop</h2>
+    <div class="when">10 MINUTES · DO NOT SKIP THIS</div>
+    <p>Use one staff phone and walk the full circle before you trust it with real customers.</p>
+
+    <figure>
+      <svg viewBox="0 0 720 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Test flow">
+        <defs><marker id="a2" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto">
+          <path d="M0,0 L7,3.2 L0,6.4 z" fill="#3FA66A"/></marker></defs>
+        <rect x="8" y="34" width="148" height="60" rx="9" fill="#121218" stroke="#4A7FB5" stroke-width="1.5"/>
+        <text x="82" y="58" text-anchor="middle" fill="#7FAEDC" font-family="Archivo,sans-serif" font-size="11.5" font-weight="800">1 · SCAN QR</text>
+        <text x="82" y="75" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="9">on the staff phone</text>
+
+        <rect x="196" y="34" width="148" height="60" rx="9" fill="#121218" stroke="#C9A227" stroke-width="1.5"/>
+        <text x="270" y="58" text-anchor="middle" fill="#E8C766" font-family="Archivo,sans-serif" font-size="11.5" font-weight="800">2 · SUBMIT</text>
+        <text x="270" y="75" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="9">time in, tick, time out</text>
+
+        <rect x="384" y="34" width="148" height="60" rx="9" fill="#121218" stroke="#3FA66A" stroke-width="1.5"/>
+        <text x="458" y="58" text-anchor="middle" fill="#6FD79B" font-family="Archivo,sans-serif" font-size="11.5" font-weight="800">3 · DASHBOARD</text>
+        <text x="458" y="75" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="9">Daily Tickets tab</text>
+
+        <rect x="572" y="34" width="140" height="60" rx="9" fill="#121218" stroke="#8C6BD4" stroke-width="1.5"/>
+        <text x="642" y="58" text-anchor="middle" fill="#B49BE8" font-family="Archivo,sans-serif" font-size="11.5" font-weight="800">4 · FILE</text>
+        <text x="642" y="75" text-anchor="middle" fill="#8B8B98" font-family="monospace" font-size="9">data\tickets\</text>
+
+        <line x1="158" y1="64" x2="194" y2="64" stroke="#3FA66A" stroke-width="1.6" marker-end="url(#a2)"/>
+        <line x1="346" y1="64" x2="382" y2="64" stroke="#3FA66A" stroke-width="1.6" marker-end="url(#a2)"/>
+        <line x1="534" y1="64" x2="570" y2="64" stroke="#3FA66A" stroke-width="1.6" marker-end="url(#a2)"/>
+      </svg>
+      <figcaption>THE TEST: PHONE &rarr; OFFICE COMPUTER &rarr; A FILE YOU CAN OPEN IN EXCEL</figcaption>
+    </figure>
+
+    <h3>A · Staff ticket</h3>
+    <ol>
+      <li>Connect the phone to the <strong>office Wi-Fi</strong>. Not mobile data.</li>
+      <li>Scan the staff QR. The strip at the top should go <strong>green</strong>.</li>
+      <li>Type the office code once when asked.</li>
+      <li>Pick a name, tap TIME IN, tick a task, tap TIME OUT, SUBMIT.</li>
+      <li>You should see <em>"Received by the office computer."</em></li>
+      <li>On the office PC: Dashboard &rarr; <strong>Daily Tickets</strong>. The ticket is there.</li>
+      <li>Open <code>data\tickets\</code>. There is a <code>.csv</code> you can open in Excel.</li>
+    </ol>
+
+    <h3>B · Visitor sign-in</h3>
+    <ol>
+      <li>Scan the visitor QR with any phone.</li>
+      <li>Fill a name and mobile, press <strong>+ Add another child</strong>, add a made-up child.</li>
+      <li>The <strong>parent or guardian</strong> box appears &mdash; tick it, and the two required boxes.</li>
+      <li>Register. Then on the door screen, search that name and tap the tile to check them IN.</li>
+      <li>Dashboard &rarr; <strong>Visitors</strong>: they show as in the building, with the child under them.</li>
+      <li>Delete the test family with <strong>Erase</strong> when you are done.</li>
+    </ol>
+
+    <div class="ok">
+      <p><strong>If all of that worked, you are live.</strong> Everything after this is optional.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="step" id="s9">
+    <h2><span class="n">9</span>Google Sheet sync</h2>
+    <div class="when">20 MINUTES · OPTIONAL · DO IT IN WEEK ONE</div>
+    <p>Everything works without this. Add it when you want to read the numbers from home.</p>
+    <ol>
+      <li>Open the Google Sheet you want the data in.</li>
+      <li><strong>Extensions &rarr; Apps Script.</strong></li>
+      <li>Delete what is there. Paste the script from <code>SYNC-SETUP.md</code> (open that file
+          in Notepad &mdash; the whole script is in it, ready to copy).</li>
+      <li>Save. Then <strong>Deploy &rarr; New deployment &rarr; Web app</strong>.
+          Execute as <strong>you</strong>, access <strong>Anyone with the link</strong>.</li>
+      <li>Copy the deployment URL.</li>
+      <li>Settings &rarr; <strong>Online Sync</strong> &rarr; paste it into the endpoint box,
+          tick <em>Auto-send when online</em>, Save.</li>
+      <li>Registry &rarr; any Export button &rarr; <strong>Send to Google Sheet</strong>. Check the sheet.</li>
+    </ol>
+    <div class="key">
+      <p>Tabs called MEMBERS, TASKS and PAYMENTS are created for you the first time. Sending twice
+      does not duplicate rows. <strong>The visitor register is deliberately not sendable</strong> &mdash;
+      children's details stay on the office computer.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="step" id="s10">
+    <h2><span class="n">10</span>Backups &mdash; the habit that saves you</h2>
+    <div class="when">2 MINUTES A WEEK · THE MOST IMPORTANT HABIT HERE</div>
+    <p>All the records live in the browser on that one computer. A cleared cache, a Windows
+       reinstall or a dead hard drive takes everything with it unless you have a backup.</p>
+    <ol>
+      <li>Console &rarr; <strong>Records &amp; money &rarr; Registry Database</strong>.</li>
+      <li><strong>BACK UP EVERYTHING</strong>. Save it into <code>data\backups\</code>.</li>
+      <li>Copy that file to a USB stick or Google Drive. <strong>Off the computer.</strong></li>
+    </ol>
+    <p>Do it <strong>every Friday</strong> and always before an update. To restore:
+       Registry &rarr; Restore from file.</p>
+    <div class="warn">
+      <p>The backup contains everything, <strong>including children's names and health notes</strong>.
+      Keep the USB stick locked up, or the Drive folder private. A backup in a drawer anyone can
+      open is a data breach waiting to happen.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="step" id="help">
+    <h2><span class="n">?</span>When something does not work</h2>
+    <div class="when">CHECK HERE BEFORE CALLING ANYONE</div>
+    <table>
+      <thead><tr><th>What you see</th><th>What it means</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr><td>Black window closes instantly</td><td>Python missing or not on PATH</td><td>Redo step 2, tick "Add to PATH"</td></tr>
+        <tr><td>Phone cannot open the page</td><td>Wrong Wi-Fi, or mobile data</td><td>Connect to the office Wi-Fi</td></tr>
+        <tr><td>Works on the PC, not on phones</td><td>Firewall</td><td><code>ALLOW-WIFI-FIREWALL.bat</code> as administrator</td></tr>
+        <tr><td>Strip on the phone is gold, not green</td><td>Plain launcher running, or PC off</td><td>Restart with <code>START-COMMAND-CENTER-WIFI.bat</code></td></tr>
+        <tr><td>"Wrong office code"</td><td>Old or mistyped code</td><td>Read it off the black window, retype on the phone. Nothing is lost</td></tr>
+        <tr><td>QR sheet shows 127.0.0.1</td><td>Printed from the wrong address</td><td>Reopen in Wi-Fi mode, retype the phone address, reprint</td></tr>
+        <tr><td>Address changed after a reboot</td><td>Router handed out a new one</td><td>Ask your provider to reserve a fixed IP, then reprint the QR once</td></tr>
+        <tr><td>Numbers look wrong</td><td>Someone edited a rate</td><td>Settings &rarr; check the rates. Dashboard &rarr; <strong>Removed</strong> shows what was deleted and by whom</td></tr>
+        <tr><td>Accidental double charge</td><td>Double tap at the desk</td><td>Inventory &rarr; sales log &rarr; the <strong>×</strong> on that row. Stock and money go back</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="step" id="card">
+    <h2><span class="n">✓</span>Tomorrow's checklist</h2>
+    <div class="when">PRINT THIS PAGE AND TICK AS YOU GO</div>
+    <ul class="check">
+      <li><span class="box"></span><span>Folder copied to the office PC, not in OneDrive</span></li>
+      <li><span class="box"></span><span>Python installed, "Add to PATH" ticked</span></li>
+      <li><span class="box"></span><span><code>START-COMMAND-CENTER-WIFI.bat</code> runs, black window stays open</span></li>
+      <li><span class="box"></span><span>Phone address written down: ________________________</span></li>
+      <li><span class="box"></span><span>Office code written down: __________</span></li>
+      <li><span class="box"></span><span>Firewall allowed for Private networks</span></li>
+      <li><span class="box"></span><span>Settings: business info filled in</span></li>
+      <li><span class="box"></span><span>Settings: rates checked</span></li>
+      <li><span class="box"></span><span>Settings: <strong>admin PIN changed from 1212</strong></span></li>
+      <li><span class="box"></span><span>Settings: privacy officer named</span></li>
+      <li><span class="box"></span><span>Visitor QR printed and taped at the entrance</span></li>
+      <li><span class="box"></span><span>Staff QR printed and posted inside the office</span></li>
+      <li><span class="box"></span><span>Terms &amp; Waiver printed for the desk folder</span></li>
+      <li><span class="box"></span><span>Door screen open on checkin.html and signed in</span></li>
+      <li><span class="box"></span><span>Test staff ticket sent and seen on the dashboard</span></li>
+      <li><span class="box"></span><span>Test visitor registered, checked in, then erased</span></li>
+      <li><span class="box"></span><span>First backup saved and copied off the computer</span></li>
+      <li><span class="box"></span><span>Staff shown: sign in, take payment, log a drink, undo a mistake</span></li>
+    </ul>
+
+    <h3>Daily routine, once you are running</h3>
+    <table>
+      <thead><tr><th>When</th><th>Who</th><th>What</th></tr></thead>
+      <tbody>
+        <tr><td>Opening</td><td>Front desk</td><td>Start the Wi-Fi launcher · sign in on the door screen · submit a task ticket TIME IN</td></tr>
+        <tr><td>All day</td><td>Front desk</td><td>Check people in and out · take payments · log drinks · fix mistakes with the × button</td></tr>
+        <tr><td>Closing</td><td>Front desk</td><td>TIME OUT on the ticket · LOCK the door screen</td></tr>
+        <tr><td>Closing</td><td>Manager</td><td>Dashboard &rarr; Daily Tickets: approve · Removed: check the corrections against the drawer</td></tr>
+        <tr><td>Friday</td><td>Owner</td><td>Registry &rarr; Back up everything · copy it off the machine</td></tr>
+        <tr><td>Monthly</td><td>Owner</td><td>Visitors &rarr; Retention &rarr; review and purge old records</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="intro" style="border-color:rgba(210,69,59,.4)">
+    <b style="color:#E88A83">Three things this guide cannot do for you.</b><br>
+    <b>1.</b> Change the PINs &mdash; they are printed here, so they are not secret.<br>
+    <b>2.</b> Get <code>terms.html</code> reviewed by a Philippine lawyer. It holds a liability
+    waiver and children's data consent, and it is an unreviewed template.<br>
+    <b>3.</b> Make the backups happen. Nothing here can save records that were never copied off
+    the machine.
+  </div>
+
+  <div class="actions">
+    <a class="btn go" href="#" onclick="window.print();return false">&#128424; Print this guide</a>
+    <a class="btn" href="console.html">Open the Console</a>
+    <a class="btn" href="qr-poster.html">QR Sheets</a>
+    <a class="btn" href="settings.html">Settings</a>
+  </div>
+
+  <div class="foot">
+    F.A.E. Command Center · Office Setup Guide · companion files:
+    <code>DAILY-TASK-TICKET-SETUP.md</code> · <code>VISITOR-SYSTEM.md</code> ·
+    <code>PRIVACY-RUNBOOK.md</code> · <code>SYNC-SETUP.md</code>
+  </div>
+
+</div>
+
+<script>
+/* Show the real address and office code when this guide is opened from the
+   office computer itself, so nobody has to copy them off the black window. */
+(function(){
+  try{
+    if(location.protocol.indexOf('http') !== 0) return;
+    var host = location.host;
+    fetch('/fae-code', { cache:'no-store' }).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){
+        if(!j || !j.code) return;
+        var box = document.createElement('div');
+        box.className = 'ok';
+        box.style.margin = '0 0 16px';
+        box.innerHTML = '<p><b>Read from this computer right now:</b><br>' +
+          'Phone address: <code>http://' + host + '/tasks.html</code><br>' +
+          'Office code: <code>' + j.code + '</code><br>' +
+          '<span style="font-size:12.5px;color:var(--mute)">If the address above starts with 127.0.0.1, ' +
+          'you opened this from the plain launcher — the phones need the 192.168 address.</span></p>';
+        var intro = document.querySelector('.intro');
+        intro.parentNode.insertBefore(box, intro.nextSibling);
+      }).catch(function(){});
+  }catch(e){}
+})();
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

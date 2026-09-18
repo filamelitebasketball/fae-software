@@ -1,0 +1,13 @@
+REORG LOG Fri Sep 18 14:13:55 CST 2026
+MOVED: _SNAPSHOTS -> _ARCHIVE/snapshots/
+MOVED: fae-codebase-snapshots -> _ARCHIVE/snapshots/
+MOVED: nxgen-codebase-snapshots -> _ARCHIVE/snapshots/
+UNZIPPED: LinkHub PH.zip -> linkmeph/
+CREATED: fae-basketball/ (empty placeholder)
+MOVED: fae-hub (stale dup) -> _ARCHIVE/
+MOVED: nxgen-premier-league -> SITES/
+MOVED: fae-court-connect -> SITES/
+MOVED: linkmeph -> SITES/
+MOVED: fae-basketball -> SITES/
+MOVED: fae-command-center -> TOOLS/
+MOVED: claude-tooling -> TOOLS/

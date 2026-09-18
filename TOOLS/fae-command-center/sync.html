@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. Sync Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--void:#050507;--panel:#0d0d12;--panel2:#131319;--line:#22222b;--line2:#2e2e39;
+--gold:#C9A227;--gold-hi:#E8C766;--ink:#F4F4F6;--mute:#8B8B98;--dim:#61616f;
+--red:#D2453B;--green:#3FA66A;--blue:#4A7FB5;
+--sans:'DM Sans',system-ui,sans-serif;--disp:'Archivo',system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:18px 16px 60px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:2px solid var(--gold);margin-bottom:16px}
+.brand{font-family:var(--disp);font-weight:900;font-size:18px;letter-spacing:.03em}
+.brand small{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:.2em;color:var(--gold);font-weight:400;margin-top:3px}
+.home{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--mute);border:1px solid var(--line);border-radius:7px;padding:7px 11px}
+.mode{display:flex;align-items:center;gap:11px;border-radius:10px;padding:11px 14px;margin-bottom:16px;font-size:13px;line-height:1.45;border:1px solid var(--line2);background:var(--panel)}
+.mode b{font-family:var(--mono);font-size:10px;letter-spacing:.15em;padding:4px 9px;border-radius:4px;flex:none}
+.mode.live{border-color:rgba(63,166,106,.45);background:rgba(63,166,106,.08)}
+.mode.live b{background:var(--green);color:#04120a}
+.mode.off{border-color:rgba(201,162,39,.45);background:rgba(201,162,39,.08)}
+.mode.off b{background:var(--gold);color:#100c00}
+.mode code{font-family:var(--mono);font-size:11.5px;color:var(--gold-hi);background:rgba(0,0,0,.35);padding:2px 6px;border-radius:4px}
+.tabs{display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap}
+.tabs button{background:var(--panel);border:1px solid var(--line2);color:var(--mute);border-radius:20px;padding:8px 14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;cursor:pointer}
+.tabs button.on{background:var(--gold);color:#0a0800;border-color:var(--gold);font-weight:700}
+.card{border:1px solid var(--line);border-radius:13px;background:var(--panel);overflow:hidden;margin-bottom:14px}
+.ch{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 15px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ch h2{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--gold);margin:0;font-weight:400}
+.ch .mini{font-family:var(--mono);font-size:9.5px;color:var(--dim)}
+.act{background:var(--gold);color:#0a0800;border:none;border-radius:8px;padding:8px 14px;font-family:var(--sans);font-weight:700;font-size:12.5px;cursor:pointer}
+.act.ghost{background:none;border:1px solid var(--line2);color:var(--mute);font-weight:500}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-family:var(--mono);font-size:8.5px;letter-spacing:.11em;color:var(--dim);font-weight:400;padding:9px 13px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 13px;border-bottom:1px solid #17171e;font-size:12.5px;color:#C6C6D1;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.n{color:var(--ink);font-weight:600}
+td.g{font-family:var(--mono);color:var(--gold)}
+.pill{display:inline-block;padding:2px 7px;border-radius:4px;font-family:var(--mono);font-size:9px;letter-spacing:.06em}
+.pill.ok{background:rgba(63,166,106,.16);color:var(--green)}
+.pill.el{background:rgba(201,162,39,.16);color:var(--gold-hi)}
+.pill.no{background:rgba(210,69,59,.16);color:var(--red)}
+.scroll{overflow-x:auto}
+.empty{padding:22px;text-align:center;color:var(--dim);font-size:13px}
+.msg{font-family:var(--mono);font-size:11px;color:var(--green);padding:0 15px 12px;min-height:16px}
+.foot{margin-top:20px;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.06em;text-align:center;line-height:1.7}
+</style>
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<script src="assets/fae-core.js?v=6"></script>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">F.A.E.<small>SYNC ENGINE · PICKLEBALL WORKBOOK</small></div>
+    <a class="home" href="console.html">← HOME</a>
+  </div>
+
+  <div class="mode" id="mode"><b>CHECKING</b><span>Testing whether this machine can read the workbook…</span></div>
+
+  <div class="tabs">
+    <button class="on" data-t="members" onclick="tab('members',this)">MEMBERS</button>
+    <button data-t="rates" onclick="tab('rates',this)">RATE CARD</button>
+    <button data-t="bookings" onclick="tab('bookings',this)">BOOKINGS FEED</button>
+    <button data-t="schedule" onclick="tab('schedule',this)">THIS WEEK</button>
+  </div>
+
+  <div id="v-members" class="view">
+    <div class="card">
+      <div class="ch"><h2>MEMBERS · FROM THE WEBSITE PROFILES</h2>
+        <div><span class="mini" id="mCount">—</span> <button class="act" onclick="importMembers()">Import to Command Center</button></div></div>
+      <div class="scroll" id="members"><div class="empty">Loading…</div></div>
+      <div class="msg" id="mMsg"></div>
+    </div>
+  </div>
+
+  <div id="v-rates" class="view" style="display:none">
+    <div class="card">
+      <div class="ch"><h2>PICKLEBALL RATE CARD</h2>
+        <button class="act" onclick="importRates()">Push into Settings</button></div>
+      <div class="scroll" id="rates"><div class="empty">Loading…</div></div>
+      <div class="msg" id="rMsg"></div>
+    </div>
+  </div>
+
+  <div id="v-bookings" class="view" style="display:none">
+    <div class="card">
+      <div class="ch"><h2>BOOKINGS FEED · WEBSITE-PUSHED</h2><span class="mini" id="bCount">—</span></div>
+      <div class="scroll" id="bookings"><div class="empty">Loading…</div></div>
+    </div>
+  </div>
+
+  <div id="v-schedule" class="view" style="display:none">
+    <div class="card">
+      <div class="ch"><h2>PICKLEBALL — TODAY</h2><span class="mini" id="sNote">—</span></div>
+      <div id="schedule"><div class="empty">Loading…</div></div>
+    </div>
+  </div>
+
+  <div class="foot">sync v1.0 · 2026-09-04 · reads the pickleball workbook read-only<br>
+  Imports save to this device (fae-members-v1 / fae-config-v1).</div>
+</div>
+
+<script>
+/* ===== F.A.E. Sync Engine — pulls the pickleball workbook into the Command Center =====
+   Read-only against Google Sheets. Needs HTTP (the launcher), not file://. */
+var SHEET='11QbrwYmMXZjWv8jWpZs5EfC7uVzmlaWQfIj1OejEsBU';
+var GID={members:'916188038', rates:'34905282', bookings:'492059920'};
+/* one tab per week; add new gids here as tabs are created */
+var WEEKS=[
+ {from:'2026-06-07',gid:'1943398743'},{from:'2026-06-14',gid:'2071499529'},
+ {from:'2026-06-21',gid:'1440831325'},{from:'2026-06-28',gid:'74607362'},
+ {from:'2026-07-05',gid:'1370858121'},{from:'2026-07-12',gid:'1087956405'},
+ {from:'2026-07-19',gid:'1845079834'},{from:'2026-07-26',gid:'73861522'},
+ {from:'2026-08-02',gid:'1244704375'},{from:'2026-08-09',gid:'558012198'},
+ {from:'2026-08-16',gid:'550625468'},{from:'2026-08-23',gid:'906676246'},
+ {from:'2026-08-31',gid:'1368362624'}
+];
+var DAYS=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+function $(id){return document.getElementById(id);}
+function pad(n){return n<10?'0'+n:''+n;}
+function isoDay(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+var store={get:function(k){try{return localStorage.getItem(k);}catch(e){return null;}},
+           set:function(k,v){try{localStorage.setItem(k,v);return true;}catch(e){return false;}}};
+
+function parseCSV(t){var rows=[],row=[],cur='',q=false,i=0;
+  while(i<t.length){var c=t[i];
+    if(q){ if(c==='"'){ if(t[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=c; }
+    else { if(c==='"')q=true; else if(c===','){row.push(cur);cur='';}
+      else if(c==='\n'){row.push(cur);rows.push(row);row=[];cur='';}
+      else if(c!=='\r')cur+=c; }
+    i++;}
+  row.push(cur);rows.push(row);return rows;}
+function url(gid){return 'https://docs.google.com/spreadsheets/d/'+SHEET+'/export?format=csv&gid='+gid;}
+function get(gid){return fetch(url(gid),{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text();}).then(parseCSV);}
+
+/* find the header row by a known column label, return its index */
+function headerRow(rows,label){for(var i=0;i<Math.min(rows.length,12);i++){for(var c=0;c<rows[i].length;c++){if(String(rows[i][c]).trim().toUpperCase()===label)return i;}}return -1;}
+
+var MEMBERS=[],RATES=[],BOOKINGS=[];
+
+function loadMembers(){
+  return get(GID.members).then(function(rows){
+    var h=headerRow(rows,'MEMBER ID'); if(h<0)throw new Error('no header');
+    var col={};rows[h].forEach(function(v,i){col[String(v).trim().toUpperCase()]=i;});
+    MEMBERS=[];
+    for(var i=h+1;i<rows.length;i++){var r=rows[i];
+      var id=String(r[col['MEMBER ID']]||'').trim();
+      if(!/^PB-\d+$/.test(id))continue;            /* skip blanks and the sheet's footnote rows */
+      MEMBERS.push({id:id,name:String(r[col['FULL NAME']]||'').trim(),
+        email:String(r[col['EMAIL']]||'').trim(),mobile:String(r[col['MOBILE']]||'').trim(),
+        tier:String(r[col['TIER']]||'').trim(),discount:String(r[col['DISCOUNT']]||'').trim(),
+        rfid:String(r[col['RFID BAND']]||'').trim(),via:String(r[col['SIGNED IN VIA']]||'').trim(),
+        joined:String(r[col['JOINED']]||'').trim(),status:String(r[col['STATUS']]||'').trim()});}
+    $('mCount').textContent=MEMBERS.length+' members';
+    var h2='<table><tr><th>ID</th><th>NAME</th><th>EMAIL</th><th>MOBILE</th><th>TIER</th><th>RFID</th><th>STATUS</th></tr>';
+    MEMBERS.forEach(function(m){
+      h2+='<tr><td class="g">'+esc(m.id)+'</td><td class="n">'+esc(m.name)+'</td><td>'+esc(m.email)+'</td><td>'+esc(m.mobile)+'</td>'
+        +'<td><span class="pill '+(/elite/i.test(m.tier)?'el':'ok')+'">'+esc(m.tier||'—')+'</span></td>'
+        +'<td class="g">'+esc(m.rfid||'—')+'</td>'
+        +'<td><span class="pill '+(/active/i.test(m.status)?'ok':'no')+'">'+esc(m.status||'—')+'</span></td></tr>';});
+    $('members').innerHTML=h2+'</table>';
+  });
+}
+function loadRates(){
+  return get(GID.rates).then(function(rows){
+    var h=headerRow(rows,'COURT ID'); if(h<0)throw new Error('no header');
+    var col={};rows[h].forEach(function(v,i){col[String(v).trim().toUpperCase()]=i;});
+    RATES=[];var extra={};
+    for(var i=h+1;i<rows.length;i++){var r=rows[i];
+      var id=String(r[col['COURT ID']]||'').trim();
+      var lbl=String(r[1]||'').trim().toUpperCase();
+      if(/PEAK START/.test(lbl))extra.peakStart=String(r[2]||'').trim();
+      if(/PEAK UPLIFT/.test(lbl))extra.peakUplift=String(r[2]||'').trim();
+      if(/MIN BOOKING/.test(lbl))extra.minHours=String(r[2]||'').trim();
+      if(!/^PB-[A-Z0-9]+$/i.test(id))continue;     /* courts only, not the peak/min config rows */
+      RATES.push({id:id,name:String(r[col['COURT NAME']]||'').trim(),
+        rate:String(r[col['RATE / HOUR']]||'').trim(),notes:String(r[col['NOTES']]||'').trim()});}
+    RATES.extra=extra;
+    var h2='<table><tr><th>COURT</th><th>NAME</th><th>RATE/HR</th><th>NOTES</th></tr>';
+    RATES.forEach(function(x){h2+='<tr><td class="g">'+esc(x.id)+'</td><td class="n">'+esc(x.name)+'</td><td class="g">'+esc(x.rate)+'</td><td>'+esc(x.notes)+'</td></tr>';});
+    h2+='</table><div style="padding:11px 13px;font-family:var(--mono);font-size:10.5px;color:var(--dim)">PEAK FROM '+esc(extra.peakStart||'?')+':00 · UPLIFT '+esc(extra.peakUplift||'?')+' · MIN '+esc(extra.minHours||'?')+'H</div>';
+    $('rates').innerHTML=h2;
+  });
+}
+function loadBookings(){
+  return get(GID.bookings).then(function(rows){
+    var h=headerRow(rows,'BOOKING REF'); if(h<0)throw new Error('no header');
+    var col={};rows[h].forEach(function(v,i){col[String(v).trim().toUpperCase()]=i;});
+    BOOKINGS=[];
+    for(var i=h+1;i<rows.length;i++){var r=rows[i];
+      var ref=String(r[col['BOOKING REF']]||'').trim(); if(!ref)continue;
+      BOOKINGS.push({ref:ref,member:String(r[col['MEMBER NAME']]||'').trim(),date:String(r[col['DATE']]||'').trim(),
+        start:String(r[col['START']]||'').trim(),hours:String(r[col['HOURS']]||'').trim(),
+        court:String(r[col['COURT ID']]||'').trim(),amount:String(r[col['AMOUNT (₱)']]||'').trim(),
+        status:String(r[col['STATUS']]||'').trim(),channel:String(r[col['CHANNEL']]||'').trim()});}
+    $('bCount').textContent=BOOKINGS.length+' bookings';
+    if(!BOOKINGS.length){$('bookings').innerHTML='<div class="empty">No website bookings yet.</div>';return;}
+    var h2='<table><tr><th>REF</th><th>MEMBER</th><th>DATE</th><th>START</th><th>HRS</th><th>COURT</th><th>AMOUNT</th><th>STATUS</th><th>VIA</th></tr>';
+    BOOKINGS.forEach(function(b){
+      h2+='<tr><td class="g">'+esc(b.ref)+'</td><td class="n">'+esc(b.member)+'</td><td>'+esc(b.date)+'</td><td class="g">'+esc(b.start)+':00</td>'
+        +'<td>'+esc(b.hours)+'</td><td class="g">'+esc(b.court)+'</td><td class="g">'+esc(b.amount)+'</td>'
+        +'<td><span class="pill '+(/paid/i.test(b.status)?'ok':'no')+'">'+esc(b.status)+'</span></td><td>'+esc(b.channel)+'</td></tr>';});
+    $('bookings').innerHTML=h2+'</table>';
+  });
+}
+function weekGid(){var t=isoDay(new Date()),best=null;
+  for(var i=0;i<WEEKS.length;i++){if(WEEKS[i].from<=t)best=WEEKS[i];else break;}return best;}
+function toMins(l){var m=String(l||'').trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if(!m)return null;var h=+m[1]%12;if(/PM/i.test(m[3]))h+=12;return h*60+(+m[2]);}
+function loadSchedule(){
+  var w=weekGid();
+  if(!w){$('sNote').textContent='no week tab';$('schedule').innerHTML='<div class="empty">This week has no tab registered.</div>';return Promise.resolve();}
+  return get(w.gid).then(function(rows){
+    var want=DAYS[(new Date()).getDay()],dayRow=-1,col=-1;
+    for(var r=0;r<Math.min(rows.length,12);r++){for(var c=0;c<rows[r].length;c++){
+      if(String(rows[r][c]).trim().toUpperCase()===want){dayRow=r;col=c;break;}}if(col>-1)break;}
+    if(col<0){$('sNote').textContent='today not in tab';$('schedule').innerHTML='<div class="empty">Could not find today in the week tab.</div>';return;}
+    var out=[],cur=null;
+    for(var i=dayRow+2;i<rows.length;i++){var row=rows[i];if(!row||row.length<=col+2)continue;
+      var tm=String(row[1]||'').trim();if(!toMins(tm))continue;
+      var nm=String(row[col]||'').trim();
+      if(!nm){if(cur){out.push(cur);cur=null;}continue;}
+      if(cur&&cur.name===nm){cur.end=toMins(tm)+30;}
+      else{if(cur)out.push(cur);cur={name:nm,start:tm,startM:toMins(tm),end:toMins(tm)+30,
+        amount:String(row[col+1]||'').trim(),status:String(row[col+2]||'').trim()};}}
+    if(cur)out.push(cur);
+    $('sNote').textContent='week of '+w.from;
+    if(!out.length){$('schedule').innerHTML='<div class="empty">No pickleball bookings today.</div>';return;}
+    function lbl(m){var h=Math.floor(m/60)%24,mm=m%60,ap=h<12?'AM':'PM',h12=h%12||12;return h12+':'+pad(mm)+' '+ap;}
+    var h2='<div class="scroll"><table><tr><th>TIME</th><th>RENTER</th><th>AMOUNT</th><th>STATUS</th></tr>';
+    out.forEach(function(b){h2+='<tr><td class="g">'+esc(b.start)+' – '+esc(lbl(b.end))+'</td><td class="n">'+esc(b.name)+'</td>'
+      +'<td class="g">'+esc(b.amount||'—')+'</td><td>'+(b.status?'<span class="pill '+(/paid/i.test(b.status)?'ok':'no')+'">'+esc(b.status)+'</span>':'—')+'</td></tr>';});
+    $('schedule').innerHTML=h2+'</table></div>';
+  });
+}
+
+/* ---- imports ---- */
+function importMembers(){
+  if(!MEMBERS.length){$('mMsg').textContent='Nothing loaded yet.';return;}
+  var existing=[];try{existing=JSON.parse(store.get('fae-members-v1'))||[];}catch(e){}
+  var byId={};existing.forEach(function(m){byId[m.id]=m;});
+  var added=0,updated=0;
+  MEMBERS.forEach(function(m){ if(byId[m.id])updated++; else added++; byId[m.id]=m; });
+  var merged=Object.keys(byId).map(function(k){return byId[k];});
+  if(store.set('fae-members-v1',JSON.stringify(merged)))
+    $('mMsg').textContent='Imported — '+added+' new, '+updated+' updated, '+merged.length+' total on this device.';
+  else $('mMsg').textContent='Could not save — storage blocked.';
+}
+function importRates(){
+  if(!RATES.length){$('rMsg').textContent='Nothing loaded yet.';return;}
+  var cfg={};try{cfg=JSON.parse(store.get('fae-config-v1'))||{};}catch(e){}
+  cfg.rates=cfg.rates||{};
+  var single=RATES.find(function(r){return /PB-1|PB-2/.test(r.id);});
+  if(single){var n=parseInt(String(single.rate).replace(/[^\d]/g,''),10);if(n)cfg.rates.pickleball=n;}
+  cfg.pickleball={courts:RATES.map(function(r){return {id:r.id,name:r.name,rate:parseInt(String(r.rate).replace(/[^\d]/g,''),10)||0,notes:r.notes};}),
+    peakStart:RATES.extra.peakStart,peakUplift:RATES.extra.peakUplift,minHours:RATES.extra.minHours};
+  if(store.set('fae-config-v1',JSON.stringify(cfg)))
+    $('rMsg').textContent='Pushed into Settings — pickleball ₱'+(cfg.rates.pickleball||'?')+'/hr plus court list and peak rules.';
+  else $('rMsg').textContent='Could not save — storage blocked.';
+}
+
+/* ---- tabs / boot ---- */
+function tab(t,btn){['members','rates','bookings','schedule'].forEach(function(k){$('v-'+k).style.display=(k===t?'':'none');});
+  document.querySelectorAll('.tabs button').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');}
+
+if(location.protocol==='file:'){
+  $('mode').className='mode off';
+  $('mode').innerHTML='<b>LOCAL ONLY</b><span>Google blocks reading the workbook when the page is opened straight from the folder. Close this and use <code>START-COMMAND-CENTER.bat</code>.</span>';
+  ['members','rates','bookings','schedule'].forEach(function(k){$(k).innerHTML='<div class="empty">Needs live mode.</div>';});
+}else{
+  $('mode').className='mode live';
+  $('mode').innerHTML='<b>LIVE</b><span>Reading the pickleball workbook straight from Google Sheets.</span>';
+  Promise.all([loadMembers().catch(err),loadRates().catch(err),loadBookings().catch(err),loadSchedule().catch(err)]);
+}
+function err(e){console&&console.log&&console.log('sync:',e&&e.message);}
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

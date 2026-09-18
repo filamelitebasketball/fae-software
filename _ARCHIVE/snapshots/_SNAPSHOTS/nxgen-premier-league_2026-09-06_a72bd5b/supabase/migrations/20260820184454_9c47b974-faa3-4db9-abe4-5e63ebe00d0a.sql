@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.prevent_managed_player_privileged_changes() FROM PUBLIC, anon, authenticated;

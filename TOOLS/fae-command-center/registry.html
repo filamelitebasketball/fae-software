@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. — Registry Database</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<script src="assets/fae-core.js?v=6"></script>
+<script src="assets/fae-export.js?v=1"></script>
+<style>
+:root{
+  --void:#050507; --panel:#0d0d12; --panel2:#121218; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#E8C766; --ink:#F4F4F6; --mute:#8B8B98; --dim:#5f5f6d;
+  --red:#D2453B; --green:#3FA66A; --blue:#4A7FB5; --purple:#8C6BD4;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;padding-bottom:60px}
+.wrap{max-width:1160px;margin:0 auto;padding:20px 18px 40px}
+a{color:inherit;text-decoration:none}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+     padding-bottom:14px;border-bottom:2px solid var(--gold);margin-bottom:18px}
+.brand b{display:block;font-family:var(--disp);font-weight:900;font-size:20px;letter-spacing:.03em;line-height:1.1}
+.brand span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--gold);margin-top:5px}
+.home{font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--gold);
+      border:1px solid var(--line2);border-radius:6px;padding:8px 12px}
+
+.lead{font-size:13px;line-height:1.65;color:#C0C0CB;background:var(--panel);border:1px solid var(--line);
+      border-radius:11px;padding:14px 16px;margin-bottom:18px}
+.lead b{color:var(--gold-hi)}
+.lead code{font-family:var(--mono);font-size:11.5px;color:var(--gold-hi);background:rgba(0,0,0,.4);padding:2px 6px;border-radius:4px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;margin-bottom:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card h2{font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.1em;margin:0 0 4px}
+.card .sub{font-size:11.5px;color:var(--mute);margin-bottom:13px;line-height:1.5}
+.big{font-family:var(--disp);font-weight:900;font-size:38px;letter-spacing:-.025em;line-height:1;margin-bottom:4px}
+.big.g{color:var(--gold)} .big.b{color:var(--blue)} .big.gr{color:var(--green)} .big.p{color:var(--purple)}
+.brk{display:flex;flex-wrap:wrap;gap:5px;margin:11px 0 13px}
+.pill{font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:3px 8px;border-radius:10px}
+.row{display:flex;flex-wrap:wrap;gap:7px}
+.btn{border:1px solid var(--line2);background:var(--panel2);color:var(--ink);border-radius:8px;
+     padding:9px 13px;font-family:var(--disp);font-weight:700;font-size:11.5px;letter-spacing:.05em;cursor:pointer}
+.btn.go{background:var(--gold);border-color:var(--gold);color:#100c00}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.locked{border:1px dashed var(--line2);border-radius:10px;padding:18px;text-align:center;color:var(--mute);font-size:12.5px}
+.folder{font-family:var(--mono);font-size:11.5px;line-height:1.85;color:#B9B9C6;background:#08080c;
+        border:1px solid var(--line2);border-radius:10px;padding:14px 16px;overflow-x:auto}
+.folder b{color:var(--gold-hi)}
+.folder .c{color:var(--dim)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--panel2);
+  border:1px solid var(--gold);color:var(--ink);border-radius:10px;padding:12px 18px;font-size:13px;z-index:60;
+  max-width:90vw;text-align:center;box-shadow:0 12px 34px -14px #000}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+th{text-align:left;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--dim);
+   padding:7px 8px;border-bottom:1px solid var(--line2)}
+td{padding:7px 8px;border-bottom:1px solid var(--line)}
+.rolebar{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--mute);margin-bottom:16px}
+.rolebar b{font-family:var(--mono);font-size:10px;letter-spacing:.12em;padding:4px 9px;border-radius:4px;
+  background:rgba(201,162,39,.16);color:var(--gold-hi)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand"><b>REGISTRY DATABASE</b><span>F.A.E. SPORTS · EVERY RECORD IN ONE PLACE</span></div>
+    <a class="home" href="console.html">&#8592; HOME</a>
+  </div>
+
+  <div class="rolebar" id="rolebar"></div>
+
+  <div class="lead">
+    This is the <b>registry</b> — the master list of everything the command centre has recorded on this
+    computer: members, daily task tickets, payments and stock. Use <b>Save to data folder</b> to write a
+    dated copy into <code>fae-command-center\data\</code> so the office always has a file backup that does
+    not depend on a browser. <b>Excel</b> gives you a spreadsheet you can open or paste straight into the
+    Google Sheet; <b>Send to Sheet</b> pushes the rows online once an endpoint is set in Settings.
+  </div>
+
+  <div class="grid">
+
+    <!-- MEMBERS -->
+    <div class="card">
+      <h2>&#128100; MEMBER REGISTRY</h2>
+      <div class="sub">Everyone on this device, from every source, tagged by where they came from.</div>
+      <div class="big g" id="mCount">0</div>
+      <div class="brk" id="mBreak"></div>
+      <div class="row">
+        <button class="btn go" onclick="FAEExport.open(this,'members')">&#8681; EXPORT &#183; 5 WAYS</button>
+      </div>
+    </div>
+
+    <!-- TICKETS -->
+    <div class="card">
+      <h2>&#128203; DAILY TASK TICKETS</h2>
+      <div class="sub">Employee time in / time out and what got done, from tasks.html.</div>
+      <div class="big b" id="tCount">0</div>
+      <div class="brk" id="tBreak"></div>
+      <div class="row">
+        <button class="btn go" onclick="FAEExport.open(this,'tickets')">&#8681; EXPORT &#183; 5 WAYS</button>
+      </div>
+    </div>
+
+    <!-- MONEY (master / trusted admin only) -->
+    <div class="card" id="moneyCard">
+      <h2>&#128179; PAYMENTS &amp; INVOICES</h2>
+      <div class="sub">Desk collections and issued receipts.</div>
+      <div id="moneyBody"></div>
+    </div>
+
+    <!-- STOCK -->
+    <div class="card">
+      <h2>&#127870; STOCK &amp; DRINKS LOG</h2>
+      <div class="sub">Inventory levels and the sales log behind the members' tabs.</div>
+      <div class="big gr" id="sCount">0</div>
+      <div class="brk" id="sBreak"></div>
+      <div class="row">
+        <button class="btn go" onclick="FAEExport.open(this,'stock')">&#8681; EXPORT &#183; 4 WAYS</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- WHOLE-DATABASE BACKUP -->
+  <div class="card" style="margin-bottom:18px">
+    <h2>&#128190; FULL BACKUP &amp; RESTORE</h2>
+    <div class="sub">One file with everything — members, tickets, invoices, stock, settings and the
+      sync outbox. Keep a copy in <code style="font-family:var(--mono)">data\backups\</code> and one off-site.</div>
+    <div class="row">
+      <button class="btn go" onclick="backupAll()">BACK UP EVERYTHING</button>
+      <button class="btn" onclick="document.getElementById('restoreFile').click()">RESTORE FROM FILE</button>
+      <input type="file" id="restoreFile" accept=".json,application/json" style="display:none" onchange="restoreAll(this)">
+    </div>
+    <div id="backupNote" class="sub" style="margin:12px 0 0"></div>
+  </div>
+
+  <!-- OUTBOX -->
+  <div class="card" style="margin-bottom:18px">
+    <h2>&#128228; WAITING TO GO ONLINE</h2>
+    <div class="sub" id="obSub">Rows queued for the Google Sheet / online database.</div>
+    <div class="row">
+      <button class="btn" onclick="pushNow()">PUSH NOW</button>
+      <button class="btn" onclick="location.href='settings.html'">SYNC SETTINGS</button>
+    </div>
+    <div id="obList"></div>
+  </div>
+
+  <!-- FOLDER MAP -->
+  <div class="card">
+    <h2>&#128193; WHERE THE FILES LIVE</h2>
+    <div class="sub">Saved files land in your Downloads unless the browser lets you pick a folder
+      (Chrome or Edge over <code style="font-family:var(--mono)">http://localhost</code> can write straight
+      into <code style="font-family:var(--mono)">data\</code>). Move them here so the registry stays tidy:</div>
+    <div class="folder">
+fae-command-center\<br>
+&nbsp;&nbsp;<b>data\</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>members\</b>&nbsp;&nbsp;&nbsp;&nbsp;<span class="c">FAE-members-YYYY-MM-DD.csv / .xls</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>tickets\</b>&nbsp;&nbsp;&nbsp;&nbsp;<span class="c">FAE-tickets-YYYY-MM-DD.csv  (daily task tickets)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>payments\</b>&nbsp;&nbsp;<span class="c">FAE-payments-YYYY-MM-DD.csv  (master only)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>stock\</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c">FAE-stock-YYYY-MM-DD.csv</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>backups\</b>&nbsp;&nbsp;&nbsp;<span class="c">FAE-full-backup-YYYY-MM-DD.json</span><br>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ===========================================================================
+   Registry — reads every store on this device, shows what is in it, and writes
+   it out as CSV / Excel / JSON, or pushes it to the Google Sheet.
+   Read-only over the data: nothing here edits a record, so it is safe to open.
+   ========================================================================= */
+var $ = function(id){ return document.getElementById(id); };
+function toast(m, ms){ var t=document.createElement('div'); t.className='toast'; t.textContent=m;
+  document.body.appendChild(t); setTimeout(function(){ t.remove(); }, ms||3200); }
+function stamp(){ return new Date().toISOString().slice(0,10); }
+function j(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
+
+/* ---------- the four data sets ---------- */
+function members(){
+  return FAE.allMembers().map(function(m){
+    return { ID:m.id, Name:m.name, Category:FAE.catLabel(m.category), Status:m.status,
+             Phone:m.phone, Email:m.email, NFC:m.nfcUid, Wallet:m.balance, Tab:m.tabBalance,
+             Programs:(m.programs||[]).join(' | '), Joined:m.joinDate, Source:m.origin };
+  });
+}
+function tickets(){
+  return FAE.tasks().map(function(t){
+    return { Ticket:t.id, Date:t.date, Employee:t.name||'', Position:t.pos||'', Shift:t.shift||'',
+             TimeIn:t.timeIn||'', TimeOut:t.timeOut||'', Hours:+t.hours||0,
+             TasksDone:(t.tasks||[]).filter(function(x){return x.done;}).length,
+             TasksTotal:(t.tasks||[]).length, Accomplished:t.acc||'', Issues:t.issue||'',
+             Status:t.status||'', SubmittedAt:t.submittedAt||'' };
+  });
+}
+function payments(){
+  var rows = [];
+  (j('fae-invoices-v1') || []).forEach(function(v){
+    rows.push({ Ref:v.no||v.id||'', Date:v.date||(v.ts||'').slice(0,10), Payer:v.renter||v.name||'',
+                Item:v.desc||v.sport||'', Method:v.method||'', Amount:+v.total||+v.amount||0, Status:v.status||'' });
+  });
+  var d = j('fae-dashboard-data') || {};
+  (d.ledgerEntries || []).forEach(function(l){
+    rows.push({ Ref:l.id||'', Date:(l.timestamp||'').slice(0,10), Payer:l.memberName||l.memberId||'',
+                Item:l.description||'', Method:l.paymentMethod||'', Amount:(+l.amountCents||0)/100, Status:l.entryType||'' });
+  });
+  return rows.sort(function(a,b){ return String(b.Date).localeCompare(String(a.Date)); });
+}
+function stock(){
+  var d = j('fae-dashboard-data') || {}, rows = [];
+  (d.inventory || []).forEach(function(i){
+    /* the dashboard tracks startStock and sold, not a running "stock" field -
+       reading the wrong one reported every drink as 0 left, which would send
+       someone to reorder stock that is sitting in the fridge */
+    var onHand = (i.startStock != null)
+      ? Math.max(0, (+i.startStock || 0) - (+i.sold || 0))
+      : (+i.stock || +i.qty || 0);
+    rows.push({ Item:i.name||i.item||'', Category:i.category||'',
+                OnHand:onHand, Sold:+i.sold||0, StartStock:+i.startStock||0,
+                Price:+i.price||0, Low:+i.lowStock||5 });
+  });
+  return rows;
+}
+var SETS = { members:members, tickets:tickets, payments:payments, stock:stock };
+
+/* One definition per data set. The menu asks for the rows fresh each time it
+   opens, so a filter change is always reflected without re-registering. */
+FAEExport.define('members',  { label:'Members',  file:'members',  sheet:'MEMBERS',  rows:members });
+FAEExport.define('tickets',  { label:'Tickets',  file:'tickets',  sheet:'TASKS',    rows:tickets });
+FAEExport.define('payments', { label:'Payments', file:'payments', sheet:'PAYMENTS', rows:payments });
+FAEExport.define('stock',    { label:'Stock',    file:'stock',    rows:stock, json:false });
+var TITLES = { members:'Members', tickets:'Tickets', payments:'Payments', stock:'Stock' };
+
+/* ---------- output ---------- */
+function out(which, fmt){
+  var rows = SETS[which]();
+  if(!rows.length){ toast('Nothing recorded in ' + TITLES[which] + ' yet'); return; }
+  var base = 'FAE-' + which + '-' + stamp();
+  if(fmt === 'xls') FAE.download(base + '.xls', FAE.xls(rows, Object.keys(rows[0]), TITLES[which]), 'application/vnd.ms-excel');
+  else if(fmt === 'json') FAE.download(base + '.json', JSON.stringify(rows, null, 2), 'application/json');
+  else FAE.download(base + '.csv', FAE.csv(rows), 'text/csv;charset=utf-8');
+  toast(rows.length + ' rows written to ' + base + '.' + fmt);
+}
+function folder(which){
+  var rows = SETS[which]();
+  if(!rows.length){ toast('Nothing to save yet'); return; }
+  var name = 'FAE-' + which + '-' + stamp() + '.csv';
+  Promise.resolve(FAE.saveToFolder(name, FAE.csv(rows), 'text/csv;charset=utf-8')).then(function(r){
+    toast(r && r.picker ? ('Saved ' + name) : ('Saved to Downloads — move it into data\\' + which + '\\'), 4200);
+  });
+}
+function toSheet(tab, which){
+  var rows = SETS[which]();
+  if(!rows.length){ toast('Nothing to send'); return; }
+  FAE.sheetPush(tab, rows);
+  paintOutbox();
+  var s = FAE.syncCfg();
+  if(!s.enabled || !s.endpoint){ toast(rows.length + ' rows queued — set the endpoint in Settings first', 4200); return; }
+  FAE.pushOutbox().then(function(r){
+    paintOutbox();
+    toast(r && r.sent ? (rows.length + ' rows sent to the sheet') : 'Queued — will send when the link is back', 4000);
+  });
+}
+
+/* ---------- full backup ---------- */
+var BACKUP_KEYS = ['fae-dashboard-data','fae-members-v1','fae-registry-members-v1','fae-invoices-v1',
+  'fae-tasks-v1','fae-task-template-v1','fae-payroll-v1','fae-config-v1','fae-outbox','fae-schedule-cache'];
+function backupAll(){
+  var blob = { app:'FAE Command Center', kind:'full-backup', at:new Date().toISOString(), stores:{} };
+  BACKUP_KEYS.forEach(function(k){ var v = localStorage.getItem(k); if(v != null) blob.stores[k] = v; });
+  var name = 'FAE-full-backup-' + stamp() + '.json';
+  Promise.resolve(FAE.saveToFolder(name, JSON.stringify(blob), 'application/json')).then(function(r){
+    $('backupNote').innerHTML = 'Last backup: <b style="color:var(--gold-hi)">' + name + '</b> · '
+      + Object.keys(blob.stores).length + ' stores · ' + (JSON.stringify(blob).length/1024).toFixed(0) + ' KB';
+    toast(r && r.picker ? 'Backup saved' : 'Backup in Downloads — move it into data\\backups\\', 4200);
+  });
+}
+function restoreAll(input){
+  var f = input.files && input.files[0]; if(!f) return;
+  var rd = new FileReader();
+  rd.onload = function(){
+    var b; try{ b = JSON.parse(rd.result); }catch(e){ toast('That file is not a F.A.E. backup'); return; }
+    if(!b || !b.stores){ toast('That file is not a F.A.E. backup'); return; }
+    var n = Object.keys(b.stores).length;
+    if(!confirm('Restore ' + n + ' data stores from ' + f.name + '?\n\nThis REPLACES what is on this computer now.\nBack up first if you are not sure.')) return;
+    Object.keys(b.stores).forEach(function(k){ try{ localStorage.setItem(k, b.stores[k]); }catch(e){} });
+    toast('Restored — reloading…'); setTimeout(function(){ location.reload(); }, 900);
+  };
+  rd.readAsText(f);
+  input.value = '';
+}
+
+/* ---------- outbox ---------- */
+function paintOutbox(){
+  var pend = FAE.outboxPending(), s = FAE.syncCfg();
+  $('obSub').innerHTML = pend.length
+    ? '<b style="color:var(--gold-hi)">' + pend.length + ' item' + (pend.length===1?'':'s') + ' waiting</b> to go to the online sheet.'
+      + (s.enabled && s.endpoint ? ' Endpoint is set — press Push now.' : ' <b>No endpoint set yet</b> — add one in Settings → Online Sync.')
+    : 'Nothing waiting. Everything recorded here has either been sent or is local-only.';
+  if(!pend.length){ $('obList').innerHTML = ''; return; }
+  $('obList').innerHTML = '<table><thead><tr><th>QUEUED</th><th>TYPE</th><th>DETAIL</th></tr></thead><tbody>'
+    + pend.slice(-12).reverse().map(function(x){
+        var it = x.item || {}, det = it.type === 'sheet_append'
+          ? (it.rows||[]).length + ' rows → ' + (it.sheet||'?') + ' tab'
+          : (it.type === 'task_ticket' ? ((it.ticket||{}).name || '') + ' ticket' : '');
+        return '<tr><td>' + (x.ts||'').slice(0,16).replace('T',' ') + '</td><td>' + (it.type||'?') + '</td><td>' + det + '</td></tr>';
+      }).join('') + '</tbody></table>';
+}
+function pushNow(){
+  var s = FAE.syncCfg();
+  if(!s.enabled || !s.endpoint){ toast('Set the endpoint in Settings → Online Sync first', 4000); return; }
+  toast('Pushing…');
+  FAE.pushOutbox().then(function(r){
+    paintOutbox();
+    toast(r && r.sent ? (r.sent + ' sent, ' + (r.failed||0) + ' failed') : 'Nothing sent — check the endpoint', 4000);
+  });
+}
+
+/* ---------- paint ---------- */
+function breakdown(el, counts, colors){
+  $(el).innerHTML = Object.keys(counts).map(function(k){
+    var c = colors[k] || '#8B8B98';
+    return '<span class="pill" style="background:' + c + '22;color:' + c + '">' + k + ' ' + counts[k] + '</span>';
+  }).join('');
+}
+function paint(){
+  /* who is looking */
+  var r = FAE.role();
+  $('rolebar').innerHTML = r
+    ? 'Signed in as <b>' + r.toUpperCase() + '</b> <a href="dashboard.html" style="color:var(--gold);margin-left:6px">switch →</a>'
+    : '<b>NOT SIGNED IN</b> <span>Money records stay hidden until you sign in on the dashboard.</span>';
+
+  /* members */
+  var ms = FAE.allMembers();
+  $('mCount').textContent = ms.length;
+  var mc = {}; ms.forEach(function(m){ var l = FAE.catLabel(m.category); mc[l] = (mc[l]||0)+1; });
+  var colorByLabel = {}; Object.keys(FAE.cats).forEach(function(k){ colorByLabel[FAE.cats[k].label] = FAE.cats[k].color; });
+  breakdown('mBreak', mc, colorByLabel);
+
+  /* tickets */
+  var ts = FAE.tasks();
+  $('tCount').textContent = ts.length;
+  var tc = {}; ts.forEach(function(t){ var s = (t.status||'open').toUpperCase(); tc[s] = (tc[s]||0)+1; });
+  var today = ts.filter(function(t){ return t.date === stamp(); });
+  if(today.length) tc['TODAY'] = today.length;
+  breakdown('tBreak', tc, { SUBMITTED:'#3FA66A', APPROVED:'#4A7FB5', OPEN:'#C9A227', TODAY:'#E8C766' });
+
+  /* stock */
+  var st = stock();
+  $('sCount').textContent = st.length;
+  var low = st.filter(function(i){ return i.Low && i.OnHand <= i.Low; }).length;
+  breakdown('sBreak', low ? { ITEMS:st.length, 'LOW STOCK':low } : { ITEMS:st.length },
+            { ITEMS:'#3FA66A', 'LOW STOCK':'#D2453B' });
+
+  /* money — only for roles allowed to see figures */
+  if(FAE.canSeeMoney()){
+    var ps = payments(), total = ps.reduce(function(a,p){ return a + (+p.Amount||0); }, 0);
+    $('moneyBody').innerHTML = '<div class="big p">' + ps.length + '</div>'
+      + '<div class="brk"><span class="pill" style="background:#C9A22722;color:#E8C766">TOTAL ' + FAE.peso(total) + '</span></div>'
+      + '<div class="row"><button class="btn go" onclick="FAEExport.open(this,\'payments\')">'
+      + '&#8681; EXPORT &#183; 5 WAYS</button></div>';
+  } else {
+    $('moneyBody').innerHTML = '<div class="locked">&#128274; Income figures are for the owner only.<br>'
+      + '<span style="font-size:11.5px">Sign in as master on the <a href="dashboard.html" style="color:var(--gold)">dashboard</a> to open this section.</span></div>';
+  }
+
+  paintOutbox();
+  /* keep the flat member registry current so a backup always carries the roster */
+  try{ FAE.saveMemberRegistry(); }catch(e){}
+}
+paint();
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

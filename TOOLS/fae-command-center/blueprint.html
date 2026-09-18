@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. × NXGEN — Master Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--void:#050507;--s1:#0c0c10;--s2:#131318;--s3:#1a1a21;--gold:#C9A227;--gold-l:#E8C468;--gold-d:#9a7a1a;
+--paint:#f0f2f5;--txt2:#9aa0ae;--txt3:#6b7180;--bd:rgba(255,255,255,.08);--bd-g:rgba(201,162,39,.28);
+--red:#ef4444;--grn:#22c55e;--amb:#f59e0b;--blu:#5b8fe8;
+--disp:'Archivo',system-ui,sans-serif;--body:'DM Sans',system-ui,-apple-system,"Segoe UI",sans-serif;--mono:'JetBrains Mono',ui-monospace,Consolas,monospace}
+body{background:var(--void);color:var(--paint);font-family:var(--body);line-height:1.65;
+background-image:radial-gradient(1100px 600px at 85% -10%,rgba(201,162,39,.10),transparent 62%);background-attachment:fixed}
+.wrap{max-width:1000px;margin:0 auto;padding:34px 26px 70px}
+a{color:var(--gold-l)}
+/* header */
+.hdr{border-bottom:2px solid var(--gold);padding-bottom:20px;margin-bottom:8px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold)}
+.hdr h1{font-family:var(--disp);font-weight:900;font-size:clamp(28px,6vw,48px);letter-spacing:-1px;line-height:1;margin:10px 0 8px}
+.hdr .sub{color:var(--txt2);font-size:15px;max-width:640px}
+.meta{margin-top:14px;font-family:var(--mono);font-size:11px;color:var(--txt3)}
+.print{float:right;font-family:var(--mono);font-size:11px;letter-spacing:1px;background:var(--gold);color:var(--void);border:none;border-radius:8px;padding:9px 16px;cursor:pointer;font-weight:600;text-transform:uppercase}
+.print:hover{background:var(--gold-l)}
+/* sections */
+h2{font-family:var(--disp);font-weight:900;font-size:20px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin:46px 0 6px;display:flex;align-items:center;gap:12px}
+h2 .n{font-family:var(--mono);font-size:12px;color:var(--void);background:var(--gold);width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:600}
+h2::after{content:"";flex:1;height:1px;background:var(--bd)}
+h3{font-family:var(--disp);font-weight:800;font-size:16px;margin:26px 0 8px;color:var(--paint)}
+p{margin-bottom:12px;color:var(--paint)}
+p.lead{color:var(--txt2)}
+ul,ol{margin:0 0 14px 22px}li{margin-bottom:7px;color:var(--paint)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--s3);padding:2px 7px;border-radius:5px;color:var(--gold-l);word-break:break-word}
+/* diagram */
+.diagram{background:var(--s1);border:1px solid var(--bd-g);border-radius:14px;padding:22px;margin:18px 0;overflow-x:auto}
+.diagram pre{font-family:var(--mono);font-size:12px;line-height:1.85;color:var(--gold-l);white-space:pre}
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:16px 0}
+.card{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:16px 18px}
+.card.g{border-left:3px solid var(--gold)}
+.card h4{font-family:var(--disp);font-weight:800;font-size:15px;margin-bottom:4px}
+.card p{font-size:13.5px;color:var(--txt2);margin:0}
+.card .k{font-family:var(--mono);font-size:11px;color:var(--gold);display:block;margin-top:7px;word-break:break-all}
+/* callouts */
+.call{border-radius:12px;padding:16px 20px;margin:18px 0;border:1px solid;display:flex;gap:14px}
+.call .ic{font-size:22px;line-height:1.2;flex-shrink:0}
+.call.warn{background:rgba(239,68,68,.09);border-color:rgba(239,68,68,.42)}
+.call.warn b{color:#ff8a8a}
+.call.note{background:rgba(201,162,39,.09);border-color:var(--bd-g)}
+.call.note b{color:var(--gold-l)}
+.call.ok{background:rgba(34,197,94,.09);border-color:rgba(34,197,94,.4)}
+.call.ok b{color:#5ee08a}
+.call p{margin:0;font-size:14px}
+/* table */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px}
+th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--gold);padding:9px 12px;border-bottom:1px solid var(--bd-g)}
+td{padding:10px 12px;border-bottom:1px solid var(--bd);color:var(--paint);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.tw{overflow-x:auto}
+/* checklist */
+.chk{background:var(--s2);border:1px solid var(--bd);border-radius:12px;padding:6px 20px;margin:14px 0}
+.ci{display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.ci:last-child{border-bottom:none}
+.box{width:20px;height:20px;border:2px solid var(--txt3);border-radius:5px;flex-shrink:0;margin-top:2px}
+.ci.done .box{background:var(--grn);border-color:var(--grn);position:relative}
+.ci.done .box::after{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#04120a;font-weight:900;font-size:13px}
+.ci strong{display:block;font-size:14.5px;font-weight:600}
+.ci small{font-size:13px;color:var(--txt2)}
+.ci.done strong{color:var(--txt3);text-decoration:line-through}
+.pill{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:20px;text-transform:uppercase;font-weight:600;margin-left:8px;white-space:nowrap}
+.p-now{background:rgba(239,68,68,.16);color:#ff8a8a}
+.p-next{background:rgba(245,158,11,.16);color:#fbbf24}
+.p-later{background:rgba(91,143,232,.16);color:#93b4f0}
+.p-done{background:rgba(34,197,94,.16);color:#5ee08a}
+.foot{margin-top:50px;padding-top:20px;border-top:1px solid var(--bd);font-family:var(--mono);font-size:11px;color:var(--txt3);text-align:center}
+@media print{
+ body{background:#fff;color:#111;background-image:none}
+ .wrap{padding:0;max-width:100%}
+ .print{display:none}
+ h1,h3,.card h4,.ci strong{color:#111}
+ h2{color:#8a6d10}h2 .n{background:#8a6d10;color:#fff}
+ p,li,td,.ci small,.card p{color:#222}
+ .card,.chk,.diagram,.call{background:#fff;border-color:#bbb}
+ .diagram pre{color:#111}code{background:#f0f0f0;color:#7a5e10}
+ .card .k{color:#7a5e10}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hdr">
+  <button class="print" onclick="window.print()">🖨 Print</button>
+  <div class="kicker">Master Blueprint</div>
+  <h1>F.A.E. × NXGEN</h1>
+  <p class="sub">One identity system for the whole building — court rentals, the basketball league, the cafe, and the door. This is the reference document for how every piece connects and what gets built next.</p>
+  <div class="meta">Owner: Coach Jr · F.A.E. Court, Lipa City, Batangas · Last updated 30 Aug 2026</div>
+</div>
+
+<h2><span class="n">1</span>The Core Idea</h2>
+<p class="lead">These are not four separate projects. They are <strong>one identity system with several doors into it</strong>. The member's RFID card is the thread that ties everything together — every tap becomes a logged transaction on one member record.</p>
+
+<div class="diagram"><pre>              RFID CARD  =  the member's identity
+                            │
+    ┌──────────┬────────────┼────────────┬──────────────┐
+    │          │            │            │              │
+  DOOR      FRONT DESK    CAFE /       WIFI          (future
+  access    check-in      COURT        portal         readers)
+    │          │          charges        │              │
+    └──────────┴─────┬────┴──────────────┴──────────────┘
+                     ▼
+        ONE member record · ONE wallet · ONE activity log
+              (Supabase — fae-court-connect)</pre></div>
+
+<div class="call ok"><div class="ic">✓</div><p><b>Why this matters:</b> "Who is in the building right now", "who owes what", and "who actually showed up" stop being three separate guesses and become one screen. Deactivating a single lost card kills door, court, cafe and WiFi access instantly.</p></div>
+
+<h3>The role each piece plays</h3>
+<div class="grid">
+  <div class="card g"><h4>F.A.E. Management</h4><p>The operating system for the building — members, bookings, wallet, incidents, inventory.</p><span class="k">fae-court-connect.lovable.app</span></div>
+  <div class="card g"><h4>NXGEN Premier League</h4><p>The league that runs inside the building — divisions, schedule, stats, standings.</p><span class="k">nxgenpremierleague.lovable.app</span></div>
+  <div class="card"><h4>F.A.E. Command Center</h4><p>The local hub the front desk opens each day. Launcher, daily checklist, playbook.</p><span class="k">Desktop\CLAUDE\FAE COMMAND CENTER\index.html</span></div>
+  <div class="card"><h4>Stat Center</h4><p>Game-night box score entry → pushes to the league site.</p><span class="k">docs\NXGEN-StatCenter.html</span></div>
+</div>
+
+<h2><span class="n">2</span>System Reference</h2>
+<div class="tw"><table>
+<tr><th>Item</th><th>Value</th></tr>
+<tr><td>NXGEN Lovable project</td><td><code>b6e07c0a-6de8-4333-903f-2c03559cc90e</code></td></tr>
+<tr><td>F.A.E. Lovable project</td><td><code>38968c5d-24a7-4370-876b-de82a8383a51</code></td></tr>
+<tr><td>Lovable workspace</td><td><code>T2ndaReXiLQE35GnF4pR</code></td></tr>
+<tr><td>NXGEN GitHub repo</td><td><code>github.com/filamelitebasketball/nxgenpremierleague</code></td></tr>
+<tr><td>NXGEN Supabase ref</td><td><code>lpsjbgdxkguouryexoth</code></td></tr>
+<tr><td>Court schedule sheet</td><td><code>1lKtBgv9zrIEZz75U_c74inPZRFbXWIIp</code></td></tr>
+<tr><td>Brand</td><td>Void <code>#050507</code> · Gold <code>#C9A227</code> · Archivo / DM Sans / JetBrains Mono</td></tr>
+<tr><td>Court rates</td><td>Basketball ₱900/hr · Volleyball ₱750/hr · Pickleball ₱400/hr</td></tr>
+<tr><td>Hours</td><td>4 AM – 12 AM · Sundays 24 hours</td></tr>
+</table></div>
+
+<h2><span class="n">3</span>Updating the Sites — FREE</h2>
+<div class="call ok"><div class="ic">💰</div><p><b>Code changes cost zero Lovable credits.</b> The NXGEN site is GitHub-synced. Push to <code>main</code> → Lovable picks it up → publish. Credits are only consumed by AI chat messages (<code>send_message</code>), so save them for genuinely new AI-built features.</p></div>
+
+<div class="diagram"><pre>edit code  →  verify (typecheck + build)  →  git push origin main
+                                                    │
+                                          Lovable syncs the code
+                                                    │
+                                        publish  →  live site</pre></div>
+
+<p><strong>Windows notes:</strong> there is no Node on this machine — use Bun at <code>~/.bun/bin/bun.exe</code>. The real <code>vite.config.ts</code> fails locally because Lovable's mcpPlugin has a Windows path bug; build with a temp config that omits it, and delete that temp config before committing. Also revert <code>src/routeTree.gen.ts</code> before committing (the build only rewrites its line endings).</p>
+
+<h2><span class="n">4</span>RFID — The Decisions That Matter</h2>
+
+<div class="call warn"><div class="ic">⚠️</div><p><b>An RFID card's UID is not a secret.</b> On EM4100 (125 kHz) and MIFARE Classic cards the UID is broadcast in the clear and can be cloned in seconds with a ~$40 Flipper Zero. If "UID matches → door opens", then standing near a member for two seconds copies your building key. <b>This is true no matter how good the software is.</b></p></div>
+
+<h3>Hardware decisions — lock these before you order</h3>
+<div class="grid">
+  <div class="card g"><h4>Card type</h4><p>Use <strong>MIFARE DESFire EV3</strong> (AES challenge–response). The card proves it holds a secret without transmitting it, so cloning means breaking AES. Costs more per card — worth it when it is also the building key.</p></div>
+  <div class="card g"><h4>WiFi controller</h4><p>The <strong>ER605 is a gateway, not a controller</strong>. Omada captive portal needs an Omada controller — the hardware OC200, or the free Software Controller on a PC. Budget for this.</p></div>
+</div>
+
+<h3>Door architecture</h3>
+<ul>
+  <li>The door controller gets <strong>its own device credential</strong> and calls a server-side endpoint — it must <em>never</em> use the website's public key.</li>
+  <li>Keep lookups behind the existing <code>get_profile_by_bracelet_uid()</code> database function (already correctly written as <code>SECURITY DEFINER</code>).</li>
+  <li><strong>Log every tap, including denials</strong> — who, which reader, when, allowed or refused.</li>
+  <li><strong>Rate-limit the lookup</strong> (~5–10/min per source) or UIDs can be brute-forced against the door.</li>
+  <li>Decide <strong>fail-open vs fail-locked</strong> when the internet drops. Most small venues cache the last-known-good member list locally so entry keeps working offline.</li>
+</ul>
+
+<h3>Internet cafe WiFi portal (not built yet)</h3>
+<p>A captive-portal landing page on the F.A.E. site: the customer identifies with their RFID code, gets WiFi, and the session is billed to their wallet as a transaction. It is simply a fifth reader on the same identity system.</p>
+<div class="call warn"><div class="ic">⚠️</div><p><b>Same secret problem, different door:</b> if <em>typing</em> an RFID code grants internet on someone's tab, a shoulder-surfed code is a free session billed to that member. Solve it with short-lived session codes, or tap-to-authenticate at the counter rather than a typed code. Decide this during design, not after.</p></div>
+
+<h2><span class="n">5</span>Security Posture</h2>
+<div class="call ok"><div class="ic">🛡</div><p><b>Audited 30 Aug 2026 — no critical blockers.</b> Row Level Security is enabled on every table and enforced at the database (not just hidden in the UI). Admin routes are gated server-side, privilege escalation via <code>user_roles</code> is blocked, the minors' guardian-consent flow is soundly designed, storage buckets holding payment proofs and photos are private, and no secret key has ever been committed. The <code>.env</code> file holds only the public anon key, which is safe by design.</p></div>
+<p><strong>Corrected finding worth remembering:</strong> an automated scan flagged the <code>bracelets</code> table as publicly readable. That was <em>wrong</em> — the policy that allowed it was created on 18 Jul and dropped on 20 Jul, and RLS denies by default. Always verify migration order chronologically before trusting a policy finding. The real leftover is a dangling <code>GRANT SELECT … ON bracelets TO anon</code> that was never revoked: harmless today, but it would silently open the whole bracelet directory the moment anyone adds a permissive anon policy.</p>
+
+<h2><span class="n">6</span>Action Checklist</h2>
+
+<h3>Launch week</h3>
+<div class="chk">
+  <div class="ci"><div class="box"></div><div><strong>Revoke the dangling <code>bracelets</code> grant <span class="pill p-now">Do now</span></strong><small>One line of SQL. Removes the loaded gun before RFID work begins.</small></div></div>
+  <div class="ci"><div class="box"></div><div><strong>Waiver legal venue: "Metro Manila" → "Batangas" <span class="pill p-now">Your call</span></strong><small>You operate in Lipa City. Naming Manila means a dispute drags you to a Manila court. Legal text, so it is your decision.</small></div></div>
+  <div class="ci"><div class="box"></div><div><strong>Rate-limit <code>/api/registration-assistant</code> <span class="pill p-now">Do now</span></strong><small>Public, unauthenticated proxy to a paid AI endpoint — scriptable for cost exhaustion.</small></div></div>
+  <div class="ci"><div class="box"></div><div><strong>Local SEO titles for register / schedule / teams / FAQ <span class="pill p-next">Next</span></strong><small>Homepage is done. Exact copy is already written and ready to apply.</small></div></div>
+</div>
+
+<h3>Before the door goes in</h3>
+<div class="chk">
+  <div class="ci"><div class="box"></div><div><strong>Lock the card type — DESFire EV3 <span class="pill p-next">Before ordering</span></strong><small>The single most important RFID decision. Cannot be undone cheaply after a bulk order.</small></div></div>
+  <div class="ci"><div class="box"></div><div><strong>Buy an Omada controller (OC200 or software) <span class="pill p-next">Before ordering</span></strong><small>The ER605 alone cannot run the captive portal.</small></div></div>
+  <div class="ci"><div class="box"></div><div><strong>Build the access log + door endpoint <span class="pill p-later">Later</span></strong><small>Device credential, every tap logged including denials, rate limited.</small></div></div>
+  <div class="ci"><div class="box"></div><div><strong>Decide fail-open vs fail-locked <span class="pill p-later">Later</span></strong><small>What the door does when the internet drops. Tell your installer.</small></div></div>
+  <div class="ci"><div class="box"></div><div><strong>WiFi captive portal page <span class="pill p-later">Later</span></strong><small>On the F.A.E. site. RFID identifies → grants WiFi → bills the session.</small></div></div>
+</div>
+
+<h3>Already done</h3>
+<div class="chk">
+  <div class="ci done"><div class="box"></div><div><strong>Fixed a Teams-page crash</strong><small>Typing in search white-screened the page if any roster row had a blank name.</small></div></div>
+  <div class="ci done"><div class="box"></div><div><strong>Corrected the venue from "Metro Manila" to Lipa City</strong><small>Was wrong on the FAQ and Privacy pages — real families would have gotten wrong directions.</small></div></div>
+  <div class="ci done"><div class="box"></div><div><strong>Fixed blank Facebook share previews</strong><small>og:image used a relative URL Facebook cannot resolve. Now absolute and site-wide.</small></div></div>
+  <div class="ci done"><div class="box"></div><div><strong>Fixed text contrast failing WCAG</strong><small>Body and form-label text sat at ~3:1 on the dark theme. Now ~4.8:1.</small></div></div>
+  <div class="ci done"><div class="box"></div><div><strong>Fixed mobile clipping and a nav dead zone</strong><small>Hero tagline was cut off on phones; nav vanished entirely between 768–819px.</small></div></div>
+  <div class="ci done"><div class="box"></div><div><strong>Restored Admin access for league managers</strong><small>The nav link was gated to full admins only, locking managers out of a page they are allowed to use.</small></div></div>
+  <div class="ci done"><div class="box"></div><div><strong>Fixed stale live scores on game night</strong><small>A slow response could overwrite newer scores on flaky venue wifi.</small></div></div>
+  <div class="ci done"><div class="box"></div><div><strong>Sitemap + local SEO for the homepage</strong><small>Added 8 missing pages; homepage now targets "basketball league Lipa City".</small></div></div>
+  <div class="ci done"><div class="box"></div><div><strong>Membership tab fixed in the Command Center</strong><small>An inline style hid 7 dashboard tabs entirely.</small></div></div>
+</div>
+
+<h2><span class="n">7</span>Operating Rules</h2>
+<div class="call note"><div class="ic">📌</div><p><b>Edit in ONE place.</b> The live admin site is the source of truth. Google Sheets and any local dashboard are read-only mirrors and exports. This single rule is what prevents front-desk schedule mix-ups.</p></div>
+<ul>
+  <li><strong>Log incidents immediately</strong> — a logged incident is a solved incident.</li>
+  <li><strong>Batch website changes</strong> — they go out together via GitHub, free.</li>
+  <li><strong>Spend Lovable credits only on new AI-built features</strong>, never on edits that can be pushed.</li>
+</ul>
+
+<div class="foot">F.A.E. × NXGEN Master Blueprint · keep this file · <code>Desktop\CLAUDE\FAE-NXGEN-MASTER-BLUEPRINT.html</code></div>
+</div>
+</body>
+</html>

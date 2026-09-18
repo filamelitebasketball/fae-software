@@ -1,0 +1,17 @@
+-- Close a privilege escalation on public.profiles.
+--
+-- The app moved membership_tier promotion into server functions (bracelet.functions.ts,
+-- otp.functions.ts) which decide the tier using the service-role client. But the database
+-- still granted plain UPDATE on the whole profiles row to `authenticated`, with the RLS
+-- policy scoped only by `auth.uid() = id` and no WITH CHECK. So the server functions were
+-- never actually the only path: any signed-in user could skip them entirely and write the
+-- column straight from the browser client --
+--
+--   supabase.from('profiles').update({ membership_tier: 'rfid_linked' }).eq('id', <self>)
+--
+-- promoting themselves to Full Member without verifying an OTP or holding a bracelet, which
+-- is what gates door, court and cafe access.
+--
+-- Revoking the column mirrors what this schema already does for registrations.status and
+-- profiles.admin_notes. service_role is unaffected, so the server functions keep working.
+REVOKE UPDATE (membership_tier) ON public.profiles FROM authenticated;

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAE Batch 23 Tournament Checkout</title>
+<script src="assets/fae-core.js?v=10"></script>
+<style>
+:root{
+ --bg-body:#050507;--bg-card:#0d0d12;--bg-card-hover:#15151b;--bg-input:#121218;
+ --bg-head:#111115;--border:#22222b;--accent:#C9A227;--text-primary:#F4F4F6;
+ --text-secondary:#8B8B98;--text-muted:#5f5f6d;
+ --green:#3FA66A;--red:#D2453B;--blue:#4A7FB5;--yellow:#E8C766;--magenta:#8C6BD4;--cyan:#4A7FB5;
+ --radius:10px;--radius-sm:6px;--shadow:0 4px 24px rgba(0,0,0,.4);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg-body);color:var(--text-primary);line-height:1.5;padding:20px}
+.wrap{max-width:1400px;margin:0 auto}
+header.top{background:var(--bg-head);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+header.top .brand{display:flex;align-items:center;gap:14px}
+.logo{width:44px;height:44px;border-radius:10px;object-fit:contain;background:#0d0d12;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:var(--accent)}
+header.top h1{font-size:19px;font-weight:700;letter-spacing:.3px}
+header.top .sub{font-size:12px;color:var(--text-secondary);margin-top:2px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+button.btn{background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer;transition:.15s}
+button.btn:hover{background:var(--bg-card-hover);border-color:var(--accent)}
+button.btn.accent{background:var(--accent);color:#111;border-color:var(--accent);font-weight:700}
+button.btn.accent:hover{background:#E8C766}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px}
+.kpi .lbl{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.kpi .val{font-size:26px;font-weight:800}
+.kpi .val.g{color:var(--green)}.kpi .val.r{color:var(--red)}.kpi .val.a{color:var(--accent)}.kpi .val.c{color:var(--cyan)}.kpi .val.b{color:var(--blue)}
+.toolbar{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.toolbar input[type=text],.toolbar select{background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;font-size:13px}
+.toolbar input[type=text]{min-width:220px}
+.toolbar label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-right:4px}
+.toolbar .chk{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary)}
+.tablewrap{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{position:sticky;top:0;background:var(--bg-head);text-align:left;padding:11px 12px;border-bottom:2px solid var(--border);color:var(--text-secondary);font-size:11px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;user-select:none;cursor:pointer}
+thead th:hover{color:var(--text-primary)}
+tbody td{padding:10px 12px;border-bottom:1px solid #202026;white-space:nowrap}
+tbody tr:hover{background:var(--bg-card-hover)}
+tbody tr.notplaying{opacity:.5}
+tbody tr.done{background:rgba(34,197,94,.06)}
+.pname{font-weight:600;cursor:pointer}
+.pname:hover{color:var(--accent);text-decoration:underline}
+.pname small{display:block;font-weight:400;color:var(--text-muted);font-size:11px}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.3px}
+.b-paid{background:rgba(34,197,94,.14);color:var(--green)}
+.b-bal{background:rgba(239,68,68,.14);color:var(--red)}
+.b-waived{background:rgba(59,130,246,.14);color:var(--blue)}
+.b-new{background:rgba(249,115,22,.14);color:var(--accent)}
+.b-re{background:rgba(6,182,212,.14);color:var(--cyan)}
+.b-sch{background:rgba(236,72,153,.14);color:var(--magenta)}
+.jno{display:inline-block;min-width:26px;text-align:center;background:#000;border:1px solid var(--border);border-radius:5px;padding:2px 6px;font-weight:800;font-size:12px;margin-right:6px}
+.money{font-variant-numeric:tabular-nums;font-weight:600}
+.money.r{color:var(--red)}.money.g{color:var(--green)}
+.flagdot{color:var(--yellow);cursor:help}
+input[type=checkbox].big{width:20px;height:20px;accent-color:var(--accent);cursor:pointer}
+.uni-cell{max-width:230px;white-space:normal;font-size:12px;color:var(--text-secondary)}
+.nosize{color:var(--text-muted);font-style:italic}
+footer.note{margin-top:16px;padding:16px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);font-size:12px;color:var(--text-secondary)}
+footer.note b{color:var(--text-primary)}
+footer.note .flag{color:var(--yellow)}
+/* modal */
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+#ov.on{display:flex}
+#mod{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);max-width:520px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow)}
+#mod .mh{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+#mod .mh h3{font-size:16px}
+#mod .mb{padding:20px 22px}
+#mod .x{background:none;border:none;color:var(--text-muted);font-size:22px;cursor:pointer}
+.brk{width:100%;border-collapse:collapse;margin:8px 0}
+.brk td{padding:7px 4px;border-bottom:1px solid #202026;font-size:13px}
+.brk td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.brk tr.tot td{font-weight:800;border-top:2px solid var(--border);border-bottom:none;padding-top:10px}
+.mnote{margin-top:12px;padding:10px 12px;background:var(--bg-input);border-left:3px solid var(--yellow);border-radius:4px;font-size:12px;color:var(--text-secondary)}
+@media print{body{background:#fff;color:#000;padding:0}.toolbar,.actions,header.top .logo{display:none}thead th{background:#eee;color:#000}.tablewrap{border:none}input[type=checkbox]{-webkit-appearance:checkbox}}
+
+/* ---- payment-scheme board ----
+   Same shape as the drafting pool in programs.html: columns you drop into,
+   cards you drag. Here a column is a fee scheme rather than a team, so moving
+   a player between columns is how a wrong category gets corrected. */
+.viewtabs{display:flex;gap:6px;margin-left:auto}
+.viewtab{background:var(--bg-input);color:var(--text-secondary);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.4px}
+.viewtab.on{background:var(--accent);border-color:var(--accent);color:#141109}
+.sb-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.sb-col{background:var(--bg-card);border:1px solid var(--border);border-top:3px solid var(--accent);
+  border-radius:var(--radius);padding:14px;min-height:150px;transition:background .15s,border-color .15s}
+.sb-col.over{border-color:var(--accent);background:var(--bg-card-hover)}
+.sb-h{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.sb-name{font-weight:800;font-size:14px;letter-spacing:.3px}
+.sb-fee{margin-left:auto;font-weight:800;color:var(--accent);font-size:13px}
+.sb-sub{font-size:11px;color:var(--text-muted);margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-money{display:flex;gap:10px;font-size:11px;margin-bottom:10px;flex-wrap:wrap}
+.sb-money b{font-variant-numeric:tabular-nums}
+.sb-list{display:flex;flex-direction:column;gap:7px;min-height:44px}
+.sb-card{display:flex;align-items:center;gap:9px;background:var(--bg-input);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:8px 10px;cursor:grab}
+.sb-wk{max-width:62px}
+.sb-n{line-height:1.35}
+.sb-card:active{cursor:grabbing}
+.sb-card.drag{opacity:.4}
+.sb-card.adj{border-left:3px solid var(--yellow)}
+.sb-num{font-size:10px;color:var(--text-muted);min-width:20px;font-variant-numeric:tabular-nums}
+.sb-n{flex:1;min-width:0;font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-bal{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
+.sb-bal.ok{color:var(--green)}.sb-bal.due{color:var(--red)}.sb-bal.over{color:var(--magenta)}
+.sb-move{background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border);
+  border-radius:var(--radius-sm);font-size:11px;padding:4px 6px;min-height:26px;cursor:pointer}
+.sb-empty{color:var(--text-muted);font-size:11.5px;padding:14px;text-align:center;
+  border:1px dashed var(--border);border-radius:var(--radius-sm)}
+@media(prefers-reduced-motion:reduce){.sb-col{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="brand">
+    <img src="assets/fae-logo.png" alt="FAE" class="logo">
+    <div>
+      <h1>FAEBASKETBALL · Tournament Checkout <span id="batchTag" style="color:var(--accent)"></span></h1>
+      <div class="sub" id="subline"></div>
+    </div>
+  </div>
+  <div class="actions">
+    <a class="btn" href="console.html" style="text-decoration:none">&#8592; Home</a>
+    <a class="btn" href="programs.html" style="text-decoration:none">Programs</a>
+    <select class="btn" id="batchSel" onchange="viewBatch(this.value)" title="Look back at an archived batch" style="cursor:pointer"></select>
+    <button class="btn accent" onclick="addPlayer()">+ Add player</button>
+    <button class="btn" onclick="archiveAndNew()" title="Archive this batch and start a blank one">&#128190; Archive &amp; new batch</button>
+    <button class="btn accent" onclick="logAndClear()" title="Record the collected income to the business dashboard, then clear the ticked rows">&#128179; Log income &amp; clear selected</button>
+    <button class="btn" onclick="resetToggles()">Reset check-ins</button>
+    <button class="btn" onclick="window.print()">Print</button>
+    <button class="btn" onclick="exportCSV()">Export CSV</button>
+    <button class="btn" onclick="backupJSON()">Backup (JSON)</button>
+  </div>
+</header>
+
+<div class="kpis" id="kpis"></div>
+
+<div class="toolbar">
+  <input type="text" id="q" placeholder="Search player, jersey, parent…" oninput="render()">
+  <span><label>Category</label>
+  <select id="fcat" onchange="render()"><option value="">All</option><option>New</option><option>Re-enrolled</option><option>Scholar</option></select></span>
+  <span><label>Payment</label>
+  <select id="fpay" onchange="render()"><option value="">All</option><option value="Fully Paid">Fully Paid</option><option value="Balance">With Balance</option></select></span>
+  <span><label>Tourn. Fee</label>
+  <select id="ftf" onchange="render()"><option value="">All</option><option value="paid">Paid</option><option value="unpaid">Unpaid</option><option value="waived">Waived</option></select></span>
+  <span><label>Uniform</label>
+  <select id="funi" onchange="render()"><option value="">All</option><option value="released">Released</option><option value="pending">Not released</option><option value="size">Has size</option><option value="nosize">No size</option></select></span>
+  <label class="chk"><input type="checkbox" id="hidenp" onchange="render()"> Hide "not playing"</label>
+  <span><label>Batch weeks</label>
+  <input type="number" id="wks" min="1" max="52" style="width:62px" onchange="setWeeks(this.value)" title="How many weeks the batch runs - the training fee is pro-rated across these"></span>
+  <div class="viewtabs">
+    <button type="button" class="viewtab on" id="vt-table" onclick="setView('table')">Table</button>
+    <button type="button" class="viewtab" id="vt-board" onclick="setView('board')">Payment scheme</button>
+  </div>
+</div>
+
+<div class="tablewrap" id="tableView">
+<table id="tbl">
+<thead><tr>
+  <th><input type="checkbox" id="selAll" onchange="toggleAll(this.checked)" title="Select all shown"></th>
+  <th onclick="sortBy('num')">#</th>
+  <th>In</th>
+  <th onclick="sortBy('name')">Player</th>
+  <th onclick="sortBy('no')">Jersey</th>
+  <th onclick="sortBy('cat')">Category</th>
+  <th onclick="sortBy('tf')">Tourn. Fee ₱2,500</th>
+  <th onclick="sortBy('paid')">Total Paid</th>
+  <th onclick="sortBy('balance')">Balance</th>
+  <th>Uniform (size)</th>
+  <th>Released</th>
+</tr></thead>
+<tbody id="tb"></tbody>
+</table>
+</div>
+
+<div class="sb-board" id="sbBoard" hidden></div>
+
+<footer class="note" id="foot"></footer>
+</div>
+
+<div id="ov" onclick="if(event.target.id=='ov')closeMod()"><div id="mod"></div></div>
+
+<script>
+const DB = {"meta": {"title": "FAE Batch 23 — Tournament Checkout", "date": "2026-09-11", "org": "F.A.E. Basketball Training Services", "fees": {"New": {"Training Fee": 5500, "Batch Uniform": 1000, "Tournament Uniform": 1600, "Tournament Fee": 2500}, "Re-enrolled": {"Training Fee": 5500, "Tournament Fee": 2500}, "Scholar": {"Tournament Fee": 2500}}, "totals": {"New": 10600, "Re-enrolled": 8000, "Scholar": 2500}}, "players": [{"num": 1, "name": "Alfonz Miguel Pamilar", "cat": "Re-enrolled", "jersey": "", "no": "", "parent": "", "due": 8000, "paid": 8000, "balance": 0, "overall": "Fully Paid", "tf": "paid", "tfLabel": "Paid", "uniform": "", "note": "", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Tournament Fee": 2500}}, {"num": 2, "name": "Victor Andrew S. Abriza", "cat": "Re-enrolled", "jersey": "", "no": "", "parent": "", "due": 8000, "paid": 5500, "balance": 2500, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "", "note": "₱5,500 recorded (training). ₱2,500 tournament fee outstanding.", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Tournament Fee": 2500}}, {"num": 3, "name": "Gavin Rojan E. Salva", "cat": "Re-enrolled", "jersey": "", "no": "", "parent": "", "due": 8000, "paid": 5500, "balance": 2500, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "", "note": "Recorded ₱3,000 + ₱2,500 = ₱5,500. ₱2,500 tournament fee outstanding.", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Tournament Fee": 2500}}, {"num": 4, "name": "Chael Juadines", "cat": "New", "jersey": "Juadines", "no": "30", "parent": "Nicole Morada Martija", "due": 10600, "paid": 4050, "balance": 6550, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "Top 9-10, Short 9-10", "note": "FB. ₱4,050 recorded.", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Batch Uniform": 1000, "Tournament Uniform": 1600, "Tournament Fee": 2500}}, {"num": 5, "name": "Yohan Ezekiel A. Belen", "cat": "Re-enrolled", "jersey": "", "no": "", "parent": "", "due": 8000, "paid": 8000, "balance": 0, "overall": "Fully Paid", "tf": "paid", "tfLabel": "Paid", "uniform": "", "note": "", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Tournament Fee": 2500}}, {"num": 6, "name": "Francis Yves C. Suavengco", "cat": "New", "jersey": "Suavengco", "no": "05", "parent": "Marvin Suavengco", "due": 10600, "paid": 5100, "balance": 5500, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "Age 9-10, Top 37-26, Short 36-15", "note": "FB. Recorded ₱5,000/₱5,100.", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Batch Uniform": 1000, "Tournament Uniform": 1600, "Tournament Fee": 2500}}, {"num": 7, "name": "Lucas Adam De Chavez", "cat": "New", "jersey": "Lucas", "no": "27", "parent": "Babie DC Valencia", "due": 10600, "paid": 4050, "balance": 6550, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "Top 9-10, Length 26, Short hips 35 / length 18", "note": "CONFIRM: uniform \"Lucas #27\" (parent Babie DC Valencia) matched to this player — verify name.", "playing": true, "flag": true, "fees": {"Training Fee": 5500, "Batch Uniform": 1000, "Tournament Uniform": 1600, "Tournament Fee": 2500}}, {"num": 8, "name": "Ram Raynard M. Balanay", "cat": "New", "jersey": "Balanay", "no": "14", "parent": "Jennie Medina Balanay", "due": 10600, "paid": 4050, "balance": 6550, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "Top 9-10, Short 9-10", "note": "₱4,050 recorded (incl. ₱1,000 uniform).", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Batch Uniform": 1000, "Tournament Uniform": 1600, "Tournament Fee": 2500}}, {"num": 9, "name": "Zeff Elison R. Samson", "cat": "Re-enrolled", "jersey": "", "no": "", "parent": "", "due": 8000, "paid": 8000, "balance": 0, "overall": "Fully Paid", "tf": "paid", "tfLabel": "Paid", "uniform": "", "note": "Recorded ₱5,500 + ₱2,500.", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Tournament Fee": 2500}}, {"num": 10, "name": "Maizon Africa", "cat": "New", "jersey": "Africa", "no": "15", "parent": "Analiza Garcia Africa", "due": 10600, "paid": 10600, "balance": 0, "overall": "Fully Paid", "tf": "paid", "tfLabel": "Paid", "uniform": "Top 7-8, Short 7-8", "note": "", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Batch Uniform": 1000, "Tournament Uniform": 1600, "Tournament Fee": 2500}}, {"num": 11, "name": "Primo Diaz", "cat": "New", "jersey": "Primo", "no": "10", "parent": "Jonas Diaz", "due": 10600, "paid": 4050, "balance": 6550, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "Top 9-10, Short 35-18", "note": "FB. ₱4,050 recorded (incl. ₱1,000 uniform).", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Batch Uniform": 1000, "Tournament Uniform": 1600, "Tournament Fee": 2500}}, {"num": 12, "name": "Marcus Riley Magpantay", "cat": "Re-enrolled", "jersey": "", "no": "", "parent": "", "due": 8000, "paid": 8000, "balance": 0, "overall": "Fully Paid", "tf": "paid", "tfLabel": "Paid", "uniform": "", "note": "", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Tournament Fee": 2500}}, {"num": 13, "name": "Carl Miguel Prillo", "cat": "Scholar", "jersey": "", "no": "", "parent": "", "due": 2500, "paid": 0, "balance": 2500, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "", "note": "", "playing": true, "flag": false, "fees": {"Tournament Fee": 2500}}, {"num": 14, "name": "Jaime David S. Abriza", "cat": "Scholar", "jersey": "", "no": "", "parent": "", "due": 2500, "paid": 0, "balance": 2500, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "", "note": "", "playing": true, "flag": false, "fees": {"Tournament Fee": 2500}}, {"num": 15, "name": "Rafael Jose Magundayao", "cat": "Re-enrolled", "jersey": "", "no": "", "parent": "", "due": 8000, "paid": 0, "balance": 8000, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "", "note": "", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Tournament Fee": 2500}}, {"num": 16, "name": "Filbert Khian Gapud", "cat": "Re-enrolled", "jersey": "", "no": "", "parent": "", "due": 8000, "paid": 0, "balance": 8000, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "", "note": "", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Tournament Fee": 2500}}, {"num": 17, "name": "Ezekiel Aiden Sison", "cat": "Re-enrolled", "jersey": "", "no": "", "parent": "", "due": 8000, "paid": 5500, "balance": 2500, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "", "note": "₱5,500 recorded (training). ₱2,500 tournament fee outstanding.", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Tournament Fee": 2500}}, {"num": 18, "name": "Hans Linatoc", "cat": "Re-enrolled", "jersey": "", "no": "", "parent": "", "due": 8000, "paid": 8000, "balance": 0, "overall": "Fully Paid", "tf": "paid", "tfLabel": "Paid", "uniform": "", "note": "Recorded ₱4,000 + ₱4,000.", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Tournament Fee": 2500}}, {"num": 19, "name": "Liam Lonzo Lipana", "cat": "Scholar", "jersey": "", "no": "", "parent": "", "due": 2500, "paid": 0, "balance": 2500, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "", "note": "", "playing": true, "flag": false, "fees": {"Tournament Fee": 2500}}, {"num": 20, "name": "Austin Trey U. Rezaba", "cat": "New", "jersey": "Rezaba", "no": "25", "parent": "Rustan Rezaba", "due": 10600, "paid": 4050, "balance": 6550, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "Top age 11-12, Short age 11-12", "note": "FB. Twin — jersey #25 per your note.", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Batch Uniform": 1000, "Tournament Uniform": 1600, "Tournament Fee": 2500}}, {"num": 21, "name": "Ampersand Verismo Diasanta", "cat": "Re-enrolled", "jersey": "", "no": "", "parent": "", "due": 8000, "paid": 5500, "balance": 2500, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "", "note": "₱5,500 recorded (training). ₱2,500 tournament fee outstanding.", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Tournament Fee": 2500}}, {"num": 22, "name": "Ethan Von Zachary de Castro", "cat": "New", "jersey": "Zachary", "no": "30", "parent": "Jhon Herbert De Castro", "due": 10600, "paid": 6500, "balance": 4100, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "Body 30, Length 21, Short hips 32, Short length 14", "note": "FB. ₱6,500 recorded.", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Batch Uniform": 1000, "Tournament Uniform": 1600, "Tournament Fee": 2500}}, {"num": 23, "name": "Kieffer Rov Sanchez", "cat": "Scholar", "jersey": "", "no": "", "parent": "", "due": 2500, "paid": 2500, "balance": 0, "overall": "Fully Paid", "tf": "paid", "tfLabel": "Paid", "uniform": "", "note": "", "playing": true, "flag": false, "fees": {"Tournament Fee": 2500}}, {"num": 24, "name": "Isidro Raymundo III", "cat": "Scholar", "jersey": "", "no": "", "parent": "", "due": 2500, "paid": 0, "balance": 2500, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "", "note": "Listed as \"Sid\".", "playing": true, "flag": false, "fees": {"Tournament Fee": 2500}}, {"num": 25, "name": "Kristoff De Los Reyes", "cat": "Re-enrolled", "jersey": "", "no": "", "parent": "", "due": 8000, "paid": 2500, "balance": 5500, "overall": "Balance", "tf": "paid", "tfLabel": "Paid", "uniform": "", "note": "₱2,500 recorded — assumed tournament fee. ₱5,500 training balance remains.", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Tournament Fee": 2500}}, {"num": 26, "name": "Daniel Nicolo T. Barranda", "cat": "Re-enrolled", "jersey": "", "no": "", "parent": "", "due": 8000, "paid": 1000, "balance": 7000, "overall": "Balance", "tf": "waived", "tfLabel": "Waived", "uniform": "", "note": "Free Tournament Fee Voucher. ₱1,000 recorded; ₱4,500 training balance remains.", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Tournament Fee": 2500}}, {"num": 27, "name": "Prince Xavier Isaac Lajarca", "cat": "Scholar", "jersey": "", "no": "", "parent": "", "due": 2500, "paid": 0, "balance": 2500, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "", "note": "Listed as \"Lajarca\".", "playing": true, "flag": false, "fees": {"Tournament Fee": 2500}}, {"num": 28, "name": "Yuan Mattheus de Castro", "cat": "New", "jersey": "Yuan", "no": "29", "parent": "Jhon Herbert De Castro", "due": 10600, "paid": 6500, "balance": 4100, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "Body 34, Length 25, Short hips 36, Short length 16", "note": "FB. ₱6,500 recorded.", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Batch Uniform": 1000, "Tournament Uniform": 1600, "Tournament Fee": 2500}}, {"num": 29, "name": "Enzo Gabriel U. Baes", "cat": "New", "jersey": "Baes", "no": "16", "parent": "Apple Umali", "due": 10600, "paid": 9100, "balance": 1500, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "Top S, Short S", "note": "₱9,100 recorded. ₱1,500 balance remaining.", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Batch Uniform": 1000, "Tournament Uniform": 1600, "Tournament Fee": 2500}}, {"num": 30, "name": "Jervie Jacob Villena", "cat": "Re-enrolled", "jersey": "", "no": "", "parent": "", "due": 8000, "paid": 0, "balance": 8000, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "", "note": "Listed as \"Jacob Villena\".", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Tournament Fee": 2500}}, {"num": 31, "name": "Marcio Noel A. Valencia", "cat": "Scholar", "jersey": "", "no": "", "parent": "", "due": 2500, "paid": 2500, "balance": 0, "overall": "Fully Paid", "tf": "paid", "tfLabel": "Paid", "uniform": "", "note": "", "playing": true, "flag": false, "fees": {"Tournament Fee": 2500}}, {"num": 32, "name": "Ashton Troy U. Rezaba", "cat": "New", "jersey": "Rezaba", "no": "15", "parent": "Rustan Rezaba", "due": 10600, "paid": 4050, "balance": 6550, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "Top age 11-12, Short age 11-12", "note": "FB. Twin — jersey #15 per your note.", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Batch Uniform": 1000, "Tournament Uniform": 1600, "Tournament Fee": 2500}}, {"num": 33, "name": "Ian Kaeden Fomodulan", "cat": "New", "jersey": "Fomodulan", "no": "10", "parent": "Alice Robles-Famodulan", "due": 9100, "paid": 4600, "balance": 4500, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "Top 9-10, Short 9-10", "note": "Adjusted 7-session rate (₱4,000 sessions) in place of the ₱5,500 full package. Total due ₱9,100 · ₱4,600 paid · ₱4,500 balance.", "playing": true, "flag": false, "fees": {"Training Fee (7 sessions)": 4000, "Batch Uniform": 1000, "Tournament Uniform": 1600, "Tournament Fee": 2500}}, {"num": 34, "name": "Yusef Andrei Sy", "cat": "Scholar", "jersey": "", "no": "", "parent": "", "due": 2500, "paid": 0, "balance": 2500, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "", "note": "", "playing": true, "flag": false, "fees": {"Tournament Fee": 2500}}, {"num": 35, "name": "Adriel Morelli M. Recinto", "cat": "Scholar", "jersey": "", "no": "", "parent": "", "due": 2500, "paid": 0, "balance": 2500, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "", "note": "Listed as \"Adi\".", "playing": true, "flag": false, "fees": {"Tournament Fee": 2500}}, {"num": 36, "name": "Jeff Moises Geloso", "cat": "New", "jersey": "Geloso", "no": "02", "parent": "Vanessa L. Reanzares", "due": 10600, "paid": 10600, "balance": 0, "overall": "Fully Paid", "tf": "paid", "tfLabel": "Paid", "uniform": "Top 9-10, Short 9-10", "note": "", "playing": true, "flag": false, "fees": {"Training Fee": 5500, "Batch Uniform": 1000, "Tournament Uniform": 1600, "Tournament Fee": 2500}}, {"num": 37, "name": "Joel Mercado Panganiban", "cat": "New", "jersey": "Panganiban", "no": "12", "parent": "Joel Mercado Panganiban", "due": 10600, "paid": 5500, "balance": 5100, "overall": "Balance", "tf": "unpaid", "tfLabel": "Unpaid", "uniform": "Top 11-12, Short 11-12", "note": "NOT PLAYING — paid new player with uniform, added for records only.", "playing": false, "flag": false, "fees": {"Training Fee": 5500, "Batch Uniform": 1000, "Tournament Uniform": 1600, "Tournament Fee": 2500}}]};
+const FEES = DB.meta.fees, TOT = DB.meta.totals;
+
+/* ---- how a due amount is built ----
+   The scheme is the DEFAULT, not the bill. What actually bills is the player's
+   own `fees` object, so a negotiated line (a short training block, a waived
+   uniform) survives instead of being flattened back to the scheme total.
+
+   On top of that sit two adjustments:
+     joinWeek - a player who starts in week 3 was never delivered the first two
+                weeks of training, so that share of the TRAINING line comes off.
+                Only training is pro-rated; the uniforms and the tournament fee
+                cost the same whoever joins when.
+     adjust   - a signed peso figure for anything the rules do not cover: a
+                voucher, goodwill, a correction. */
+let WEEKS = Number(lget('fae-checkout-weeks')) || 8;
+
+function setWeeks(n){
+  n = Math.max(1, Math.min(52, Number(n)||8));
+  WEEKS = n; lset('fae-checkout-weeks', n);
+  P.forEach(recalcDue); saveLive(); render();
+}
+/* Matches 'Training Fee' and negotiated variants like 'Training Fee (7 sessions)'. */
+function trainingKey(fees){
+  return Object.keys(fees||{}).filter(function(k){ return /^training fee/i.test(k); })[0];
+}
+function recalcDue(p){
+  if(p.joinWeek===undefined) p.joinWeek = 1;
+  if(p.adjust===undefined)   p.adjust   = 0;
+  if(p.banked===undefined)   p.banked   = 0;
+  const fees = p.fees || FEES[p.cat] || {};
+  const base = Object.keys(fees).reduce(function(t,k){ return t + (Number(fees[k])||0); }, 0);
+  const tk   = trainingKey(fees);
+  const training = tk ? (Number(fees[tk])||0) : 0;
+  const missed = Math.max(0, Math.min(WEEKS-1, (Number(p.joinWeek)||1) - 1));
+  p.lateDeduct = (training > 0 && WEEKS > 0) ? Math.round(training / WEEKS * missed) : 0;
+  p.due     = Math.max(0, base - p.lateDeduct + (Number(p.adjust)||0));
+  p.balance = p.due - (Number(p.paid)||0);
+  p.overall = p.balance <= 0 ? 'Fully Paid' : 'Balance';
+  return p;
+}
+function setJoinWeek(num, wk){
+  const p = P.find(function(x){ return x.num===num; }); if(!p) return;
+  p.joinWeek = Math.max(1, Math.min(WEEKS, Number(wk)||1));
+  recalcDue(p); saveLive(); render();
+}
+function setAdjust(num){
+  const p = P.find(function(x){ return x.num===num; }); if(!p) return;
+  const msg = [p.name + ' — manual adjustment in pesos.',
+    'Negative takes money off, positive adds it.',
+    'The late-join deduction is worked out separately, from the week they joined.'
+  ].join(String.fromCharCode(10));
+  const raw = prompt(msg, String(Number(p.adjust)||0));
+  if(raw===null) return;
+  p.adjust = Math.round(Number(String(raw).replace(/[^0-9.\-]/g,'')) || 0);
+  recalcDue(p); saveLive(); render();
+}
+
+/* ---- reusable tournament-checkout template ----
+   The embedded Batch 23 is archived ONCE (fully paid) so it stays viewable,
+   but the LIVE checkout starts empty and is filled per batch. Every batch can
+   be archived and looked back on; the sheet then resets for the next batch. */
+function lget(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
+function lset(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+function archive(){ return lget('fae-checkout-archive') || {}; }
+function saveArchive(a){ lset('fae-checkout-archive', a); }
+(function seedOnce(){
+  if(lget('fae-checkout-seeded')) return;
+  var b23 = DB.players.map(function(p){ var q = Object.assign({}, p);
+    q.paid=q.due; q.balance=0; q.overall='Fully Paid'; q.tf='paid'; q.tfLabel='Paid'; return q; });
+  var a = archive(); a['Batch 23'] = { players:b23, savedAt:new Date().toISOString() };
+  saveArchive(a); lset('fae-checkout-seeded', 1);
+})();
+let BATCH = lget('fae-checkout-batch') || 'Batch 24';
+let P = lget('fae-checkout-live') || [];
+function saveLive(){ lset('fae-checkout-live', P); lset('fae-checkout-batch', BATCH); }
+P.forEach(p=>{ if(p.checkedIn===undefined)p.checkedIn=false; if(p.released===undefined)p.released=false; });
+/* Existing rows predate joinWeek/adjust/banked. recalcDue reproduces their
+   current due exactly when joinWeek is 1 and adjust is 0, so this is a no-op
+   for every player already on the sheet. */
+P.forEach(recalcDue);
+let sortKey='num', sortDir=1;
+
+/* add one player: category drives the fee total */
+function addPlayer(){
+  var name = prompt('Player full name:'); if(!name) return;
+  var cat = (prompt('Category — New / Re-enrolled / Scholar:', 'New')||'New').trim();
+  if(!TOT[cat]){ cat = 'New'; }
+  var wk = Math.max(1, Math.min(WEEKS, parseInt(prompt('Joining on which week of the '+WEEKS+'-week batch? (1 = from the start)','1'),10) || 1));
+  var p = { num:(P.reduce(function(m,x){return Math.max(m,x.num||0);},0)+1), name:name.trim(), cat:cat,
+    jersey:'', no:'', parent:'', paid:0, banked:0, joinWeek:wk, adjust:0,
+    tf:'unpaid', tfLabel:'Unpaid', uniform:'', note:'', playing:true, flag:false,
+    fees:Object.assign({}, FEES[cat]), checkedIn:false, released:false };
+  recalcDue(p);
+  P.push(p); saveLive(); render();
+}
+/* archive the current batch and reset the sheet for the next one */
+function archiveAndNew(){
+  if(P.length){
+    var a = archive(); a[BATCH] = { players:P.map(function(x){return Object.assign({},x);}), savedAt:new Date().toISOString() };
+    saveArchive(a);
+  }
+  var next = prompt('Archived "'+BATCH+'". Name the NEW batch:', 'Batch ' + ((parseInt((BATCH.match(/\d+/)||[23])[0],10)||23)+1));
+  if(next===null) return;
+  BATCH = next.trim() || BATCH; P = []; saveLive(); refreshBatchSel(); render();
+}
+/* load an archived batch back into the sheet (look-back / continue) */
+function viewBatch(name){
+  if(!name) return;
+  var a = archive(); if(!a[name]) return;
+  BATCH = name; P = a[name].players.map(function(x){ return Object.assign({}, x); });
+  P.forEach(p=>{ if(p.checkedIn===undefined)p.checkedIn=false; if(p.released===undefined)p.released=false; });
+  P.forEach(recalcDue);
+  saveLive(); render();
+}
+function refreshBatchSel(){
+  var sel = document.getElementById('batchSel'); if(!sel) return;
+  var names = Object.keys(archive());
+  sel.innerHTML = '<option value="">— look back at a batch —</option>'
+    + names.map(function(n){ return '<option value="'+n+'"'+(n===BATCH?' selected':'')+'>'+n+'</option>'; }).join('');
+}
+
+const peso = n => n===null||n===undefined ? '—' : '₱'+Number(n).toLocaleString('en-PH');
+const catBadge = c => c==='New'?'<span class="badge b-new">New</span>':c==='Re-enrolled'?'<span class="badge b-re">Re-enroll</span>':'<span class="badge b-sch">Scholar</span>';
+const tfBadge = p => p.tf==='paid'?'<span class="badge b-paid">Paid</span>':p.tf==='waived'?'<span class="badge b-waived">Waived</span>':'<span class="badge b-bal">Unpaid</span>';
+
+function filtered(){
+  const q=document.getElementById('q').value.toLowerCase().trim();
+  const fc=document.getElementById('fcat').value, fp=document.getElementById('fpay').value,
+        ft=document.getElementById('ftf').value, fu=document.getElementById('funi').value,
+        hnp=document.getElementById('hidenp').checked;
+  let r=P.filter(p=>{
+    if(hnp && !p.playing) return false;
+    if(q && !((p.name+' '+p.jersey+' '+p.no+' '+p.parent).toLowerCase().includes(q))) return false;
+    if(fc && p.cat!==fc) return false;
+    if(fp && p.overall!==fp) return false;
+    if(ft && p.tf!==ft) return false;
+    if(fu==='released'&&!p.released) return false;
+    if(fu==='pending'&&p.released) return false;
+    if(fu==='size'&&!p.uniform) return false;
+    if(fu==='nosize'&&p.uniform) return false;
+    return true;
+  });
+  r.sort((a,b)=>{let x=a[sortKey],y=b[sortKey];
+    if(x===null)x=-1; if(y===null)y=-1;
+    if(typeof x==='string'){x=x.toLowerCase();y=(''+y).toLowerCase();}
+    return x<y?-1*sortDir:x>y?1*sortDir:0;});
+  return r;
+}
+function sortBy(k){ sortDir = (sortKey===k? -sortDir:1); sortKey=k; render(); }
+
+function render(){
+  const rows=filtered();
+  const tb=document.getElementById('tb');
+  tb.innerHTML = rows.map(p=>{
+    const cls=(!p.playing?'notplaying ':'')+(p.checkedIn?'done':'');
+    const flag=p.flag?' <span class="flagdot" title="Needs your confirmation — see notes">▲</span>':'';
+    const np=!p.playing?' <span class="badge b-bal">Not playing</span>':'';
+    const jersey=p.no?('<span class="jno">#'+p.no+'</span>'+p.jersey):'<span class="nosize">—</span>';
+    const uni=p.uniform?('<div class="uni-cell">'+p.uniform+'</div>'):'<span class="nosize">No size on file</span>';
+    return `<tr class="${cls}">
+      <td><input type="checkbox" class="rowsel" ${SEL.has(p.num)?'checked':''} onchange="selRow(${p.num},this.checked)"></td>
+      <td>${p.num}</td>
+      <td><input type="checkbox" class="big" ${p.checkedIn?'checked':''} onchange="toggle(${p.num},'checkedIn',this.checked)"></td>
+      <td><span class="pname" onclick="openMod(${p.num})">${p.name}${flag}${np}<small>${p.parent?('Guardian: '+p.parent):''}</small></span></td>
+      <td>${jersey}</td>
+      <td>${catBadge(p.cat)}</td>
+      <td>${tfBadge(p)}</td>
+      <td class="money">${peso(p.paid)}</td>
+      <td class="money ${p.balance>0?'r':'g'}">${p.balance===null?'<span class="nosize">TBD</span>':peso(p.balance)}</td>
+      <td>${uni}</td>
+      <td><input type="checkbox" class="big" ${p.released?'checked':''} onchange="toggle(${p.num},'released',this.checked)"></td>
+    </tr>`;
+  }).join('');
+  if(!rows.length) tb.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--text-muted);padding:34px">No players in <b>'+BATCH+'</b> yet — <b>+ Add player</b>, or pick an archived batch to look back.</td></tr>';
+  var sa=document.getElementById('selAll'); if(sa) sa.checked = rows.length>0 && rows.every(p=>SEL.has(p.num));
+  var tag=document.getElementById('batchTag'); if(tag) tag.textContent = BATCH;
+  var wi=document.getElementById('wks'); if(wi && document.activeElement!==wi) wi.value = WEEKS;
+  refreshBatchSel();
+  renderBoard(rows);
+  renderKPIs(); renderFoot();
+  document.getElementById('subline').textContent = DB.meta.org+'  ·  '+BATCH+'  ·  showing '+rows.length+' of '+P.length;
+}
+function toggle(num,field,val){ const p=P.find(x=>x.num===num); p[field]=val; saveLive(); render(); }
+function resetToggles(){ P.forEach(p=>{p.checkedIn=false;p.released=false;}); saveLive(); render(); }
+
+/* ---- select + record income to the business dashboard ----
+   Ticked rows' collected amounts are logged to fae-takepayment-log (the same
+   feed the dashboard's "Live Income · desk collections" reads), tagged with a
+   category so the tournament money is identifiable, then the rows are cleared. */
+let SEL = new Set();
+function selRow(num,on){ on?SEL.add(num):SEL.delete(num); }
+function toggleAll(on){ const rows=filtered(); rows.forEach(p=>on?SEL.add(p.num):SEL.delete(p.num)); render(); }
+function logAndClear(){
+  const sel = P.filter(p=>SEL.has(p.num));
+  if(!sel.length){ alert('Tick the rows you want to record first (use the top checkbox to select all shown).'); return; }
+
+  /* `banked` is how much of a player's `paid` has already been pushed to the
+     income ledger. Only the difference is new money, so pressing this twice
+     cannot double-count a collection. */
+  const fresh = sel.filter(p => (Number(p.paid)||0) - (Number(p.banked)||0) > 0);
+  const collected = fresh.reduce((s,p)=>s+((Number(p.paid)||0)-(Number(p.banked)||0)), 0);
+  if(!collected){ alert('Nothing new to record - every ticked row has already been banked.'); return; }
+
+  const owing = sel.filter(p => (Number(p.balance)||0) > 0);
+  const msg = ['Recording ' + peso(collected) + ' from ' + fresh.length + ' player(s) to the business dashboard.',
+    owing.length ? owing.length + ' of these still owe money and will STAY on the sheet.' : 'All ticked rows are settled and will be cleared.',
+    '', 'Payment method - Cash / GCash / Mixed:'].join(String.fromCharCode(10));
+  const method = (prompt(msg, 'Cash')||'').trim();
+  if(!method) return;
+
+  const cat = 'Tournament - ' + BATCH;
+  if(!(window.FAE && FAE.incomeAdd)){ alert('Income ledger not loaded - open this page through the Command Center (not as a bare file).'); return; }
+  const now = new Date().toISOString();
+  fresh.forEach(p=>{
+    const amt = (Number(p.paid)||0) - (Number(p.banked)||0);
+    FAE.incomeAdd({ program:'basketball', category:cat, label:p.name, amount:amt, method:method, ref:BATCH, ts:now });
+    p.banked = Number(p.paid)||0;
+  });
+
+  /* Only settled rows leave. Clearing someone who still owes would delete the
+     receivable along with them. */
+  const kept = P.filter(p => !SEL.has(p.num) || (Number(p.balance)||0) > 0);
+  const cleared = P.length - kept.length;
+  P = kept; SEL.clear(); saveLive(); render();
+  alert('Recorded ' + peso(collected) + ' as FAEBASKETBALL "' + cat + '" (' + method + ') to the cash flow.'
+    + String.fromCharCode(10) + 'Cleared ' + cleared + ' settled row(s); kept ' + owing.length + ' still owing.');
+}
+
+function renderKPIs(){
+  const play=P.filter(p=>p.playing);
+  const k=[
+    ['Players Playing',play.length,'a'],
+    ['Fully Paid',P.filter(p=>p.overall==='Fully Paid').length,'g'],
+    ['With Balance',P.filter(p=>p.overall==='Balance'&&p.playing).length,'r'],
+    ['Tourn. Fee Settled',P.filter(p=>(p.tf==='paid'||p.tf==='waived')&&p.playing).length,'b'],
+    ['Checked In',P.filter(p=>p.checkedIn).length,'c'],
+    ['Uniforms Released',P.filter(p=>p.released).length,'a'],
+  ];
+  document.getElementById('kpis').innerHTML=k.map(([l,v,c])=>`<div class="kpi"><div class="lbl">${l}</div><div class="val ${c}">${v}</div></div>`).join('');
+}
+function renderFoot(){
+  const flags=P.filter(p=>p.flag);
+  document.getElementById('foot').innerHTML=`
+   <b>How to use:</b> tick <b>In</b> when a player arrives and <b>Released</b> when their tournament uniform is handed over. Click a player's name for the full fee breakdown. Everything is live in this page — hit <b>Backup (JSON)</b> or <b>Export CSV</b> to save a snapshot, and <b>Print</b> for a paper checklist.<br><br>
+   <b>Fees (Batch 23):</b> New ₱10,600 (Training 5,500 · Batch Uniform 1,000 · Tournament Uniform 1,600 · Tournament Fee 2,500) · Re-enrolled ₱8,000 (Training 5,500 · Tournament Fee 2,500) · Scholar ₱2,500 (Tournament Fee only).<br><br>
+   <span class="flag"><b>▲ To confirm:</b></span> ${flags.map(f=>f.name+' — '+f.note).join(' &nbsp;|&nbsp; ')}<br>
+   <span style="color:var(--text-muted)">Payment amounts transcribed from your iPhone notes; partial-payment allocation to the tournament fee is an assumption — verify against your records before final checkout.</span>`;
+}
+
+function openMod(num){
+  const p=P.find(x=>x.num===num);
+  const fees=p.fees||FEES[p.cat];
+  let rows=Object.entries(fees).map(([k,v])=>`<tr><td>${k}</td><td>${peso(v)}</td></tr>`).join('');
+  const due=p.due;
+  let body=`
+   <div style="margin-bottom:10px">${catBadge(p.cat)} ${tfBadge(p)} ${p.playing?'':'<span class="badge b-bal">Not playing</span>'}</div>
+   <div style="font-size:13px;color:var(--text-secondary);margin-bottom:6px">${p.parent?('Guardian: '+p.parent+'<br>'):''}${p.no?('Jersey: #'+p.no+' '+p.jersey):'Jersey: not assigned'}</div>
+   <table class="brk">
+     <tr><td colspan="2" style="color:var(--text-muted);text-transform:uppercase;font-size:11px;letter-spacing:.5px">Fee breakdown — ${p.cat}</td></tr>
+     ${rows}
+     ${Number(p.lateDeduct)>0?`<tr><td>Joined week ${p.joinWeek} — ${p.joinWeek-1} week(s) of training not delivered</td><td class="money g">−${peso(p.lateDeduct)}</td></tr>`:''}
+     ${Number(p.adjust)?`<tr><td>Manual adjustment</td><td class="money ${p.adjust<0?'g':'r'}">${p.adjust>0?'+':'−'}${peso(Math.abs(p.adjust))}</td></tr>`:''}
+     <tr class="tot"><td>Total Due</td><td>${due===null?'TBD':peso(due)}</td></tr>
+     <tr><td>Recorded Paid</td><td class="money g">${peso(p.paid)}</td></tr>
+     <tr class="tot"><td>Balance</td><td class="money ${p.balance>0?'r':'g'}">${p.balance===null?'TBD':peso(p.balance)}</td></tr>
+   </table>
+   ${Number(p.banked)>0?`<div style="margin-top:8px;font-size:12px;color:var(--text-secondary)">${peso(p.banked)} of this has already been recorded to the cash flow.</div>`:''}
+   <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+     <button class="btn" onclick="closeMod();setAdjust(${p.num})">Manual adjustment…</button>
+   </div>
+   <div style="margin-top:14px"><b>Uniform:</b> ${p.uniform?p.uniform:'<span class="nosize">No size on file</span>'}</div>
+   ${p.note?('<div class="mnote">'+p.note+'</div>'):''}`;
+  document.getElementById('mod').innerHTML=`<div class="mh"><h3>${p.name}</h3><button class="x" onclick="closeMod()">×</button></div><div class="mb">${body}</div>`;
+  document.getElementById('ov').classList.add('on');
+}
+function closeMod(){ document.getElementById('ov').classList.remove('on'); }
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMod();});
+
+function exportCSV(){
+  const h=['#','Player','Guardian','Category','JerseyNo','JerseyName','TotalDue','TotalPaid','Balance','OverallStatus','TournamentFee','UniformSize','CheckedIn','UniformReleased','Playing','Note'];
+  const esc=s=>'"'+String(s===null?'':s).replace(/"/g,'""')+'"';
+  const lines=[h.join(',')];
+  P.forEach(p=>lines.push([p.num,p.name,p.parent,p.cat,p.no,p.jersey,p.due===null?'':p.due,p.paid,p.balance===null?'':p.balance,p.overall,p.tfLabel,p.uniform,p.checkedIn?'YES':'',p.released?'YES':'',p.playing?'YES':'NO',p.note].map(esc).join(',')));
+  dl('FAE-Batch23-Checkout-'+DB.meta.date+'.csv', lines.join('\n'), 'text/csv');
+}
+function backupJSON(){
+  const snap={...DB, savedAt:new Date().toISOString(), players:P.map(p=>({...p}))};
+  dl('FAE-Batch23-Checkout-backup-'+new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')+'.json', JSON.stringify(snap,null,2), 'application/json');
+}
+function dl(name,content,type){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([content],{type})); a.download=name;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+/* ---------- payment-scheme board ----------
+   The drafting pool from programs.html pointed at money instead of teams. The
+   columns are the fee schemes, ordered most expensive first so the biggest
+   liabilities read first, and dragging a player between them is how a category
+   gets corrected: until now `cat` was fixed by the prompt at add time and there
+   was no way to change it afterwards without editing storage by hand. */
+const SCHEMES = Object.keys(TOT).sort((a,b)=>TOT[b]-TOT[a]);
+let VIEW = lget('fae-checkout-view') || 'table';
+let dragNum = null;
+
+function sbEsc(v){ return String(v==null?'':v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function setView(v){
+  VIEW = (v==='board') ? 'board' : 'table';
+  lset('fae-checkout-view', VIEW);
+  document.getElementById('vt-table').classList.toggle('on', VIEW==='table');
+  document.getElementById('vt-board').classList.toggle('on', VIEW==='board');
+  document.getElementById('tableView').hidden = VIEW!=='table';
+  document.getElementById('sbBoard').hidden  = VIEW!=='board';
+  render();
+}
+
+/* A player whose due does not match their scheme's standard total is on a
+   negotiated rate - an adjusted session count, a voucher, a part scholarship.
+   Recomputing them from the scheme would quietly delete that agreement, so it
+   is confirmed rather than assumed. */
+function isAdjusted(p){
+  const std = FEES[p.cat]; if(!std) return false;
+  const own = p.fees || {};
+  const keys = Object.keys(std).concat(Object.keys(own))
+    .filter(function(k,i,a){ return a.indexOf(k)===i; });
+  return keys.some(function(k){ return Number(std[k]||0) !== Number(own[k]||0); });
+}
+
+function setScheme(num, cat){
+  const p = P.find(x=>x.num===num);
+  if(!p || !TOT[cat] || p.cat===cat){ render(); return; }
+  if(isAdjusted(p) && !confirm(
+      p.name+' is on negotiated fee lines, not the standard '+p.cat+' scheme.'
+      +'\n\nMoving them to '+cat+' resets the fees to the standard '+peso(TOT[cat])+' and loses that adjustment.'
+      +'\n\nContinue?')){ render(); return; }
+  p.cat  = cat;
+  p.fees = Object.assign({}, FEES[cat]);     /* back to the scheme default */
+  recalcDue(p);                              /* keeps joinWeek + adjust; paid is never recomputed */
+  saveLive(); render();
+}
+
+function sbDragStart(e,el,num){
+  dragNum = num; el.classList.add('drag');
+  e.dataTransfer.setData('text/fae-player', String(num));
+  e.dataTransfer.effectAllowed = 'move';
+}
+function sbDragEnd(el){
+  dragNum = null; el.classList.remove('drag');
+  document.querySelectorAll('.sb-col.over').forEach(c=>c.classList.remove('over'));
+}
+/* Guarded on dragNum so a file dragged in from the desktop is not a drop. */
+function sbOver(e,el){ if(dragNum===null) return; e.preventDefault(); el.classList.add('over'); }
+function sbOut(el){ el.classList.remove('over'); }
+function sbDrop(e,el,cat){
+  el.classList.remove('over');
+  if(dragNum===null) return;
+  e.preventDefault();
+  const n = dragNum; dragNum = null;
+  setScheme(n, cat);
+}
+
+
+/* Week joined drives the pro-rate, so it sits on the card next to the balance
+   rather than behind an edit dialog - it is set once, on the day they walk in. */
+function wkOpts(cur){
+  var out = '';
+  for(var w=1; w<=WEEKS; w++){
+    out += '<option value="'+w+'"'+(Number(cur)===w?' selected':'')+'>Wk '+w+'</option>';
+  }
+  return out;
+}
+/* Anything that moved the player off the scheme default is stated on the card.
+   A deduction nobody can see is a deduction nobody can check. */
+function adjNote(p){
+  var bits = [];
+  if(Number(p.lateDeduct)>0) bits.push('joined wk '+(p.joinWeek||1)+', -'+peso(p.lateDeduct));
+  if(Number(p.adjust))       bits.push((p.adjust>0?'+':'')+peso(p.adjust)+' adj');
+  if(Number(p.banked)>0)     bits.push(peso(p.banked)+' banked');
+  if(!bits.length) return '';
+  return '<br><span style="font-size:10px;color:var(--yellow)">'+bits.join(' · ')+'</span>';
+}
+function sbCard(p, opts){
+  const bal = Number(p.balance)||0, nm = sbEsc(p.name);
+  return '<div class="sb-card'+(isAdjusted(p)?' adj':'')+'" draggable="true"'
+    + ' ondragstart="sbDragStart(event,this,'+p.num+')" ondragend="sbDragEnd(this)"'
+    + (isAdjusted(p) ? ' title="Adjusted rate '+peso(p.due)+' instead of the standard '+peso(TOT[p.cat])+'"' : '')
+    + '>'
+    + '<span class="sb-num">'+p.num+'</span>'
+    + '<span class="sb-n">'+nm+(p.playing?'':' <span style="color:var(--text-muted);font-weight:400">(not playing)</span>')
+    +   adjNote(p)+'</span>'
+    + '<span class="sb-bal '+(bal<0?'over':bal===0?'ok':'due')+'">'
+    +   (bal<0 ? 'Refund '+peso(-bal) : bal===0 ? 'Paid' : peso(bal))+'</span>'
+    + '<select class="sb-move sb-wk" aria-label="Week '+nm+' joined" title="Week joined - pro-rates the training fee"'
+    + ' onchange="setJoinWeek('+p.num+',this.value)">'
+    + wkOpts(p.joinWeek||1)
+    + '</select>'
+    + '<select class="sb-move" aria-label="Move '+nm+' to another payment scheme"'
+    + ' onchange="setScheme('+p.num+',this.value)">'
+    + '<option value="">Move…</option>'
+    + opts.map(c=>'<option value="'+sbEsc(c)+'">'+sbEsc(c)+'</option>').join('')
+    + '</select></div>';
+}
+
+function renderBoard(rows){
+  const board = document.getElementById('sbBoard');
+  if(!board || VIEW!=='board') return;
+  board.innerHTML = SCHEMES.map(cat=>{
+    const list = rows.filter(p=>p.cat===cat);
+    const due  = list.reduce((s,p)=>s+(Number(p.due)||0),0);
+    const paid = list.reduce((s,p)=>s+(Number(p.paid)||0),0);
+    const out  = due - paid;
+    const opts = SCHEMES.filter(c=>c!==cat);
+    return '<div class="sb-col" ondragover="sbOver(event,this)" ondragleave="sbOut(this)"'
+      + ' ondrop="sbDrop(event,this,\'' + sbEsc(cat) + '\')">'
+      + '<div class="sb-h"><span class="sb-name">'+sbEsc(cat)+'</span>'
+      + '<span class="sb-fee">'+peso(TOT[cat])+'</span></div>'
+      + '<div class="sb-sub" title="'+sbEsc(Object.keys(FEES[cat]).join(' · '))+'">'+list.length+' player'+(list.length===1?'':'s')+' · '+sbEsc(Object.keys(FEES[cat]).join(' · '))+'</div>'
+      + '<div class="sb-money">'
+      +   '<span>Due <b>'+peso(due)+'</b></span>'
+      +   '<span style="color:var(--green)">Collected <b>'+peso(paid)+'</b></span>'
+      +   (out<0
+            ? '<span style="color:var(--magenta)">Refund due <b>'+peso(-out)+'</b></span>'
+            : '<span style="color:'+(out>0?'var(--red)':'var(--green)')+'">Outstanding <b>'+peso(out)+'</b></span>')
+      + '</div>'
+      + '<div class="sb-list">'
+      + (list.length ? list.map(p=>sbCard(p,opts)).join('')
+                     : '<div class="sb-empty">Drag a player here to put them on this scheme.</div>')
+      + '</div></div>';
+  }).join('');
+}
+
+/* through setView, so a remembered view is applied to the DOM on load */
+setView(VIEW);
+</script>
+</body>
+</html>

@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. — Terms, Waiver & Privacy Notice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<script src="assets/fae-core.js?v=6"></script>
+<style>
+:root{
+  --void:#050507; --panel:#0d0d12; --panel2:#121218; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#E8C766; --ink:#F4F4F6; --mute:#8B8B98; --dim:#5f5f6d;
+  --red:#D2453B; --green:#3FA66A; --blue:#4A7FB5;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;padding-bottom:60px}
+.wrap{max-width:760px;margin:0 auto;padding:18px 16px 40px}
+a{color:var(--gold-hi)}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;
+     padding-bottom:13px;border-bottom:2px solid var(--gold);margin-bottom:18px}
+.top b{display:block;font-family:var(--disp);font-weight:900;font-size:18px;letter-spacing:.02em;line-height:1.15}
+.top small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--gold);margin-top:5px}
+.home{font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--gold);
+      border:1px solid var(--line2);border-radius:6px;padding:8px 11px;text-decoration:none;white-space:nowrap}
+
+.ver{font-family:var(--mono);font-size:10.5px;color:var(--mute);background:var(--panel);
+     border:1px solid var(--line);border-radius:9px;padding:11px 14px;margin-bottom:16px;line-height:1.7}
+.ver b{color:var(--gold-hi)}
+
+/* jump menu */
+.jump{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.jump a{font-family:var(--mono);font-size:10px;letter-spacing:.1em;padding:6px 11px;border-radius:14px;
+  border:1px solid var(--line2);color:var(--mute);text-decoration:none}
+.jump a:hover{border-color:var(--gold);color:var(--gold-hi)}
+
+section{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px}
+h2{font-family:var(--disp);font-weight:800;font-size:16px;letter-spacing:.01em;margin:0 0 4px;color:var(--gold-hi)}
+h2 .n{font-family:var(--mono);font-size:11px;color:var(--gold);margin-right:8px}
+.lead{font-size:12.5px;color:var(--mute);margin:0 0 14px;line-height:1.5}
+h3{font-family:var(--disp);font-weight:800;font-size:13.5px;margin:18px 0 7px}
+p,li{font-size:14.5px;line-height:1.68;color:#D5D5DE}
+p{margin:0 0 11px}
+ul,ol{margin:0 0 12px;padding-left:22px}
+li{margin-bottom:6px}
+strong{color:var(--ink)}
+.key{border-left:3px solid var(--gold);background:rgba(201,162,39,.07);padding:12px 15px;border-radius:0 9px 9px 0;margin:14px 0}
+.key p:last-child{margin-bottom:0}
+.warn{border-left:3px solid var(--red);background:rgba(210,69,59,.08);padding:12px 15px;border-radius:0 9px 9px 0;margin:14px 0}
+.warn p:last-child{margin-bottom:0}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+th{text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--dim);
+   padding:8px 9px;border-bottom:1px solid var(--line2);vertical-align:bottom}
+td{padding:9px;border-bottom:1px solid var(--line);color:#D5D5DE;vertical-align:top}
+.contact{font-family:var(--mono);font-size:13px;color:var(--gold-hi);line-height:1.9}
+
+.foot{font-size:12px;color:var(--dim);line-height:1.7;text-align:center;margin-top:24px}
+.actions{position:sticky;bottom:0;background:linear-gradient(0deg,var(--void) 72%,transparent);
+  padding:16px 0 8px;display:flex;gap:9px;flex-wrap:wrap}
+.btn{border:1px solid var(--line2);background:var(--panel2);color:var(--ink);border-radius:10px;
+  padding:12px 18px;font-family:var(--disp);font-weight:700;font-size:13px;letter-spacing:.04em;
+  cursor:pointer;text-decoration:none;display:inline-block}
+.btn.go{background:var(--gold);border-color:var(--gold);color:#100c00}
+
+@media print{
+  body{background:#fff;color:#111;padding:0}
+  .wrap{max-width:none;padding:0}
+  .top,.jump,.actions,.home{display:none !important}
+  section{background:#fff;border:0;border-bottom:1px solid #ccc;border-radius:0;padding:10px 0;page-break-inside:avoid}
+  h2{color:#111} p,li,td{color:#222} .lead{color:#555}
+  .key,.warn{background:#f4f4f4;border-left-color:#888}
+  .ver{background:#f4f4f4;color:#333;border-color:#ccc}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div><b>TERMS, WAIVER &amp; PRIVACY NOTICE</b><small>F.A.E. SPORTS MANAGEMENT SERVICES · LIPA CITY</small></div>
+    <a class="home" href="console.html">&#8592; HOME</a>
+  </div>
+
+  <div class="ver" id="verBox">
+    <b>Version 1.0</b> &nbsp;·&nbsp; Effective 6 September 2026 &nbsp;·&nbsp; Applies to everyone entering the facility.<br>
+    This page covers four things: the <b>house rules</b>, the <b>waiver and assumption of risk</b>,
+    <b>parental consent for children</b>, and our <b>privacy notice</b> under the Data Privacy Act.
+  </div>
+
+  <div class="jump">
+    <a href="#rules">1 · HOUSE RULES</a>
+    <a href="#waiver">2 · WAIVER</a>
+    <a href="#minors">3 · CHILDREN</a>
+    <a href="#privacy">4 · PRIVACY</a>
+    <a href="#rights">5 · YOUR RIGHTS</a>
+    <a href="#contact">6 · CONTACT</a>
+  </div>
+
+  <!-- =============================================================== -->
+  <section id="rules">
+    <h2><span class="n">1</span>Using the facility</h2>
+    <div class="lead">The house rules. Everyone entering agrees to these.</div>
+
+    <h3>Who may use the courts</h3>
+    <ul>
+      <li>Court time must be booked and paid for at the front desk before play begins.</li>
+      <li>Anyone entering the building signs in. Children are signed in under a responsible adult.</li>
+      <li>We may refuse entry or end a session for unsafe behaviour, intoxication, abusive conduct,
+          or refusal to follow staff instructions. Court fees for a session ended this way are not refunded.</li>
+    </ul>
+
+    <h3>Conduct</h3>
+    <ul>
+      <li>Proper court shoes only. No street shoes, no bare feet.</li>
+      <li>No smoking, vaping, alcohol or illegal drugs anywhere on the premises.</li>
+      <li>Treat staff, other players and equipment with respect. Damage caused deliberately or
+          through reckless behaviour will be charged to the person responsible or, for a child,
+          to the adult who signed them in.</li>
+      <li>Outside food and drink may be restricted. Clean up after your session.</li>
+    </ul>
+
+    <h3>Bookings, payment and cancellation</h3>
+    <ul>
+      <li>Rates are posted at the front desk and in the Command Center. Member and non-member rates differ.</li>
+      <li>A session begins at the booked time whether or not your group has arrived.</li>
+      <li>Equipment borrowed (balls, scoreboard) must be returned in the condition it was issued.</li>
+      <li>If we cancel a booking for a reason within our control, you may rebook or be refunded.</li>
+    </ul>
+
+    <h3>Personal belongings</h3>
+    <p>Bring valuables at your own risk. We do not operate a secured cloakroom and we are not
+       responsible for items lost or left behind, except where the loss is caused by our own fault.</p>
+  </section>
+
+  <!-- =============================================================== -->
+  <section id="waiver">
+    <h2><span class="n">2</span>Waiver and assumption of risk</h2>
+    <div class="lead">Read this part properly. It concerns injury.</div>
+
+    <h3>Sport carries risk</h3>
+    <p>Basketball, volleyball and pickleball involve running, jumping, sudden changes of direction
+       and contact with other players, the floor, the ball and the equipment. Injuries happen in
+       these sports even when everything is done correctly. Those risks include, and are not limited
+       to: sprains, fractures, dislocations, cuts, dental and eye injuries, concussion, heat
+       exhaustion, cardiac events, and in rare cases permanent disability or death.</p>
+
+    <p><strong>By entering and playing, you accept those inherent risks</strong> for yourself and for
+       any child you sign in.</p>
+
+    <h3>You confirm that</h3>
+    <ul>
+      <li>You (and any child you sign in) are physically fit to take part, and are not playing against
+          medical advice.</li>
+      <li>You will stop and tell staff if you feel unwell, dizzy, or are injured.</li>
+      <li>You will follow safety instructions from staff and posted signage.</li>
+      <li>You are responsible for your own health insurance. We do not provide medical cover.</li>
+    </ul>
+
+    <h3>What you release</h3>
+    <p>You agree not to hold F.A.E. Sports Management Services, its owners, staff and contractors
+       liable for injury, illness, loss or damage that arises from the <strong>inherent risks of the
+       sport</strong>, from your own actions, or from the actions of other players.</p>
+
+    <div class="warn">
+      <p><strong>What this waiver does NOT do — and cannot do.</strong> Under Philippine law a waiver
+         cannot excuse us from our own negligence, from a failure to keep the premises reasonably safe,
+         or from any wilful or grossly negligent act. Nothing you sign here removes those obligations
+         from us, or removes your right to make a claim about them. Any part of this waiver that a
+         court finds invalid is severed and the rest continues to apply.</p>
+    </div>
+
+    <h3>Emergency medical treatment</h3>
+    <p>If you or a child you signed in is injured and cannot give consent at the time, you authorise
+       our staff to arrange first aid and, where reasonably necessary, transport to a hospital or
+       clinic. You agree to be responsible for the cost of that treatment and transport. We will
+       contact your emergency contact as soon as we are able.</p>
+  </section>
+
+  <!-- =============================================================== -->
+  <section id="minors">
+    <h2><span class="n">3</span>Children and young people</h2>
+    <div class="lead">Rules that apply when someone under 18 is in the building.</div>
+
+    <div class="key">
+      <p><strong>A child cannot sign for themselves.</strong> Only a parent or legal guardian — or an
+         adult that parent has authorised in writing — may register a child, accept these terms on
+         their behalf, and consent to us holding their details.</p>
+    </div>
+
+    <h3>The adult who signs a child in confirms that they</h3>
+    <ul>
+      <li>are the child's <strong>parent or legal guardian</strong>, or have that person's authority to act for the child;</li>
+      <li>accept the waiver in section 2 on the child's behalf;</li>
+      <li>consent to us holding the child's details as described in section 4;</li>
+      <li>will remain responsible for that child while they are on the premises.</li>
+    </ul>
+
+    <h3>Supervision</h3>
+    <ul>
+      <li>Children under 12 must have a responsible adult in the building at all times.</li>
+      <li>Children aged 12 to 17 may play unaccompanied only if a parent or guardian has registered
+          them and given a contact number that is reachable for the whole session.</li>
+      <li>A child is signed out to the adult who signed them in, or to someone that adult has named.
+          If you want someone else to collect your child, tell the front desk.</li>
+      <li>Our staff supervise court use and safety. They are <strong>not</strong> childminders and
+          cannot take custody of a child.</li>
+    </ul>
+
+    <h3>Photographs and video of children</h3>
+    <div class="key">
+      <p><strong>Separate, optional, and yours to refuse.</strong> We only photograph or film a child
+         for posting if the parent or guardian has ticked the photo permission — and that permission
+         is a separate tick from the one that lets us hold their details. Saying no changes nothing
+         about the child's use of the facility.</p>
+    </div>
+    <ul>
+      <li>You may withdraw photo permission at any time. Tell the front desk and we stop, and remove
+          what we still control.</li>
+      <li>We do not publish a child's full name, school, or any contact detail alongside their image.</li>
+      <li>Other customers taking photos are not under our control. Tell staff immediately if someone
+          is photographing children and we will deal with it.</li>
+      <li>CCTV, where installed, runs for security and is covered in section 4. It is not the same
+          as photo permission.</li>
+    </ul>
+
+    <h3>Safeguarding</h3>
+    <p>If staff have a genuine concern that a child is being harmed or is at risk, we may report it to
+       the proper authorities. We will do that regardless of any consent given here, because child
+       protection law requires it.</p>
+  </section>
+
+  <!-- =============================================================== -->
+  <section id="privacy">
+    <h2><span class="n">4</span>Privacy notice</h2>
+    <div class="lead">Required by the Data Privacy Act of 2012 (Republic Act No. 10173).
+      This tells you what we collect, why, how long we keep it, and who sees it.</div>
+
+    <h3>Who is responsible</h3>
+    <p>F.A.E. Sports Management Services, Lipa City, Batangas, is the personal information controller
+       for the details collected at sign-in. Our contact for privacy questions is in section 6.</p>
+
+    <h3>What we collect and why</h3>
+    <table>
+      <thead><tr><th>What</th><th>Why we need it</th><th>Required?</th></tr></thead>
+      <tbody>
+        <tr><td>Name of the adult</td><td>To identify who is in the building and who is responsible for a child</td><td>Yes</td></tr>
+        <tr><td>Mobile number</td><td>To reach you during a session, and to find your record on a later visit</td><td>Yes</td></tr>
+        <tr><td>Email, home address</td><td>Receipts, booking confirmations, and to reach you if the phone fails</td><td>No</td></tr>
+        <tr><td>Emergency contact and number</td><td>To call someone if you are injured and cannot speak for yourself</td><td>Strongly advised</td></tr>
+        <tr><td>Name and age of each child</td><td>To know who is in the building, who is responsible for them, and to run age-appropriate sessions</td><td>Yes, if you bring a child</td></tr>
+        <tr><td>Health notes — allergy, asthma, condition</td><td>So staff and first aiders can act correctly in an emergency</td><td><strong>No — entirely optional</strong></td></tr>
+        <tr><td>Check-in and check-out times</td><td>To know who is inside during an emergency evacuation, and to investigate incidents</td><td>Automatic</td></tr>
+        <tr><td>Photographs and video</td><td>Promotion of the facility and league coverage</td><td><strong>No — separate opt-in</strong></td></tr>
+      </tbody>
+    </table>
+
+    <div class="key">
+      <p><strong>Health information is sensitive personal information</strong> under the Act. We ask for
+         it only so we can help you in an emergency, we never require it, and only staff who need it
+         for that purpose can see it. Leaving it blank does not affect your use of the facility.</p>
+    </div>
+
+    <h3>Our lawful basis</h3>
+    <ul>
+      <li><strong>Your consent</strong> — for holding your contact details, for a child's details, and
+          separately for photographs.</li>
+      <li><strong>Contract</strong> — to take a booking and issue a receipt.</li>
+      <li><strong>Legal obligation</strong> — tax and business records; incident reports; child protection reporting.</li>
+      <li><strong>Legitimate interests</strong> — knowing who is in the building for safety and evacuation,
+          and protecting the premises. We keep this to what is proportionate.</li>
+    </ul>
+
+    <h3>Who can see it</h3>
+    <ul>
+      <li><strong>Front desk staff</strong> see names, the adult-and-child link, and check-in status —
+          what they need to run the door safely. They do not see the full register.</li>
+      <li><strong>Management</strong> sees the full record.</li>
+      <li>Emergency services and medical staff, if you are injured.</li>
+      <li>Authorities where the law requires it.</li>
+    </ul>
+    <p>We do <strong>not</strong> sell your details, and we do not share them with advertisers.</p>
+
+    <h3>Where it is kept</h3>
+    <p>Records are held on the facility's own office computer and its backups. They are not published
+       online. Access is restricted by role, and every deletion is recorded.</p>
+
+    <h3>How long we keep it</h3>
+    <table>
+      <thead><tr><th>Record</th><th>Kept for</th></tr></thead>
+      <tbody>
+        <tr><td>Visitor and child registration</td><td>2 years after the last visit, then deleted</td></tr>
+        <tr><td>Check-in / check-out log</td><td>1 year</td></tr>
+        <tr><td>Incident and injury reports</td><td>5 years — longer if a claim is open. For an incident involving a child, until they turn 21</td></tr>
+        <tr><td>Receipts and financial records</td><td>10 years, as tax law requires</td></tr>
+        <tr><td>Photographs with permission</td><td>Until permission is withdrawn</td></tr>
+      </tbody>
+    </table>
+
+    <h3>If something goes wrong</h3>
+    <p>If personal data is lost or exposed in a way that puts you at real risk, we will notify the
+       National Privacy Commission and the people affected within the time the law requires.</p>
+  </section>
+
+  <!-- =============================================================== -->
+  <section id="rights">
+    <h2><span class="n">5</span>Your rights</h2>
+    <div class="lead">Under the Data Privacy Act these are yours, free of charge. A parent exercises
+      them on behalf of their child.</div>
+    <ul>
+      <li><strong>Be informed</strong> — this notice.</li>
+      <li><strong>Access</strong> — ask for a copy of what we hold about you and your children.</li>
+      <li><strong>Correct it</strong> — have anything wrong fixed.</li>
+      <li><strong>Object</strong> — tell us to stop processing, where processing is based on consent.</li>
+      <li><strong>Erasure or blocking</strong> — have your record deleted, unless we must keep it for a
+          legal reason such as tax records or an open incident.</li>
+      <li><strong>Data portability</strong> — get your record in a file you can take elsewhere.</li>
+      <li><strong>Damages</strong> — claim compensation for a violation.</li>
+      <li><strong>Complain</strong> — to us first, and to the National Privacy Commission if we do not
+          resolve it.</li>
+    </ul>
+    <div class="key">
+      <p><strong>Withdrawing consent is easy and has no penalty.</strong> Tell the front desk. We will
+         delete your record, including your children's, unless the law requires us to keep a specific
+         part of it — and we will tell you which part and why. We aim to act on any request within
+         <strong>15 working days</strong>.</p>
+    </div>
+  </section>
+
+  <!-- =============================================================== -->
+  <section id="contact">
+    <h2><span class="n">6</span>How to reach us</h2>
+    <div class="lead">For any privacy question, correction, or deletion request.</div>
+    <div class="contact" id="contactBox">
+      F.A.E. Sports Management Services<br>
+      Lipa City, Batangas<br>
+      <span id="cPhone">—</span><br>
+      <span id="cEmail">—</span>
+    </div>
+    <p style="margin-top:14px">Ask for the <strong>person responsible for data privacy</strong>. If you are
+       not satisfied with our answer, you may complain to the National Privacy Commission
+       (<a href="https://privacy.gov.ph" target="_blank" rel="noopener">privacy.gov.ph</a>).</p>
+  </section>
+
+  <div class="ver" style="border-color:rgba(210,69,59,.4)">
+    <b style="color:#E88A83">A note on this document.</b> These terms were drafted as a working template
+    for this facility. They are <b>not legal advice</b> and have not been reviewed by a lawyer.
+    Before relying on them — particularly the waiver in section 2 and anything concerning children —
+    have a Philippine lawyer review and adjust them. Print the reviewed version and keep a signed
+    paper copy for anyone who registers on paper.
+  </div>
+
+  <div class="actions">
+    <a class="btn go" href="register.html">&#8592; Back to sign-in</a>
+    <button class="btn" onclick="window.print()">&#128424; Print / Save PDF</button>
+  </div>
+
+  <div class="foot">
+    F.A.E. Sports Management Services · Terms, Waiver &amp; Privacy Notice · Version 1.0 · 6 September 2026
+  </div>
+
+</div>
+
+<script>
+/* The business name, phone and email come from Settings so this page never
+   carries stale contact details - a privacy notice that lists a dead number is
+   worse than useless, because it blocks the very requests it is meant to invite. */
+(function(){
+  try{
+    var b = (FAE.config().business) || {};
+    if(b.phone) document.getElementById('cPhone').textContent = b.phone;
+    if(b.email) document.getElementById('cEmail').textContent = b.email;
+    var dpo = (FAE.config().privacy || {}).officer;
+    if(dpo){
+      var box = document.getElementById('contactBox');
+      box.innerHTML += '<br><span style="color:var(--mute)">Data privacy contact:</span> ' + dpo;
+    }
+  }catch(e){}
+  /* deep link like terms.html#waiver should land on the section, not the top */
+  try{ if(location.hash) document.querySelector(location.hash).scrollIntoView(); }catch(e){}
+})();
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

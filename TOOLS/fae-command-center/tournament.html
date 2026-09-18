@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. — Tournament Matchmaking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<script src="assets/fae-core.js?v=9"></script>
+<script src="assets/fae-export.js?v=1"></script>
+<style>
+:root{
+  --void:#050507; --panel:#0d0d12; --panel2:#121218; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#E8C766; --ink:#F4F4F6; --mute:#8B8B98; --dim:#5f5f6d;
+  --red:#D2453B; --green:#3FA66A; --blue:#4A7FB5; --purple:#8C6BD4; --win:#3FA66A;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;padding-bottom:50px}
+.wrap{max-width:1280px;margin:0 auto;padding:20px 18px 40px}
+a{color:inherit;text-decoration:none}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-bottom:14px;border-bottom:2px solid var(--gold);margin-bottom:16px}
+.brand b{display:block;font-family:var(--disp);font-weight:900;font-size:20px;letter-spacing:.03em;line-height:1.1}
+.brand span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--gold);margin-top:5px}
+.home{font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--gold);border:1px solid var(--line2);border-radius:6px;padding:8px 12px;white-space:nowrap}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+label.fld{display:flex;flex-direction:column;gap:4px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--dim)}
+select,input[type=text]{background:var(--panel);border:1px solid var(--line2);color:var(--ink);border-radius:9px;padding:9px 12px;font-size:14px;font-family:var(--sans)}
+.btn{border:1px solid var(--line2);background:var(--panel2);color:var(--ink);border-radius:9px;padding:10px 15px;font-family:var(--disp);font-weight:700;font-size:12.5px;letter-spacing:.03em;cursor:pointer}
+.btn.go{background:var(--gold);border-color:var(--gold);color:#100c00}
+.btn.warn{border-color:var(--red);color:#f0b4ae}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{font-family:var(--disp);font-weight:800;font-size:12px;letter-spacing:.04em;padding:9px 16px;border-radius:9px;border:1px solid var(--line2);background:var(--panel);color:var(--mute);cursor:pointer}
+.tab.on{background:var(--gold);border-color:var(--gold);color:#100c00}
+.note{font-size:12px;color:var(--mute);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:14px;line-height:1.5}
+h2{font-family:var(--disp);font-weight:900;font-size:14px;letter-spacing:.05em;margin:18px 0 10px;color:var(--gold-hi)}
+.entrants{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ent{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line2);border-radius:9px;padding:8px 11px;font-size:13px}
+.ent input{accent-color:var(--gold)}
+.ent .seed{font-family:var(--mono);font-size:10px;color:var(--dim)}
+textarea{width:100%;min-height:120px;background:var(--panel);border:1px solid var(--line2);color:var(--ink);border-radius:9px;padding:11px;font-family:var(--mono);font-size:13px;line-height:1.6}
+.bracket{display:flex;gap:26px;overflow-x:auto;padding:10px 2px 20px}
+.col{flex:none;min-width:190px;display:flex;flex-direction:column;justify-content:space-around;gap:14px}
+.col h3{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--dim);margin:0 0 2px;text-transform:uppercase}
+.day{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--gold);border:1px dashed var(--line2);border-radius:6px;padding:3px 8px;display:inline-block;margin-bottom:8px}
+.mt{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.mt .mid{font-family:var(--mono);font-size:8px;color:var(--dim);padding:3px 8px;border-bottom:1px solid var(--line)}
+.tm{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--line)}
+.tm:last-child{border-bottom:0}
+.tm:hover{background:var(--panel2)}
+.tm.win{background:rgba(63,166,106,.16);color:#8ce0ab;font-weight:700}
+.tm.bye{color:var(--dim);cursor:default;font-style:italic}
+.tm.tbd{color:var(--dim);cursor:default}
+.tm .sd{font-family:var(--mono);font-size:9px;color:var(--dim)}
+.champ{background:linear-gradient(90deg,rgba(201,162,39,.2),transparent);border:1px solid var(--gold);border-radius:12px;padding:14px 18px;margin:10px 0;font-family:var(--disp);font-weight:900;font-size:16px}
+.champ span{color:var(--gold-hi)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+td.num,th.num{text-align:right;font-family:var(--mono)}
+tr.team-h td{background:var(--panel2);font-family:var(--disp);font-weight:800;letter-spacing:.03em;color:var(--gold-hi)}
+tr.sub td{color:var(--mute);font-family:var(--mono);font-size:11px}
+tr.grand td{border-top:2px solid var(--gold);font-family:var(--disp);font-weight:800;font-size:14px}
+.paid{color:var(--green)} .due{color:var(--red)}
+.pill{font-size:8.5px;font-weight:800;letter-spacing:.05em;padding:2px 7px;border-radius:8px;text-transform:uppercase}
+.pill.p{background:rgba(63,166,106,.2);color:#6FD79B} .pill.u{background:rgba(210,69,59,.2);color:#f0b4ae}
+.empty{padding:34px;text-align:center;color:var(--mute);border:1px dashed var(--line2);border-radius:12px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--gold);color:var(--ink);border-radius:10px;padding:12px 18px;font-size:13px;z-index:60;display:none}
+@media print{ body{background:#fff;color:#111}.top,.controls,.tabs,.home,.note,.btn{display:none!important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><b>TOURNAMENT MATCHMAKING</b><span>F.A.E. FILAM ELITE · DOUBLE ELIMINATION</span></div>
+    <a class="home" href="programs.html">&#8592; PROGRAMS</a>
+  </div>
+
+  <div class="controls">
+    <label class="fld">BATCH<select id="batchSel" onchange="onBatch()"></select></label>
+    <label class="fld">DIVISION<select id="divSel" onchange="renderAll()">
+      <option value="teens">Teens</option>
+      <option value="kids">Kids</option>
+      <option value="all">All divisions</option>
+    </select></label>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" id="tab-mm" onclick="showTab('mm')">&#127942; Matchmaking</div>
+    <div class="tab" id="tab-bal" onclick="showTab('bal')">&#128176; Balance Sheet</div>
+  </div>
+
+  <div id="pane-mm">
+    <div class="note">
+      FAEBASKETBALL batch: <b>6 weeks training</b>, then the <b>Kids</b> and <b>Teens</b> tournaments — a
+      <b>2-day double-elimination</b>. Pick the teams below (make them in the
+      <a href="programs.html" style="color:var(--gold)">Drafting board</a>, or type names for a quick bracket),
+      then generate. Click the winner of each game; losers drop to the losers bracket and are out on their second loss.
+    </div>
+    <div id="entrantWrap"></div>
+    <div class="controls">
+      <button class="btn go" onclick="generate()">&#9889; Generate double-elim bracket</button>
+      <button class="btn" onclick="reseed()">&#127922; Re-seed order</button>
+      <button class="btn" onclick="finishTournament()" title="Save the result and reset the bracket for the next batch">&#9989; Finish &amp; reset for next batch</button>
+      <button class="btn warn" onclick="clearBracket()">Clear bracket</button>
+    </div>
+    <div id="champWrap"></div>
+    <div id="bracketWrap"></div>
+  </div>
+
+  <div id="pane-bal" hidden>
+    <div class="controls">
+      <button class="btn go" onclick="FAEExport.open(this,'balance')">&#8681; Export balance sheet</button>
+      <button class="btn" onclick="window.print()">&#128424; Print</button>
+    </div>
+    <div id="balWrap"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* Tournament matchmaking (double-elimination) + balance sheet for FilAm Elite.
+   Bracket engine lives in fae-core (FAE.deBracket/deResolve/deSetWinner/deChampion).
+   A bracket is stored inside the batch's tournament record, one per division. */
+var $=id=>document.getElementById(id);
+function toast(m){var t=$('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2400);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function peso(n){return (n===null||n===undefined||n==='')?'—':'₱'+Number(n).toLocaleString('en-PH');}
+
+var TAB='mm', NAMES=[], SEL={};
+
+function batches(){ return FAE.batchesFor('basketball'); }
+function currentBatch(){ var id=$('batchSel').value; return batches().filter(b=>b.id===id)[0]||batches()[0]||null; }
+function division(){ return $('divSel').value; }
+function ageGroup(){ var d=division(); return d==='all'?null:d; }
+
+function draftTeams(){ var b=currentBatch(); return b?FAE.teamsFor(b.id):[]; }
+function entrants(){
+  var t=draftTeams();
+  if(t.length) return t.filter(x=>SEL[x.id]!==false).map((x,i)=>({id:x.id,name:x.name,seed:i+1}));
+  return NAMES.map((n,i)=>({id:'N'+i,name:n,seed:i+1}));
+}
+
+function tourRec(){
+  var b=currentBatch(); if(!b) return null;
+  return FAE.tournamentsFor(b.id).filter(t=>t.division===division() && t.kind==='bracket')[0]||null;
+}
+function saveBracket(bk){
+  var b=currentBatch(); if(!b) return;
+  var rec=tourRec()||{ batchId:b.id, division:division(), kind:'bracket', format:'double-elim' };
+  rec.bracket=bk; FAE.tournamentSave(rec);
+}
+function loadBracket(){ var r=tourRec(); return r&&r.bracket?r.bracket:null; }
+
+function generate(){
+  var ents=entrants();
+  if(ents.length<3){ toast('Need at least 3 teams for a bracket'); return; }
+  var bk=FAE.deBracket(ents);
+  if(!bk){ toast('Could not build bracket'); return; }
+  saveBracket(bk); toast(ents.length+'-team double-elim bracket built'); renderBracket();
+}
+function reseed(){
+  if(draftTeams().length){ toast('Draft-board teams keep their order — re-order them in Drafting'); return; }
+  for(var i=NAMES.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var k=NAMES[i];NAMES[i]=NAMES[j];NAMES[j]=k; }
+  renderEntrants(); toast('Seeds shuffled');
+}
+function clearBracket(){
+  if(!confirm('Clear this division\'s bracket? Team list stays.')) return;
+  var rec=tourRec(); if(rec){ rec.bracket=null; FAE.tournamentSave(rec); }
+  renderBracket(); renderChamp();
+}
+/* Archive the finished bracket (champion + date) so it can be looked back on,
+   then reset the bracket so the same batch/division is ready to run again. */
+function tournArchive(){ try{ return JSON.parse(localStorage.getItem('fae-tourn-archive'))||[]; }catch(e){ return []; } }
+function finishTournament(){
+  var bk=loadBracket();
+  if(!bk){ toast('No bracket to finish'); return; }
+  var champ=FAE.deChampion(bk);
+  if(!champ){ if(!confirm('No champion decided yet — archive and reset anyway?')) return; }
+  var b=currentBatch();
+  var rec={ id:'TA-'+Date.now(), batch:b?b.batchNumber:'', division:division(),
+            champion:champ?champ.name:'', teams:(bk.teams||[]).map(function(t){return t.name;}),
+            finishedAt:new Date().toISOString() };
+  var arr=tournArchive(); arr.push(rec);
+  try{ localStorage.setItem('fae-tourn-archive', JSON.stringify(arr)); }catch(e){}
+  var tr=tourRec(); if(tr){ tr.bracket=null; FAE.tournamentSave(tr); }
+  renderBracket(); renderChamp();
+  toast('Archived' + (champ?(' — champion '+champ.name):'') + '. Bracket reset for the next batch.');
+}
+function pick(matchId, side){
+  var bk=loadBracket(); if(!bk) return;
+  var res=FAE.deResolve(bk), r=res[matchId];
+  if(!r||r.auto||r.dead||!r.a||!r.b||r.a.bye||r.b.bye) return;
+  FAE.deSetWinner(bk,matchId,side); saveBracket(bk); renderBracket(); renderChamp();
+}
+
+function renderEntrants(){
+  var t=draftTeams();
+  if(t.length){
+    $('entrantWrap').innerHTML='<h2>ENTRANTS · '+t.length+' teams (from Drafting)</h2><div class="entrants">'+
+      t.map((x,i)=>`<label class="ent"><input type="checkbox" ${SEL[x.id]!==false?'checked':''} onchange="SEL['${x.id}']=this.checked">
+        <span class="seed">#${i+1}</span> ${esc(x.name)}</label>`).join('')+'</div>';
+  } else {
+    $('entrantWrap').innerHTML='<h2>ENTRANTS · type team names (one per line)</h2>'+
+      `<textarea id="nameBox" placeholder="Team Kobe&#10;Team Curry&#10;Team LeBron&#10;Team Luka" oninput="NAMES=this.value.split(/\\n/).map(s=>s.trim()).filter(Boolean)">${esc(NAMES.join('\n'))}</textarea>`+
+      '<div class="note" style="margin-top:8px">No teams in the Drafting board for this batch yet. Type names here for a quick bracket, or build rosters in <a href="programs.html" style="color:var(--gold)">Drafting</a> and they show up here automatically.</div>';
+  }
+}
+
+function teamLabel(tm){ return tm?(tm.bye?'BYE':(tm.name||'?')):'TBD'; }
+function matchBox(m,res){
+  var r=res[m.id]||{}, a=r.a,b=r.b, win=r.winner;
+  function row(side,tm){
+    var cls='tm';
+    if(!tm) cls+=' tbd';
+    else if(tm.bye) cls+=' bye';
+    else if(win&&win.id===tm.id) cls+=' win';
+    var sd=tm&&!tm.bye&&tm.seed?`<span class="sd">#${tm.seed}</span>`:'';
+    var click=(tm&&!tm.bye&&a&&b&&!a.bye&&!b.bye&&!r.auto&&!r.dead)?`onclick="pick('${m.id}','${side}')"`:'';
+    return `<div class="${cls}" ${click}><span>${esc(teamLabel(tm))}</span>${sd}</div>`;
+  }
+  if(r.dead) return '';
+  return `<div class="mt"><div class="mid">${m.id.replace(/-/g,' ')}</div>${row('a',a)}${row('b',b)}</div>`;
+}
+function colsFor(bk,res,bracket){
+  var byRound={};
+  bk.matches.filter(m=>m.bracket===bracket).forEach(m=>{ (byRound[m.round]=byRound[m.round]||[]).push(m); });
+  return Object.keys(byRound).sort((x,y)=>x-y).map(rd=>{
+    var boxes=byRound[rd].map(m=>matchBox(m,res)).join('');
+    if(!boxes.trim()) return '';
+    var lbl=bracket==='WB'?'Winners R'+rd:bracket==='LB'?'Losers R'+rd:'Grand Final';
+    return `<div class="col"><h3>${lbl}</h3>${boxes}</div>`;
+  }).join('');
+}
+function renderBracket(){
+  var bk=loadBracket();
+  if(!bk){ $('bracketWrap').innerHTML='<div class="empty">No bracket yet — pick teams and hit <b>Generate</b>.</div>'; renderChamp(); return; }
+  var res=FAE.deResolve(bk);
+  var wb=colsFor(bk,res,'WB'), lb=colsFor(bk,res,'LB'), gf=colsFor(bk,res,'GF');
+  $('bracketWrap').innerHTML=
+    '<span class="day">DAY 1 · winners bracket + losers rounds</span>'+
+    '<div class="bracket">'+wb+lb+'</div>'+
+    '<span class="day">DAY 2 · grand final</span>'+
+    '<div class="bracket">'+gf+'</div>';
+  renderChamp();
+}
+function renderChamp(){
+  var bk=loadBracket(); if(!bk){ $('champWrap').innerHTML=''; return; }
+  var c=FAE.deChampion(bk);
+  $('champWrap').innerHTML=c?`<div class="champ">&#127942; CHAMPION: <span>${esc(c.name)}</span></div>`:'';
+}
+
+function billOf(p){ var bl=p.billing||{}; return { due:+bl.due||0, paid:+bl.paid||0, balance:bl.balance==null?((+bl.due||0)-(+bl.paid||0)):+bl.balance, status:bl.status||'', tf:bl.tfLabel||'' }; }
+function balanceGroups(){
+  var b=currentBatch(); if(!b) return {groups:[],undrafted:[]};
+  var ag=ageGroup(), inDiv=p=>!ag||p.ageGroup===ag;
+  var teams=FAE.teamsFor(b.id), taken={}, groups=[];
+  teams.forEach(t=>{
+    var roster=FAE.rosterFor(t.id).filter(inDiv);
+    roster.forEach(p=>taken[p.id]=1);
+    if(roster.length) groups.push({name:t.name, players:roster});
+  });
+  var undrafted=FAE.playersFor('basketball',ag).filter(p=>!taken[p.id]);
+  return {groups:groups, undrafted:undrafted};
+}
+function balRowsFlat(){
+  var g=balanceGroups(), out=[];
+  function push(team,p){ var bl=billOf(p); out.push({Team:team, Player:p.fullName||'', Category:p.category||'', Due:bl.due, Paid:bl.paid, Balance:bl.balance, 'Tournament Fee':bl.tf||bl.status||''}); }
+  g.groups.forEach(gr=>gr.players.forEach(p=>push(gr.name,p)));
+  g.undrafted.forEach(p=>push('Undrafted',p));
+  return out;
+}
+function renderBalance(){
+  var g=balanceGroups();
+  var all=g.groups.concat(g.undrafted.length?[{name:'Undrafted',players:g.undrafted}]:[]);
+  if(!all.length){ $('balWrap').innerHTML='<div class="empty">No players in this division yet. Add them in <a href="programs.html" style="color:var(--gold)">Programs → New player</a>.</div>'; return; }
+  var gd={due:0,paid:0,bal:0}, html='<table><thead><tr><th>Player</th><th>Category</th><th class="num">Due</th><th class="num">Paid</th><th class="num">Balance</th><th>Fee</th></tr></thead><tbody>';
+  all.forEach(gr=>{
+    var st={due:0,paid:0,bal:0};
+    html+=`<tr class="team-h"><td colspan="6">${esc(gr.name)} · ${gr.players.length}</td></tr>`;
+    gr.players.forEach(p=>{
+      var bl=billOf(p); st.due+=bl.due;st.paid+=bl.paid;st.bal+=bl.balance;
+      var pill=bl.balance<=0?'<span class="pill p">paid</span>':'<span class="pill u">balance</span>';
+      html+=`<tr><td>${esc(p.fullName||'')}</td><td>${esc(p.category||'')}</td>
+        <td class="num">${peso(bl.due)}</td><td class="num paid">${peso(bl.paid)}</td>
+        <td class="num ${bl.balance>0?'due':'paid'}">${peso(bl.balance)}</td><td>${pill} ${esc(bl.tf||'')}</td></tr>`;
+    });
+    html+=`<tr class="sub"><td colspan="2">Subtotal — ${esc(gr.name)}</td><td class="num">${peso(st.due)}</td><td class="num">${peso(st.paid)}</td><td class="num">${peso(st.bal)}</td><td></td></tr>`;
+    gd.due+=st.due;gd.paid+=st.paid;gd.bal+=st.bal;
+  });
+  html+=`<tr class="grand"><td colspan="2">GRAND TOTAL</td><td class="num">${peso(gd.due)}</td><td class="num">${peso(gd.paid)}</td><td class="num">${peso(gd.bal)}</td><td></td></tr>`;
+  html+='</tbody></table>';
+  $('balWrap').innerHTML=html;
+}
+FAEExport.define('balance',{ label:'Balance Sheet', file:'tournament-balance', sheet:'BALANCE', rows:balRowsFlat, formats:['csv','xls','folder'] });
+
+function showTab(t){ TAB=t; $('tab-mm').classList.toggle('on',t==='mm'); $('tab-bal').classList.toggle('on',t==='bal');
+  $('pane-mm').hidden=t!=='mm'; $('pane-bal').hidden=t!=='bal'; renderAll(); }
+function onBatch(){ SEL={}; renderAll(); }
+function renderAll(){ if(TAB==='mm'){ renderEntrants(); renderBracket(); } else renderBalance(); }
+
+(function(){
+  var bs=batches();
+  $('batchSel').innerHTML = bs.length
+    ? bs.map(b=>`<option value="${b.id}">Batch ${b.batchNumber} · ${b.startDate}</option>`).join('')
+    : '<option value="">No batches yet</option>';
+  renderAll();
+})();
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

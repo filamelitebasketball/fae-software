@@ -1,0 +1,22 @@
+# NXGEN Premier League
+
+> NXGEN Premier League is a Philippines-based basketball league featuring four divisions — Rising Stars, Legacy, 3x3, and King of the Court — with live streams, leaderboards, player profiles, and RFID-linked accounts.
+
+## Pages
+
+- [Home](/): League overview, divisions, fixtures, leaderboards, livestream, and sponsors.
+- [Register](/register): Sign up for a division as a player or coach.
+- [Schedule](/schedule): Upcoming fixtures and game times across all divisions.
+- [Standings](/standings): Current team standings for each division.
+- [Leaders](/leaders): Top players by PTS, REB, AST, STL, BLK per division.
+- [Player Rankings](/rankings): Individual players ranked per game by PTS, REB, AST, STL, BLK, filterable by division.
+- [Gallery](/gallery): Game night photos organised by date and division.
+- [Development Guide](/development): High school basketball development guide — the path into NXGEN's Rising Stars and Legacy divisions.
+
+## Legal
+
+- [Privacy Policy](/legal/privacy): How we handle player and visitor data.
+- [Terms of Service](/legal/terms): Rules for using the site and league services.
+- [Waiver](/legal/waiver): Participation waiver for players.
+- [Code of Conduct](/legal/code-of-conduct): Expected behavior for players, coaches, and staff.
+- [Refund Policy](/legal/refund-policy): Refund and cancellation terms.

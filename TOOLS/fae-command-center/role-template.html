@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. Role Playbook — Template</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fae-playbook-light.css?v=1">
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<style>
+  /* template callout — not part of a real role page; strip when cloning */
+  .tpl{border:1px dashed var(--blue);background:rgba(74,127,181,.08);border-radius:10px;padding:14px 16px;margin:16px 0;
+       font-size:13px;line-height:1.6;color:#9FC0E4}
+  .tpl b{color:#BBD6F2}
+  .ph{color:var(--gold-hi);font-family:var(--mono);font-size:.92em}
+  @media print{.tpl{display:none}}
+</style>
+</head>
+<body>
+<!-- =====================================================================
+     F.A.E. ROLE PLAYBOOK — TEMPLATE
+     HOW TO CLONE:
+       1. Copy this file to  playbook-<role>.html
+       2. Replace every [BRACKETED] placeholder with real text.
+       3. Delete every .tpl (blue dashed) note block — they are guidance only.
+       4. Fill the sign-off checks with the real must-pass items for the role.
+       5. Update the nav home link, <title>, hero, and footer role name.
+       6. Add the role to the-fae-way.html roles grid + set status LIVE.
+     Every real playbook keeps these 9 sections in this order.
+     ===================================================================== -->
+<div class="nav"><div class="nav-in">
+  <a class="home" href="console.html">← COMMAND CENTER</a>
+  <a href="#rule">THE RULE</a>
+  <a href="#owns">WHAT YOU OWN</a>
+  <a href="#flow">THE FLOW</a>
+  <a href="#free">WHEN FREE</a>
+  <a href="#esc">ESCALATE</a>
+  <a href="#teachback">TEACH-BACK</a>
+  <a href="#sheet">SIGN-OFF</a>
+  <a href="#card">QUICK CARD</a>
+  <span class="sp"></span>
+  <button class="btn-print" onclick="window.print()">PRINT</button>
+</div></div>
+
+<div class="wrap">
+
+  <p class="eyebrow">F.A.E. MANAGEMENT · [ROLE NAME] PLAYBOOK</p>
+  <h1>[The role, in a<br>3-word line.]</h1>
+  <p class="sub">One or two sentences: what this role is for, and the single outcome the business needs from it. New here? Read top to bottom once, then keep the <b>Quick Card</b> at your station.</p>
+  <div class="tpl">This page is the <b>template</b>. It shows the shape every role playbook shares. To build a real one, follow the clone steps in the HTML comment at the top of this file. Trained &amp; deployed the <a href="the-fae-way.html">F.A.E. Way</a>.</div>
+
+  <section class="sec" id="rule">
+    <p class="sec-no">01</p>
+    <h2>The one rule</h2>
+    <div class="rule-box">
+      <b>[The single most important rule of this role, in one line.]</b>
+      <p>[Why it matters and what breaks if it is ignored. Keep it concrete.]</p>
+    </div>
+  </section>
+
+  <section class="sec" id="owns">
+    <p class="sec-no">02</p>
+    <h2>What you decide, what you don't</h2>
+    <div class="tpl">Every role must know its edges. This is how we stop both overstepping and freezing.</div>
+    <table>
+      <tr><th>THIS ROLE DECIDES</th><th>DOES NOT DECIDE — ASK ABOVE</th></tr>
+      <tr><td>[thing you can just do]</td><td>[thing you must escalate]</td></tr>
+      <tr><td>[thing you can just do]</td><td>[thing you must escalate]</td></tr>
+    </table>
+  </section>
+
+  <section class="sec" id="flow">
+    <p class="sec-no">03</p>
+    <h2>The [shift / session / day], start to finish</h2>
+    <div class="cols">
+      <div class="col"><header><b>Start</b><span>FIRST 15 MIN</span></header>
+        <ol><li>[first thing]</li><li>[second thing]</li><li>[third thing]</li></ol></div>
+      <div class="col"><header><b>During</b><span>ALL [SHIFT]</span></header>
+        <ol><li>[ongoing duty]</li><li>[ongoing duty]</li><li>[ongoing duty]</li></ol></div>
+      <div class="col"><header><b>Close</b><span>LAST 20 MIN</span></header>
+        <ol><li>[wrap-up]</li><li>[wrap-up]</li><li>[hand over cleanly]</li></ol></div>
+    </div>
+  </section>
+
+  <section class="sec" id="free">
+    <p class="sec-no">04</p>
+    <h2>When you're free, do this</h2>
+    <div class="free">
+      <b>[Role] standing list — do these without being told</b>
+      <ul>
+        <li>[standing task]</li>
+        <li>[standing task]</li>
+        <li>[standing task]</li>
+        <li>Ask the person above you: "I'm free — what would help most right now?"</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="sec" id="esc">
+    <p class="sec-no">05</p>
+    <h2>When to escalate</h2>
+    <div class="esc">
+      <div class="esc-row"><i>NOW</i><p>[emergency — injury, theft, threat, money you can't explain]</p></div>
+      <div class="esc-row"><i>TODAY</i><p>[same-day problem]</p></div>
+      <div class="esc-row"><i>THIS WEEK</i><p>[recurring / wear-and-tear problem]</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="teachback">
+    <p class="sec-no">06</p>
+    <h2>Teach-back — the "show me" scenarios</h2>
+    <div class="tpl">Pick the 3–5 hardest real moments of this role. In training the person must <b>show</b> they can handle each. "Pass =" is what good looks like.</div>
+    <div class="tback">
+      <div class="q"><b>[a hard scenario for this role.]</b><p>[what a correct handling looks like.]</p></div>
+      <div class="q"><b>[a hard scenario for this role.]</b><p>[what a correct handling looks like.]</p></div>
+      <div class="q"><b>[a hard scenario for this role.]</b><p>[what a correct handling looks like.]</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="sheet">
+    <p class="sec-no">07</p>
+    <h2>Competency sign-off</h2>
+    <div class="signoff">
+      <h3>F.A.E. [ROLE] SIGN-OFF</h3>
+      <p class="cs">TRAINEE: ________________________ · TRAINER: ________________________</p>
+      <div class="chk"><div class="box"></div><span>[must-pass check specific to this role]</span></div>
+      <div class="chk"><div class="box"></div><span>[must-pass check specific to this role]</span></div>
+      <div class="chk"><div class="box"></div><span>[must-pass check specific to this role]</span></div>
+      <div class="chk"><div class="box"></div><span>Passed teach-back on every scenario above.</span></div>
+      <div class="chk"><div class="box"></div><span>Trainer judges the trainee <b>ready and comfortable</b> to work this alone.</span></div>
+      <div class="sign-lines">
+        <div class="sl"><label>Trainee — sign &amp; date</label><div class="nm">Name: ____________________</div></div>
+        <div class="sl"><label>Trainer — sign &amp; date</label><div class="nm">Name: ____________________</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="card">
+    <p class="sec-no">08</p>
+    <h2>Quick Card</h2>
+    <div class="card">
+      <h3>F.A.E. [ROLE] — QUICK CARD</h3>
+      <p class="cs">[ONE LINE OF THE MOST-NEEDED NUMBERS / FACTS]</p>
+      <ol>
+        <li><b>[the rule.]</b></li>
+        <li><b>[key step.]</b></li>
+        <li><b>[key step.]</b></li>
+        <li><b>[hand over clean.]</b></li>
+      </ol>
+    </div>
+  </section>
+
+  <div class="foot">
+    <div>F.A.E. [ROLE] PLAYBOOK · v0 TEMPLATE · Filamelite Basketball / F.A.E. Court</div>
+    <div>CLONE ME · FILL THE BRACKETS · DELETE THE BLUE NOTES</div>
+  </div>
+</div>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

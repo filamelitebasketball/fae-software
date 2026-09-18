@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. — FilAm Elite</title>
+<meta name="description" content="F.A.E. (FilAm Elite) — sports management, leagues, events, and digital services. Lipa City, Batangas.">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;900&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C9A227;--gold-l:#E8C468;--void:#08080b;--ink:#F0F2F5;--muted:#8F94A4}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--void);color:var(--ink);font-family:'DM Sans',sans-serif;
+ min-height:100vh;display:flex;flex-direction:column;
+ background:radial-gradient(ellipse 70% 60% at 50% 30%,#17130a 0%,#0a0a0d 55%,#000 100%)}
+header{text-align:center;padding:9vh 20px 4vh}
+.brand{font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(48px,11vw,104px);
+ letter-spacing:.18em;text-indent:.18em;color:var(--ink);line-height:1}
+.sub{font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(13px,2.6vw,18px);
+ letter-spacing:.42em;text-indent:.42em;color:var(--gold);text-transform:uppercase;margin-top:14px}
+.venue{font-size:clamp(11px,2vw,14px);letter-spacing:.3em;color:var(--muted);
+ text-transform:uppercase;margin-top:10px}
+main{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+ gap:16px;max-width:960px;width:100%;margin:0 auto;padding:0 20px 8vh}
+a.card{display:block;padding:26px 24px;border:1px solid rgba(201,162,39,.28);border-radius:14px;
+ background:rgba(15,15,18,.55);text-decoration:none;color:var(--ink);transition:.2s;backdrop-filter:blur(6px)}
+a.card:hover{border-color:var(--gold);background:rgba(201,162,39,.08);transform:translateY(-3px)}
+.card h2{font-family:'Archivo',sans-serif;font-weight:900;font-size:22px;letter-spacing:.02em}
+.card p{color:var(--muted);font-size:14px;margin-top:8px;line-height:1.5}
+.card .go{color:var(--gold-l);font-size:13px;letter-spacing:.15em;text-transform:uppercase;margin-top:16px;display:inline-block}
+.soon{opacity:.5;pointer-events:none}
+footer{text-align:center;padding:28px 20px;color:var(--muted);font-size:12px;letter-spacing:.12em}
+footer a{color:var(--gold)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">F.A.E.</div>
+  <div class="sub">FilAm Elite</div>
+  <div class="venue">Sports · Events · Digital Services · Lipa City, Batangas</div>
+</header>
+
+<main>
+  <a class="card" href="https://nxgen.faehq.com">
+    <h2>NXGEN Premier League</h2>
+    <p>Lipa City's competitive basketball league — divisions, schedules, live standings.</p>
+    <span class="go">Enter ›</span>
+  </a>
+  <a class="card" href="https://basketball.faehq.com">
+    <h2>FAE Basketball</h2>
+    <p>Programs, training, and teams under FAE Sports Management.</p>
+    <span class="go">Enter ›</span>
+  </a>
+  <a class="card soon" href="#">
+    <h2>FAE Volleyball</h2>
+    <p>Coming soon.</p>
+    <span class="go">Soon</span>
+  </a>
+  <a class="card" href="https://events.faehq.com">
+    <h2>FAE Events</h2>
+    <p>Tournaments, clinics, and sports events management.</p>
+    <span class="go">Enter ›</span>
+  </a>
+  <a class="card" href="https://linkme.faehq.com">
+    <h2>LinkMePH</h2>
+    <p>Smart NFC cards, live sports streaming, and creative services.</p>
+    <span class="go">Enter ›</span>
+  </a>
+  <a class="card" href="mailto:filamelitebasketball@gmail.com">
+    <h2>Work with F.A.E.</h2>
+    <p>Sponsorships, partnerships, and management inquiries.</p>
+    <span class="go">Contact ›</span>
+  </a>
+</main>
+
+<footer>© <span id="y"></span> F.A.E. — FilAm Elite · <a href="mailto:filamelitebasketball@gmail.com">filamelitebasketball@gmail.com</a></footer>
+<script>document.getElementById('y').textContent=new Date().getFullYear();</script>
+</body>
+</html>

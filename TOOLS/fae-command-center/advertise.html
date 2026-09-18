@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. Court — Advertise</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Oswald:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1B2A55; --navy2:#142042; --red:#C1272D; --gold:#F2A900; --gold-hi:#FFC23D;
+  --light:#EDF1F7; --band:#F7F9FC; --grey:#6B7280; --ink:#0f1730;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif;
+  --cond:'Oswald',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#0a0e1c;color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.bar{max-width:720px;margin:0 auto;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.bar a{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:#8b93ad;text-decoration:none;border:1px solid #26304f;border-radius:7px;padding:7px 11px}
+.bar button{font-family:var(--mono);font-size:10px;letter-spacing:.1em;background:var(--gold);color:#0a0800;border:none;border-radius:7px;padding:8px 14px;cursor:pointer;font-weight:700}
+
+/* the sheet (A4-ish) */
+.sheet{max-width:720px;margin:0 auto 40px;background:var(--navy);color:var(--light);border-radius:14px;overflow:hidden;box-shadow:0 30px 70px -34px rgba(0,0,0,.9)}
+.hero{padding:38px 36px 28px;background:linear-gradient(150deg,var(--navy) 42%,var(--navy2));position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-50px;top:-50px;width:230px;height:230px;border:16px solid rgba(242,169,0,.13);border-radius:50%}
+.kicker{font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--gold);margin-bottom:16px}
+.h{font-family:var(--disp);font-weight:900;font-size:38px;line-height:1.01;letter-spacing:-.02em;margin:0 0 12px;max-width:15ch}
+.h em{color:var(--gold);font-style:normal}
+.sub{font-size:14.5px;color:#C7D0E6;max-width:46ch;line-height:1.55;margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--navy2)}
+.st{background:var(--navy);padding:18px;text-align:center}
+.st b{display:block;font-family:var(--disp);font-weight:900;font-size:28px;color:var(--gold)}
+.st span{font-size:11px;color:#9DA9C6;letter-spacing:.03em}
+
+.why{padding:26px 36px 8px;background:var(--light);color:var(--ink)}
+.why h3,.pkwrap h3,.terms h3{font-family:var(--cond);text-transform:uppercase;letter-spacing:.06em;font-size:15px;color:var(--red);margin:0 0 14px}
+.why ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.why li{display:flex;gap:11px;font-size:14px;line-height:1.5;color:#26304f}
+.why li::before{content:"";flex:none;width:9px;height:9px;border-radius:50%;background:var(--gold);margin-top:6px}
+.why li b{color:var(--ink)}
+
+.pkwrap{padding:22px 36px 8px;background:var(--light);color:var(--ink)}
+.pk{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:14px 0;border-bottom:1px solid #dce3ef}
+.pk:last-child{border:none}
+.pk .n b{display:block;font-weight:700;font-size:15px;color:var(--ink)}
+.pk .n span{font-size:12px;color:var(--grey)}
+.pk .p{font-family:var(--disp);font-weight:900;font-size:19px;color:var(--navy);white-space:nowrap;text-align:right}
+.pk .p small{display:block;font-family:var(--sans);font-weight:500;font-size:9.5px;color:var(--grey)}
+
+.terms{padding:18px 36px 26px;background:var(--band);color:var(--ink)}
+.terms p{margin:0;font-size:12.5px;color:var(--grey);line-height:1.6}
+
+.cta{background:var(--red);color:#fff;padding:22px 36px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.cta .l b{font-family:var(--disp);font-weight:900;font-size:19px;display:block}
+.cta .l span{font-size:12.5px;opacity:.9}
+.cta .r{text-align:right;font-family:var(--mono);font-size:13px;line-height:1.7}
+.foot{background:var(--navy2);color:#7E88A6;text-align:center;padding:12px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em}
+.foot b{color:var(--gold)}
+
+@media print{
+  body{background:#fff}
+  .bar{display:none}
+  .sheet{margin:0;max-width:100%;border-radius:0;box-shadow:none}
+  .hero::after{display:none}
+}
+@media(max-width:560px){ .h{font-size:30px} .hero,.why,.pkwrap,.terms,.cta{padding-left:22px;padding-right:22px} }
+</style>
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<script src="assets/fae-core.js?v=6"></script>
+</head>
+<body>
+  <div class="bar">
+    <a href="console.html">← Command Center</a>
+    <button onclick="window.print()">🖨 Save / Print as PDF</button>
+  </div>
+
+  <div class="sheet">
+    <div class="hero">
+      <div class="kicker" id="kicker">F.A.E. SPORTS MANAGEMENT · LIPA CITY</div>
+      <h1 class="h">Put your brand <em>on the court.</em></h1>
+      <p class="sub" id="sub">Reach players, parents and crowds every week at San Vicente's home of basketball &amp; volleyball.</p>
+    </div>
+    <div class="stats">
+      <div class="st"><b>30+</b><span>bookings / week</span></div>
+      <div class="st"><b>3</b><span>courts in play</span></div>
+      <div class="st"><b>6 days</b><span>open weekly</span></div>
+    </div>
+
+    <div class="why">
+      <h3>Why advertise here</h3>
+      <ul>
+        <li><b>A captive weekly crowd.</b> Teams, parents and spectators fill the court every session — your banner is seen the whole time they are here.</li>
+        <li><b>Local reach in Lipa.</b> San Vicente families and the wider Batangas basketball &amp; volleyball scene pass through our doors.</li>
+        <li><b>League exposure.</b> NXGEN Premier League games and tournaments draw bigger crowds and livestream audiences.</li>
+        <li><b>Flexible placement.</b> Courtside banner, scoreboard, team jersey, digital shoutout, or full event title — pick what fits your budget.</li>
+      </ul>
+    </div>
+
+    <div class="pkwrap">
+      <h3>Advertising packages</h3>
+      <div id="packages"></div>
+    </div>
+
+    <div class="terms"><h3 style="margin-bottom:8px">Terms</h3>
+      <p id="terms">Rates valid 15 days from issue. Payment by Cash, GCash or E-Wallet. Artwork supplied by the advertiser or produced by F.A.E. for an added fee.</p>
+    </div>
+
+    <div class="cta">
+      <div class="l"><b>Advertise with F.A.E.</b><span id="ctaSub">Message us to reserve your spot this season.</span></div>
+      <div class="r" id="contact">0917 501 8835<br>filamelitebasketball@gmail.com</div>
+    </div>
+    <div class="foot" id="foot">F.A.E. SPORTS MANAGEMENT SERVICES · <b>EARNED NOT GIVEN</b></div>
+  </div>
+
+<script>
+/* Reads business info + advertising packages from Settings (fae-config-v1).
+   Edit them in settings.html and this ad updates. Falls back to sensible defaults. */
+var DEFAULTS={
+  business:{regName:'F.A.E. SPORTS MANAGEMENT SERVICES',owner:'Isidro V. Raymundo Jr. (Coach Junior)',
+    tagline:'EARNED NOT GIVEN',phone:'0917 501 8835',email:'filamelitebasketball@gmail.com',
+    address:'Purok 4, San Vicente, Brgy. Banaybanay, Lipa City, Batangas',
+    brands:'F.A.E. Court · Fil-Am Elite Management'},
+  ads:[
+    {name:'Courtside Tarpaulin', price:1500, unit:'per month'},
+    {name:'Backboard / Scoreboard Brand', price:2500, unit:'per month'},
+    {name:'Jersey / Uniform Patch', price:5000, unit:'per season'},
+    {name:'Digital Shoutout', price:800, unit:'per post'},
+    {name:'Tournament Title Sponsor', price:10000, unit:'per event'}
+  ]
+};
+function esc(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+var CFG=DEFAULTS;
+try{var c=JSON.parse(localStorage.getItem('fae-config-v1')); if(c&&c.business){CFG={business:c.business, ads:(c.ads&&c.ads.length?c.ads:DEFAULTS.ads)};}}catch(e){}
+
+var b=CFG.business||{};
+document.getElementById('kicker').textContent=((b.regName||'F.A.E. SPORTS MANAGEMENT').toUpperCase())+' · LIPA CITY';
+document.getElementById('contact').innerHTML=esc(b.phone||'')+'<br>'+esc(b.email||'');
+document.getElementById('foot').innerHTML=esc(b.regName||'F.A.E. SPORTS MANAGEMENT SERVICES')+' · <b>'+esc(b.tagline||'EARNED NOT GIVEN')+'</b>';
+
+var ph='';
+(CFG.ads||[]).forEach(function(a){
+  ph+='<div class="pk"><div class="n"><b>'+esc(a.name)+'</b><span>'+esc(a.blurb||unitBlurb(a.name))+'</span></div>'
+     +'<div class="p">₱'+(+a.price).toLocaleString()+'<small>'+esc(a.unit||'')+'</small></div></div>';
+});
+document.getElementById('packages').innerHTML=ph;
+
+function unitBlurb(name){
+  var m={'Courtside Tarpaulin':'Your banner along the court, seen all session',
+    'Backboard / Scoreboard Brand':'Logo on the scoreboard or backboard',
+    'Jersey / Uniform Patch':'Your logo on a team kit for the season',
+    'Digital Shoutout':'Social posts + livestream mention',
+    'Tournament Title Sponsor':'“Presented by” on an NXGEN event'};
+  return m[name]||'Ask us for details';
+}
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

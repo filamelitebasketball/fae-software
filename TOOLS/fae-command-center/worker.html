@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. Worker Submit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="assets/vendor/qrcode.min.js"></script>
+<script src="assets/fae-core.js?v=6"></script>
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<style>
+:root{
+  --void:#050507; --panel:#0d0d12; --panel2:#131319; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#E8C766; --ink:#F4F4F6; --mute:#8B8B98; --dim:#61616f;
+  --red:#D2453B; --green:#3FA66A; --blue:#4A7FB5;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:520px;margin:0 auto;padding:18px 16px 60px}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:2px solid var(--gold);margin-bottom:16px}
+.brand{font-family:var(--disp);font-weight:900;font-size:17px;letter-spacing:.03em}
+.brand small{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--gold);font-weight:400;margin-top:3px}
+.home{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--mute);border:1px solid var(--line);border-radius:7px;padding:6px 10px}
+
+.modes{display:flex;gap:8px;margin-bottom:16px}
+.modes button{flex:1;background:var(--panel);border:1px solid var(--line2);color:var(--mute);border-radius:10px;
+  padding:11px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;cursor:pointer}
+.modes button.on{background:var(--gold);color:#0a0800;border-color:var(--gold);font-weight:700}
+
+.intro{font-size:13px;line-height:1.5;color:#B0B0BC;margin:0 0 16px}
+.intro b{color:var(--gold-hi)}
+
+.types{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.types button{background:var(--panel);border:1px solid var(--line2);color:var(--ink);border-radius:11px;
+  padding:14px 12px;text-align:left;cursor:pointer}
+.types button.on{border-color:var(--gold);background:linear-gradient(150deg,rgba(201,162,39,.13),transparent)}
+.types button b{display:block;font-family:var(--disp);font-weight:800;font-size:14px}
+.types button span{font-size:11px;color:var(--dim)}
+
+.field{margin-bottom:13px}
+.field label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--dim);margin-bottom:6px;text-transform:uppercase}
+.field input,.field select,.field textarea{width:100%;background:var(--panel);border:1px solid var(--line2);color:var(--ink);
+  border-radius:9px;padding:12px;font-family:var(--sans);font-size:15px}
+.field textarea{resize:vertical;min-height:74px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-size:11px;color:var(--dim);margin-top:5px}
+
+.go{width:100%;background:var(--gold);color:#0a0800;border:none;border-radius:11px;padding:15px;
+  font-family:var(--sans);font-weight:700;font-size:16px;cursor:pointer;margin-top:6px}
+.go:active{transform:translateY(1px)}
+
+/* result */
+.result{display:none}
+.result.show{display:block}
+.qrbox{background:#fff;border-radius:14px;padding:16px;display:flex;align-items:center;justify-content:center;margin:4px 0 14px}
+.qrbox svg{width:100%;height:auto;max-width:300px;display:block}
+.codebox{background:var(--panel);border:1px solid var(--line2);border-radius:10px;padding:12px;
+  font-family:var(--mono);font-size:11px;color:var(--gold-hi);word-break:break-all;line-height:1.5;margin-bottom:12px}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+.acts a,.acts button{display:block;text-align:center;background:var(--panel);border:1px solid var(--line2);color:var(--ink);
+  border-radius:10px;padding:12px;font-family:var(--sans);font-size:13.5px;font-weight:600;cursor:pointer}
+.acts .wa{background:rgba(63,166,106,.14);border-color:rgba(63,166,106,.4);color:#6FD79B}
+.summary{border:1px solid var(--line);border-radius:11px;background:var(--panel);padding:14px;margin-bottom:12px}
+.summary h3{font-family:var(--disp);font-weight:800;font-size:15px;margin:0 0 8px}
+.summary div{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px solid #16161d;font-size:13px}
+.summary div:last-child{border:none}
+.summary .k{color:var(--dim);font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.summary .v{color:var(--ink);text-align:right;font-weight:600}
+.again{width:100%;background:none;border:1px solid var(--line);color:var(--mute);border-radius:10px;padding:12px;font-family:var(--mono);font-size:11px;cursor:pointer;margin-top:4px}
+
+/* receive */
+.decoded{border:1px solid var(--gold);border-radius:12px;background:linear-gradient(160deg,rgba(201,162,39,.08),transparent);padding:16px;margin-top:14px;display:none}
+.decoded.show{display:block}
+.bad{color:var(--red);font-size:13px;margin-top:10px}
+
+.foot{margin-top:24px;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.06em;text-align:center;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">F.A.E.<small>WORKER SUBMIT</small></div>
+    <a class="home" href="console.html">← HOME</a>
+  </div>
+
+  <div class="modes">
+    <button id="mSubmit" class="on" onclick="setMode('submit')">▲ SUBMIT (staff)</button>
+    <button id="mReceive" onclick="setMode('receive')">▼ RECEIVE (desk)</button>
+  </div>
+
+  <div id="syncBar" style="display:flex;align-items:center;gap:10px;border:1px solid var(--line2);border-radius:10px;padding:9px 12px;margin-bottom:14px;font-size:12px">
+    <span id="syncDot" style="width:9px;height:9px;border-radius:50%;background:var(--dim);flex:none"></span>
+    <span id="syncMsg" style="flex:1;color:#B0B0BC">Checking sync…</span>
+    <button id="syncBtn" onclick="syncNow()" style="background:none;border:1px solid var(--line2);color:var(--gold);border-radius:8px;padding:6px 10px;font-family:var(--mono);font-size:10px;cursor:pointer">Sync now</button>
+  </div>
+
+  <!-- ============ SUBMIT ============ -->
+  <div id="submitView">
+    <p class="intro">Fill this on your phone. It makes a <b>code + QR</b> you show or send to the desk — no login, works offline. The desk scans it or types it in.</p>
+
+    <div class="types" id="types">
+      <button data-t="incident" class="on" onclick="pickType('incident',this)"><b>Incident</b><span>No-show, damage, injury…</span></button>
+      <button data-t="shift" onclick="pickType('shift',this)"><b>Shift hours</b><span>Confirm your clock in/out</span></button>
+      <button data-t="payment" onclick="pickType('payment',this)"><b>Payment</b><span>Court rental taken</span></button>
+      <button data-t="note" onclick="pickType('note',this)"><b>Note</b><span>Anything else</span></button>
+    </div>
+
+    <form id="form" onsubmit="return makeCode(event)">
+      <div class="field"><label>Your name</label><input id="by" placeholder="Who is submitting" required></div>
+      <div id="fields"></div>
+      <button class="go" type="submit">Create submission →</button>
+    </form>
+
+    <div class="result" id="result">
+      <div class="summary" id="summary"></div>
+      <div class="qrbox" id="qr"></div>
+      <div class="codebox" id="code"></div>
+      <div class="acts">
+        <button onclick="copyCode()">📋 Copy code</button>
+        <a class="wa" id="waShare" target="_blank" rel="noopener">Send on WhatsApp</a>
+      </div>
+      <button class="again" onclick="reset()">↺ Make another</button>
+    </div>
+  </div>
+
+  <!-- ============ RECEIVE ============ -->
+  <div id="receiveView" style="display:none">
+    <p class="intro">Desk side. Paste a code a worker sent (or type what their QR shows) and read the submission to file it. Codes start with <b>FAE1.</b></p>
+    <div class="field"><label>Paste the code</label><textarea id="inCode" placeholder="FAE1.…"></textarea></div>
+    <button class="go" onclick="decode()">Read submission →</button>
+    <div class="decoded" id="decoded"></div>
+    <div class="bad" id="decErr"></div>
+  </div>
+
+  <div class="foot">
+    worker v1.0 · 2026-09-04 · offline-safe<br>
+    NO PHOTOS IN A CODE — for a photo incident, file it on the dashboard with the picture.
+  </div>
+</div>
+
+<script>
+/* ================= F.A.E. Worker Submit =================
+   Turns a submission into a compact "FAE1." code + QR (offline, no server).
+   Encoding: JSON -> UTF-8 -> base64url, prefixed "FAE1.". Decoding reverses it. */
+/* Non-member (walk-in) court rates from Settings via shared core; the worker payment
+   form is for walk-ins, so it uses the non-member price. */
+var RATES=(function(){
+  function p(s){ return (window.FAE&&FAE.rate)?FAE.rate(s,false):({basketball:1200,volleyball:1200,pickleball:700}[s]); }
+  return {Basketball:p('basketball'), Volleyball:p('volleyball'), Pickleball:p('pickleball')};
+})();
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+function b64urlEncode(str){
+  var b=btoa(unescape(encodeURIComponent(str)));
+  return b.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function b64urlDecode(str){
+  str=str.replace(/-/g,'+').replace(/_/g,'/'); while(str.length%4) str+='=';
+  return decodeURIComponent(escape(atob(str)));
+}
+
+/* ---- field templates per type ---- */
+var TYPE=null;
+var FIELDS={
+  incident:function(){return ''
+    +fld('name','Renter / person','text','Name (or “walk-in”)')
+    +sel('category','Category',['No-show','Damage','Injury','Argument','Overtime','Payment problem','Other'])
+    +sel('severity','Severity',['Low','Medium','High'])
+    +area('details','What happened','Describe it plainly');},
+  shift:function(){return ''
+    +sel('block','Shift block',['A · Morning 06–14','B · Afternoon 14–22','C · Graveyard 22–06','Custom'])
+    +row(fld('start','Clock in','time',''),fld('end','Clock out','time',''))
+    +sel('hoursOk','Hours correct?',['Yes — correct','No — see note'])
+    +area('note','Note (if wrong)','Only if something is off');},
+  payment:function(){return ''
+    +fld('renter','Renter','text','Name')
+    +row(sel('sport','Sport',['Basketball','Volleyball','Pickleball']),fld('hours','Hours','number','1'))
+    +row(fld('amount','Amount ₱','number','auto'),sel('method','Method',['Cash','GCash']))
+    +'<div class="hint">Amount fills from the rate × hours — change it if needed.</div>'
+    +area('note','Note','Optional');},
+  note:function(){return ''
+    +fld('title','Title','text','Short title')
+    +area('body','Details','What do you want the desk to know?');}
+};
+function fld(id,label,type,ph){return '<div class="field"><label>'+esc(label)+'</label><input id="f_'+id+'" type="'+type+'" placeholder="'+esc(ph)+'"></div>';}
+function area(id,label,ph){return '<div class="field"><label>'+esc(label)+'</label><textarea id="f_'+id+'" placeholder="'+esc(ph)+'"></textarea></div>';}
+function sel(id,label,opts){return '<div class="field"><label>'+esc(label)+'</label><select id="f_'+id+'">'+opts.map(function(o){return '<option>'+esc(o)+'</option>';}).join('')+'</select></div>';}
+function row(a,b){return '<div class="row2">'+a+b+'</div>';}
+
+function pickType(t,el){
+  TYPE=t;
+  document.querySelectorAll('#types button').forEach(function(b){b.classList.remove('on');});
+  el.classList.add('on');
+  $('fields').innerHTML=FIELDS[t]();
+  if(t==='payment') wirePayment();
+  $('result').classList.remove('show');
+}
+function wirePayment(){
+  function calc(){var s=$('f_sport').value,h=parseFloat($('f_hours').value)||0;var a=$('f_amount');
+    if(a && (a.value===''||a.dataset.auto!=='0')){a.value=(RATES[s]||0)*h; a.dataset.auto='1';}}
+  $('f_sport').addEventListener('change',calc); $('f_hours').addEventListener('input',calc);
+  $('f_amount').addEventListener('input',function(){this.dataset.auto='0';});
+  calc();
+}
+
+/* ---- build the code ---- */
+function collect(){
+  var data={t:TYPE, by:$('by').value.trim(), ts:new Date().toISOString()};
+  document.querySelectorAll('#fields [id^=f_]').forEach(function(el){
+    data[el.id.slice(2)]=el.value;
+  });
+  return data;
+}
+function makeCode(e){
+  e.preventDefault();
+  if(!TYPE){alert('Pick what you are submitting first.');return false;}
+  var data=collect();
+  try{ if(window.FAE){ FAE.outboxAdd(data); FAE.pushOutbox().then(syncStatus); } }catch(e){}
+  var code='FAE1.'+b64urlEncode(JSON.stringify(data));
+  // summary
+  $('summary').innerHTML='<h3>'+esc(labelFor(TYPE))+'</h3>'+summaryRows(data);
+  // qr
+  try{
+    var qr=qrcode(0,'M'); qr.addData(code); qr.make();
+    $('qr').innerHTML=qr.createSvgTag({cellSize:5, margin:2, scalable:true});
+  }catch(err){ $('qr').innerHTML='<div style="color:#111;font-size:12px;padding:10px">Code too long for a QR — use the text code below.</div>'; }
+  $('code').textContent=code;
+  // whatsapp share
+  var msg='F.A.E. '+labelFor(TYPE)+' from '+data.by+':%0A'+encodeURIComponent(code);
+  $('waShare').href='https://wa.me/?text='+msg;
+  $('result').classList.add('show');
+  $('result').scrollIntoView({behavior:'smooth',block:'start'});
+  return false;
+}
+function labelFor(t){return {incident:'Incident report',shift:'Shift hours',payment:'Payment taken',note:'Note'}[t]||t;}
+function summaryRows(d){
+  var skip={t:1,ts:1};var h='';
+  for(var k in d){ if(skip[k]||d[k]===''||d[k]==null) continue;
+    h+='<div><span class="k">'+esc(k)+'</span><span class="v">'+esc(d[k])+'</span></div>'; }
+  h+='<div><span class="k">time</span><span class="v">'+new Date(d.ts).toLocaleString()+'</span></div>';
+  return h;
+}
+function copyCode(){
+  var t=$('code').textContent;
+  if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){toast('Copied');},function(){fallbackCopy(t);});}
+  else fallbackCopy(t);
+}
+function fallbackCopy(t){var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Copied');}catch(e){}document.body.removeChild(ta);}
+function toast(m){var d=document.createElement('div');d.textContent=m;d.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--gold);color:#0a0800;font-weight:700;padding:10px 18px;border-radius:20px;z-index:99';document.body.appendChild(d);setTimeout(function(){d.remove();},1400);}
+function reset(){ $('result').classList.remove('show'); $('form').reset(); if(TYPE==='payment')wirePayment(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+/* ---- modes ---- */
+function setMode(m){
+  var sub=m==='submit';
+  $('submitView').style.display=sub?'':'none';
+  $('receiveView').style.display=sub?'none':'';
+  $('mSubmit').classList.toggle('on',sub);
+  $('mReceive').classList.toggle('on',!sub);
+}
+
+/* ---- receive / decode ---- */
+function decode(){
+  $('decErr').textContent=''; $('decoded').classList.remove('show');
+  var raw=$('inCode').value.trim();
+  var m=raw.match(/FAE1\.([A-Za-z0-9_\-]+)/);
+  if(!m){ $('decErr').textContent='That is not a F.A.E. code. It should start with FAE1.'; return; }
+  var data;
+  try{ data=JSON.parse(b64urlDecode(m[1])); }
+  catch(e){ $('decErr').textContent='Could not read that code — it may be incomplete.'; return; }
+  var h='<h3 style="font-family:var(--disp);font-weight:900;font-size:16px;margin:0 0 4px">'+esc(labelFor(data.t))+'</h3>'
+    +'<div style="font-family:var(--mono);font-size:10px;color:var(--dim);margin-bottom:10px">from '+esc(data.by||'—')+' · '+(data.ts?new Date(data.ts).toLocaleString():'')+'</div>'
+    +'<div class="summary" style="margin:0">'+summaryRows(data)+'</div>'
+    +'<div style="font-size:12px;color:#B0B0BC;margin-top:12px">File this into the dashboard, then you are done.</div>';
+  $('decoded').innerHTML=h; $('decoded').classList.add('show');
+}
+
+/* ---- sync status ---- */
+function syncStatus(){
+  var dot=$('syncDot'), msg=$('syncMsg'), btn=$('syncBtn');
+  if(!window.FAE){ msg.textContent='Sync unavailable.'; return; }
+  var s=FAE.syncCfg(), pend=FAE.outboxPending().length, on=FAE.online();
+  if(!s.enabled || !s.endpoint){
+    dot.style.background='var(--dim)';
+    msg.innerHTML='Saving on this device. '+(pend?('<b style="color:var(--gold-hi)">'+pend+'</b> waiting'):'')+' — set an online endpoint in Settings to auto-submit.';
+    btn.style.display='none'; return;
+  }
+  btn.style.display='';
+  if(!on){ dot.style.background='var(--red)'; msg.innerHTML='Offline. <b>'+pend+'</b> queued — will send when back online.'; return; }
+  if(pend){ dot.style.background='var(--gold)'; msg.innerHTML='<b>'+pend+'</b> waiting to send.'; }
+  else { dot.style.background='var(--green)'; msg.textContent='All submissions synced.'; }
+}
+function syncNow(){
+  if(!window.FAE) return;
+  $('syncMsg').textContent='Sending…';
+  FAE.pushOutbox().then(function(r){ syncStatus(); if(r&&r.sent) toast(r.sent+' sent'); });
+}
+try{ window.addEventListener('online', syncStatus); window.addEventListener('offline', syncStatus); }catch(e){}
+
+/* boot: default type */
+pickType('incident', document.querySelector('#types button'));
+syncStatus();
+if(window.FAE) FAE.pushOutbox().then(syncStatus);
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

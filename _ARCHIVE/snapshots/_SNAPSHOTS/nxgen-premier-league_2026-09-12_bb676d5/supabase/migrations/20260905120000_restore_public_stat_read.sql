@@ -1,0 +1,14 @@
+-- Applied to production 2026-09-05.
+--
+-- The RLS policy on player_stats ("Public stats for public players only")
+-- calls is_visible_stat_player(uuid). EXECUTE on that function had been
+-- revoked from anon AND authenticated, so the policy could not be evaluated
+-- for anyone except staff -- every logged-out visitor and every ordinary
+-- member saw a player card of zeros, with the underlying rows perfectly
+-- intact. Shared card links were showing 0.0 PPG to the public.
+--
+-- The function is a boolean visibility check written to be called from inside
+-- a policy, so both roles need EXECUTE. Note that get_public_player and
+-- get_profile_by_bracelet_uid stay revoked on purpose: those are only ever
+-- called through server functions using the service-role client.
+grant execute on function public.is_visible_stat_player(uuid) to anon, authenticated;

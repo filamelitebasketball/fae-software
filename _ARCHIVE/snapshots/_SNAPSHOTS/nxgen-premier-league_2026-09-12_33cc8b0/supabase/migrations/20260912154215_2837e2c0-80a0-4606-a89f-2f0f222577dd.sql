@@ -1,0 +1,2 @@
+REVOKE SELECT (id, full_name, photo_url, avatar_url, bio, "position", jersey_number, division, height_cm, weight_kg, instagram_handle, facebook_handle, twitter_handle, tiktok_handle, is_public) ON public.profiles FROM anon;
+REVOKE SELECT ON public.profiles FROM anon;

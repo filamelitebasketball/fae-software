@@ -1,0 +1,118 @@
+F.A.E. COMMAND CENTER
+=====================
+Version: console v1.0 - 2026-09-03
+
+(This replaces "READ ME FIRST.txt". The old one is still there so you can
+ compare. Delete it once you are happy with this version.)
+
+
+HOW TO OPEN IT
+--------------
+Double-click  START-COMMAND-CENTER.bat
+
+A black window opens, then the Command Center appears in your browser.
+LEAVE THE BLACK WINDOW OPEN while you work. Closing it turns live mode off.
+
+Look at the chip in the top-left of the page:
+
+  GREEN "LIVE"        Reading the court schedule straight from the Google
+                      Sheet. The four tiles at the top are real and current.
+
+  GOLD "LOCAL ONLY"   You opened the page directly instead of using the
+                      launcher. Everything still works except those four
+                      tiles. Close it and use the .bat file.
+
+If you would rather not use the launcher, double-click console.html. You just
+will not get the live status tiles.
+
+
+WHAT YOU SEE FIRST
+------------------
+The top of the home page answers the questions people actually ask, without
+you clicking anything:
+
+  COURT RIGHT NOW ... in use (and by whom) or free
+  NEXT BOOKING ...... what time, and who
+  BOOKED TODAY ...... how many bookings today
+  EXPECTED TODAY .... the pesos those bookings should bring in
+
+Underneath: today's full schedule, who is on shift, and your daily checklist.
+
+
+THE TWO BUTTONS THAT MATTER MOST
+--------------------------------
+  TODAY'S SCHEDULE  ->  who is booked, when, which court. Check it first
+                        every day and before every renter.
+
+  LOG AN INCIDENT   ->  the moment anything goes wrong (no-show, damage,
+                        injury, argument, overtime), press this and record
+                        it with a photo. Logging it right away is what stops
+                        the mix-ups and the missing records.
+
+You do not need the person to be a saved member. Type their name in the
+name box, add a title, attach a photo, file it. Keep photos small and few.
+
+
+KEYBOARD SHORTCUT
+-----------------
+The bar at the bottom of the screen jumps straight to any page. Click it,
+type any of these, press Enter:
+
+  schedule   incident   staff   payroll   dashboard
+  nxgen      playbook   rates   sheet     members
+
+
+WHAT'S INSIDE
+-------------
+console.html ........ THE HOME PAGE. Open this one (via the .bat launcher).
+index.html .......... The old home page. Kept for comparison.
+playbook-v2.html .... HOW WE RUN THE BUILDING. Every new staff member reads
+                      this once, top to bottom. Print the Quick Card at the
+                      bottom and keep it on the desk.
+playbook.html ....... The old playbook. Kept for comparison.
+schedule.html ....... Live court schedule, straight from the Google Sheet.
+staff.html .......... Staff Hub - clock in, daily tasks, drinks count.
+payroll.html ........ Payroll and payslips.
+dashboard.html ...... Full business dashboard - incidents, revenue, members.
+nxgen-stats.html .... NXGEN league stats, leaders and standings.
+INSTALL-OFFICE.md ... How to set this up on another machine.
+logs/ ............... Change log, standing audit sheet, install log.
+assets/ ............. Logos. Leave this folder alone.
+
+
+THE MOST IMPORTANT THING TO UNDERSTAND
+--------------------------------------
+We run on several machines. Not everything is shared between them.
+
+  SAME ON EVERY DEVICE
+    - The court schedule (the Google Sheet)
+    - Members, payments, roles, stock (the live site's admin page)
+
+  SAVED ON THIS MACHINE ONLY
+    - Your checklist ticks
+    - Staff Hub shifts, tasks and drinks counts
+    - Payroll data
+    - Dashboard records and incident drafts
+
+On the home page, every number carries a small coloured label telling you
+which kind it is. Blue and green travel between devices. Gold does not.
+
+  THE RULE: if it must match on every device, it does not live in this
+  folder. Put it on the Sheet or on the live site.
+
+Export a backup from the Staff Hub regularly. A machine that dies takes its
+local data with it.
+
+
+LIVE WEBSITES
+-------------
+  F.A.E. Management ..... https://fae-court-connect.lovable.app
+  NXGEN Premier League .. https://nxgenpremierleague.lovable.app
+
+These are the shared, online source of truth. For records everyone must see
+(members, payments), use the live site's admin panel.
+
+
+TIP: Right-click START-COMMAND-CENTER.bat -> Send to -> Desktop (create
+     shortcut), then rename the shortcut to "F.A.E. Command Center".
+     That is the only icon staff need.

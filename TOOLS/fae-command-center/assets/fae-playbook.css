@@ -1,0 +1,172 @@
+/* ===================================================================
+   F.A.E. Playbook design system — shared by every role playbook.
+   Cloned from playbook.html (v2) so all role pages match the front
+   desk playbook. Page-specific bits stay inline per page.
+   =================================================================== */
+:root{
+  --void:#050507; --panel:#0d0d12; --panel2:#131319; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#E8C766; --ink:#F4F4F6; --mute:#8B8B98; --dim:#61616f;
+  --red:#D2453B; --green:#3FA66A; --blue:#4A7FB5;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:var(--gold-hi)}
+.wrap{max-width:1000px;margin:0 auto;padding:34px 22px 90px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:50;background:rgba(5,5,7,.95);backdrop-filter:blur(10px);
+     border-bottom:1px solid var(--line);margin:-34px -22px 30px;padding:11px 22px}
+.nav-in{max-width:1000px;margin:0 auto;display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.nav a{font-family:var(--mono);font-size:10px;letter-spacing:.11em;color:var(--mute);text-decoration:none;
+       padding:6px 10px;border:1px solid var(--line);border-radius:6px}
+.nav a:hover{color:var(--gold);border-color:var(--gold)}
+.nav a.home{color:var(--gold);border-color:rgba(201,162,39,.45)}
+.nav .sp{flex:1}
+.btn-print{font-family:var(--mono);font-size:10px;letter-spacing:.11em;background:var(--gold);color:#0a0800;
+           border:none;padding:7px 13px;border-radius:6px;cursor:pointer}
+
+/* headings */
+h1{font-family:var(--disp);font-weight:900;font-size:clamp(30px,5vw,50px);line-height:1;letter-spacing:-.022em;margin:0 0 14px}
+.sub{font-size:16.5px;line-height:1.6;color:var(--mute);max-width:66ch;margin:0 0 8px}
+.sub b{color:var(--ink);font-weight:600}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:var(--gold);margin:0 0 13px}
+h2{font-family:var(--disp);font-weight:900;font-size:26px;letter-spacing:-.015em;margin:0 0 6px}
+.sec{padding:38px 0;border-top:1px solid var(--line)}
+.sec-no{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--gold);margin:0 0 10px}
+.sec p{font-size:15px;line-height:1.65;color:#BEBEC9;max-width:72ch}
+.sec p b{color:var(--ink)}
+
+/* the one rule / callout box */
+.rule-box{border:2px solid var(--red);border-radius:14px;padding:26px;background:linear-gradient(150deg,rgba(210,69,59,.14),transparent);margin:8px 0 0}
+.rule-box b{display:block;font-family:var(--disp);font-weight:900;font-size:23px;line-height:1.15;margin-bottom:9px}
+.rule-box p{margin:0;color:#D6D6DE;max-width:64ch}
+.rule-box.gold{border-color:var(--gold);background:linear-gradient(150deg,rgba(201,162,39,.13),transparent)}
+.rule-box.gold b{color:var(--gold-hi)}
+
+/* numbered steps */
+.steps{counter-reset:s;margin-top:22px}
+.step{counter-increment:s;display:grid;grid-template-columns:46px 1fr;gap:16px;padding:17px 0;border-bottom:1px solid var(--line)}
+.step:last-child{border-bottom:none}
+.step::before{content:counter(s);font-family:var(--disp);font-weight:900;font-size:21px;color:var(--gold);
+              border:1.5px solid rgba(201,162,39,.4);border-radius:9px;height:42px;display:flex;align-items:center;justify-content:center}
+.step h3{margin:0 0 5px;font-family:var(--disp);font-weight:800;font-size:17.5px;letter-spacing:-.01em}
+.step p{margin:0;font-size:14.5px;line-height:1.6;color:#B4B4C0}
+.step .say{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:12.5px;color:var(--gold-hi);
+            background:rgba(201,162,39,.1);border-left:2px solid var(--gold);padding:7px 12px;border-radius:0 6px 6px 0}
+
+/* deploy ladder — the 4 steps to solo */
+.ladder{display:grid;gap:11px;margin-top:22px;counter-reset:l}
+.rung{counter-increment:l;display:grid;grid-template-columns:54px 1fr;gap:16px;align-items:start;
+      border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--panel)}
+.rung::before{content:counter(l);font-family:var(--disp);font-weight:900;font-size:24px;color:#0a0800;
+      background:var(--gold);border-radius:10px;height:44px;display:flex;align-items:center;justify-content:center}
+.rung b{display:block;font-family:var(--disp);font-weight:800;font-size:18px;margin-bottom:5px}
+.rung p{margin:0;font-size:14.5px;line-height:1.6;color:#B4B4C0}
+.rung.gate{border-color:var(--gold);background:linear-gradient(150deg,rgba(201,162,39,.1),transparent)}
+.rung.gate::before{background:var(--green);color:#04180d}
+
+/* three-column flow (opening/during/closing, or batch/1:1/open run) */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:14px;margin-top:20px}
+.col{border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden}
+.col header{padding:13px 16px;border-bottom:1px solid var(--line);background:var(--panel2)}
+.col header b{display:block;font-family:var(--disp);font-weight:800;font-size:15.5px}
+.col header span{font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;color:var(--gold);display:block;margin-top:4px}
+.col ol,.col ul{margin:0;padding:14px 16px 16px 32px}
+.col li{font-size:14px;line-height:1.55;color:#BEBEC9;margin-bottom:9px}
+.col li:last-child{margin-bottom:0}
+.col li b{color:var(--ink)}
+
+/* tier / info cards (records, role list) */
+.tiers{display:grid;gap:11px;margin-top:20px}
+.tier{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:start;border:1px solid var(--line);
+      border-radius:11px;padding:16px;background:var(--panel)}
+.tier .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;padding:6px 9px;border-radius:5px;text-align:center;
+           background:rgba(201,162,39,.15);color:var(--gold-hi)}
+.tier .tag.blue{background:rgba(74,127,181,.16);color:#7FAEDC}
+.tier .tag.green{background:rgba(63,166,106,.15);color:#6FD79B}
+.tier b{display:block;font-size:14.5px;margin-bottom:5px}
+.tier p{margin:0;font-size:13.5px;line-height:1.55;color:#AFAFBC}
+
+/* golden note */
+.golden{margin-top:18px;border:1px solid var(--gold);border-radius:11px;padding:18px 20px;
+        background:linear-gradient(150deg,rgba(201,162,39,.1),transparent)}
+.golden b{font-family:var(--disp);font-weight:900;font-size:17px;color:var(--gold-hi)}
+.golden p{margin:7px 0 0;color:#CFCFD8;font-size:14.5px;max-width:66ch}
+
+/* tables */
+table{width:100%;border-collapse:collapse;margin-top:18px;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+th{text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;color:var(--dim);font-weight:400;
+   padding:11px 15px;background:var(--panel2);border-bottom:1px solid var(--line)}
+td{padding:12px 15px;border-bottom:1px solid #17171e;font-size:14px;color:#BEBEC9;vertical-align:top}
+tr:last-child td{border-bottom:none}
+td b{color:var(--ink)}
+td.who{font-family:var(--disp);font-weight:800;color:var(--gold);white-space:nowrap}
+
+/* teach-back prompts */
+.tback{display:grid;gap:10px;margin-top:20px}
+.tback .q{border-left:2px solid var(--gold);background:var(--panel);border-radius:0 10px 10px 0;padding:14px 16px}
+.tback .q b{display:block;font-size:14.5px;color:var(--ink);margin-bottom:4px}
+.tback .q b::before{content:"\201CShow me \2014 ";color:var(--gold-hi);font-family:var(--mono);font-size:12px}
+.tback .q b::after{content:"\201D";color:var(--gold-hi)}
+.tback .q p{margin:0;font-size:13px;color:#9A9AA8}
+.tback .q p::before{content:"Pass = ";font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--green)}
+
+/* when you're free */
+.free{margin-top:20px;border:1px dashed var(--line2);border-radius:12px;padding:20px;background:rgba(63,166,106,.04)}
+.free b{font-family:var(--disp);font-weight:800;font-size:16px;color:#6FD79B;display:block;margin-bottom:10px}
+.free ul{margin:0;padding-left:20px}
+.free li{font-size:14px;line-height:1.7;color:#BEBEC9}
+
+/* escalation */
+.esc{display:grid;gap:9px;margin-top:20px}
+.esc-row{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:center;border-left:2px solid var(--gold);
+         padding:12px 16px;background:var(--panel);border-radius:0 10px 10px 0}
+.esc-row i{font-family:var(--mono);font-size:11px;color:var(--gold);font-style:normal}
+.esc-row p{margin:0;font-size:14px;color:#BEBEC9}
+
+/* warnings */
+.warn{border:1px solid rgba(210,69,59,.45);background:rgba(210,69,59,.08);border-radius:11px;padding:17px 19px;margin-top:20px}
+.warn b{color:#F08A82;display:block;margin-bottom:6px;font-size:15px}
+.warn p{margin:0;color:#D6D6DE;font-size:14px;line-height:1.6}
+
+/* competency sign-off sheet — printable, signable */
+.signoff{border:2px solid var(--gold);border-radius:14px;padding:26px;margin-top:22px;background:var(--panel)}
+.signoff h3{font-family:var(--disp);font-weight:900;font-size:20px;margin:0 0 4px}
+.signoff .cs{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--gold);margin-bottom:18px}
+.signoff .chk{display:grid;grid-template-columns:26px 1fr;gap:12px;align-items:start;padding:10px 0;border-bottom:1px solid #17171e}
+.signoff .chk:last-of-type{border-bottom:none}
+.signoff .box{width:20px;height:20px;border:1.5px solid var(--gold);border-radius:5px;margin-top:1px}
+.signoff .chk span{font-size:14px;line-height:1.5;color:#CFCFD8}
+.signoff .chk span b{color:var(--ink)}
+.sign-lines{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:26px}
+.sign-lines .sl{border-top:1.5px solid var(--line2);padding-top:8px}
+.sign-lines .sl label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.sign-lines .sl .nm{font-size:13px;color:#9A9AA8;margin-top:4px}
+
+/* quick card */
+.card{border:2px solid var(--gold);border-radius:14px;padding:28px;margin-top:22px;background:var(--panel)}
+.card h3{font-family:var(--disp);font-weight:900;font-size:21px;margin:0 0 4px}
+.card .cs{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--gold);margin-bottom:18px}
+.card ol{margin:0;padding-left:20px}
+.card li{font-size:15px;line-height:1.75;color:#CFCFD8}
+.card li b{color:var(--ink)}
+
+.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);
+      font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.08em;
+      display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+
+@media print{
+  body{background:#fff;color:#000}
+  .nav,.btn-print{display:none}
+  .wrap{max-width:100%;padding:0}
+  .sec{page-break-inside:avoid;border-top:1px solid #ccc}
+  .col,.tier,.rate,.card,.esc-row,.rule-box,.golden,.warn,table,.rung,.signoff,.tback .q,.free{border-color:#bbb !important;background:#fff !important}
+  h1,h2,.step h3,.card h3,.col header b,.tier b,td b,.rung b,.signoff h3{color:#000}
+  .sec p,.step p,.col li,.tier p,td,.card li,.golden p,.warn p,.rung p,.free li,.signoff .chk span{color:#222}
+  .sec-no,.eyebrow,.col header span,.card .cs,.esc-row i,.golden b,.signoff .cs{color:#7a6212}
+  .step::before{color:#7a6212;border-color:#bbb}
+  .rung::before{background:#7a6212 !important;color:#fff !important}
+  .signoff .box{border-color:#7a6212}
+  .signoff{page-break-before:always}
+}

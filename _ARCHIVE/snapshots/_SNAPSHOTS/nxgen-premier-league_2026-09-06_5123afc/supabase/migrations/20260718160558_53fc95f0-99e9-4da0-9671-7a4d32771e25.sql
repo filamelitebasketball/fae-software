@@ -1,0 +1,1 @@
+ALTER VIEW public.leaderboard_totals SET (security_invoker = true);

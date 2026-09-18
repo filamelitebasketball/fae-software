@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The F.A.E. Way — How We Train & Deploy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fae-playbook-light.css?v=1">
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<script src="assets/fae-core.js?v=6"></script>
+<style>
+  /* page-specific: role grid */
+  .roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:20px}
+  .role{border:1px solid var(--line);border-radius:12px;padding:17px;background:var(--panel)}
+  .role b{display:block;font-family:var(--disp);font-weight:800;font-size:16px;margin-bottom:4px}
+  .role .st{font-family:var(--mono);font-size:9px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;display:inline-block;margin-bottom:8px}
+  .role .st.live{background:rgba(63,166,106,.15);color:#6FD79B}
+  .role .st.soon{background:rgba(201,162,39,.15);color:var(--gold-hi)}
+  .role p{margin:0;font-size:13px;line-height:1.5;color:#AFAFBC}
+  .role a{display:inline-block;margin-top:10px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--gold);border:1px solid var(--line2);border-radius:6px;padding:5px 9px;text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="nav"><div class="nav-in">
+  <a class="home" href="console.html">← COMMAND CENTER</a>
+  <a href="#why">WHY</a>
+  <a href="#rule">THE RULE</a>
+  <a href="#ladder">THE LADDER</a>
+  <a href="#teachback">TEACH-BACK</a>
+  <a href="#chain">WHO SIGNS OFF</a>
+  <a href="#free">WHEN FREE</a>
+  <a href="#sheet">SIGN-OFF SHEET</a>
+  <a href="#roles">ROLES</a>
+  <span class="sp"></span>
+  <button class="btn-print" onclick="window.print()">PRINT</button>
+</div></div>
+
+<div class="wrap">
+
+  <p class="eyebrow">F.A.E. MANAGEMENT · THE OPERATING METHOD</p>
+  <h1>The F.A.E. Way.</h1>
+  <p class="sub">Every role at F.A.E. — coach, court attendant, admin, marketer, custodian, referee — is trained and deployed the <b>same way</b>. This page is that method. Read it once. Every role playbook is built on top of it.</p>
+  <p class="sub">The idea is simple: <b>nobody is left to guess.</b> We tell you the exact standard, we train you to it, and we check that you can do it — before you ever work a shift alone.</p>
+
+  <!-- 1 -->
+  <section class="sec" id="why">
+    <p class="sec-no">01</p>
+    <h2>Why we do it this way</h2>
+    <p>Most jobs here start with "watch for a day, then you're on your own." That is how mistakes happen and how good people get blamed for things nobody ever taught them. We have all seen the two habits that hurt a team:</p>
+    <div class="tiers">
+      <div class="tier"><span class="tag">HABIT 1</span>
+        <div><b>Waiting to be told</b>
+        <p>Standing around until someone gives an order. At F.A.E. that is not respect — it is lost time. Every role has a <b>"when you're free, do this"</b> list so you always know the next move without being told.</p></div>
+      </div>
+      <div class="tier"><span class="tag">HABIT 2</span>
+        <div><b>The quiet "yes"</b>
+        <p>Nodding that you understand when you don't, because asking feels like admitting weakness. Here, <b>the opposite is true.</b> We would rather you ask twice than guess once. That is why training ends with you <b>showing</b> us, not telling us.</p></div>
+      </div>
+    </div>
+    <div class="golden">
+      <b>The promise this method makes to you</b>
+      <p>If you were trained the F.A.E. Way and something still goes wrong, that is on the training, not on you. That only holds if the training was real — which is what the rest of this page guarantees.</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="sec" id="rule">
+    <p class="sec-no">02</p>
+    <h2>The one rule of training</h2>
+    <div class="rule-box gold">
+      <b>Nobody works a shift alone until their sign-off sheet is signed.</b>
+      <p>Not "probably ready," not "seems fine." A named trainer watched you do the job, you showed them you can handle the hard parts, and you both signed and dated the sheet. Until then you are always working <strong>beside</strong> someone. This protects the trainee, the trainer, and the business.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="sec" id="ladder">
+    <p class="sec-no">03</p>
+    <h2>The 4 steps to working solo</h2>
+    <p>Every role climbs the same four steps, in order. You do not skip a step, and the trainer decides when you are ready to move up — not the calendar.</p>
+    <div class="ladder">
+      <div class="rung"><div><b>Read &amp; watch</b>
+        <p>Read your role playbook top to bottom. Then watch a senior person do the real job for at least one full shift or session. Ask every question that comes to mind — that is the point of this step.</p></div></div>
+      <div class="rung"><div><b>Do-with-me</b>
+        <p>Now you do the job, with the trainer standing beside you. They let you lead and only step in when needed. This is where the playbook turns into muscle memory.</p></div></div>
+      <div class="rung"><div><b>Teach-back</b>
+        <p>You <b>show</b> the trainer how you would handle the tricky moments — a no-show, an injury, a short cash count, an angry parent. Not "do you understand?" but "show me." See the next section.</p></div></div>
+      <div class="rung gate"><div><b>Sign-off → solo</b>
+        <p>Trainer and trainee both sign the dated competency sheet. From that moment you can work that job alone. The signed sheet goes to the Head Ops Manager and is kept on file.</p></div></div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="sec" id="teachback">
+    <p class="sec-no">04</p>
+    <h2>Teach-back — the "show me" step</h2>
+    <p>This is the heart of the F.A.E. Way and the part most training skips. Understanding is proven by <b>doing</b>, not by saying yes. The trainer picks the hard scenarios for the role and asks the trainee to walk through them out loud or act them out. If the trainee freezes or guesses, that is not a failure — it just means step 2 repeats until it is solid.</p>
+    <div class="tback">
+      <div class="q"><b>a renter is not on the schedule but insists they booked.</b><p>opens the live Sheet first, never argues from memory.</p></div>
+      <div class="q"><b>a player gets injured mid-session.</b><p>stops play, gives first aid, tells the Head Ops immediately, logs it.</p></div>
+      <div class="q"><b>the cash at end of shift is ₱200 short.</b><p>logs it honestly, does not adjust the number, reports before leaving.</p></div>
+    </div>
+    <div class="golden">
+      <b>Why this beats a written quiz</b>
+      <p>A quiz tests memory. Teach-back tests the actual moment. Someone can tick the right box on paper and still freeze at the desk. We want to see the freeze in training, not on a live shift.</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="sec" id="chain">
+    <p class="sec-no">05</p>
+    <h2>Who trains and signs off whom</h2>
+    <p>Training runs down the chain. Each person is signed off by the level above them — except coaches, where <b>a coach trains a coach.</b></p>
+    <table>
+      <tr><th>THE PERSON BEING TRAINED</th><th>IS TRAINED &amp; SIGNED OFF BY</th></tr>
+      <tr><td class="who">Head Ops Manager</td><td>The Owner (Coach Junior)</td></tr>
+      <tr><td class="who">Senior Coach</td><td>Head Ops Manager (Jazzy)</td></tr>
+      <tr><td class="who">Assistant &amp; Entry Coach</td><td><b>The Senior Coach of that sport</b> — coach trains coach</td></tr>
+      <tr><td class="who">Court Attendant</td><td>Head Ops Manager (Jazzy)</td></tr>
+      <tr><td class="who">Admin</td><td>Head Ops Manager (Jazzy)</td></tr>
+      <tr><td class="who">Social Media Marketer</td><td>Head Ops Manager (Jazzy)</td></tr>
+      <tr><td class="who">Custodian</td><td>Head Ops Manager (Jazzy)</td></tr>
+      <tr><td class="who">Referee</td><td>A Senior Coach</td></tr>
+    </table>
+  </section>
+
+  <!-- 6 -->
+  <section class="sec" id="free">
+    <p class="sec-no">06</p>
+    <h2>When you're free, do this</h2>
+    <p>The single biggest change we want: <b>idle time is work time.</b> If your main task is done and no one has given you an order, you do not wait — you go to your role's standing list. Every playbook has one. The general version, for anyone, anytime:</p>
+    <div class="free">
+      <b>Anyone, any role, when there is nothing urgent</b>
+      <ul>
+        <li>Tidy your station and the areas around it — court, desk, storeroom, entrance.</li>
+        <li>Check the group chats you are responsible for and answer what you can.</li>
+        <li>Look at what the <b>next</b> shift or session will need and set it up early.</li>
+        <li>Restock what is low — drinks, forms, water, equipment.</li>
+        <li>Ask the person above you: "I'm free — what would help most right now?"</li>
+      </ul>
+    </div>
+    <p style="margin-top:16px">Asking "what would help most?" is not a sign you have no initiative. It is exactly the initiative we want.</p>
+  </section>
+
+  <!-- 7 -->
+  <section class="sec" id="sheet">
+    <p class="sec-no">07</p>
+    <h2>The competency sign-off sheet</h2>
+    <p>This is the record that a person was really trained. Each role playbook carries its own version with role-specific checks. This is the shape they all share — print it, fill it in ink, both people sign, give it to Head Ops.</p>
+
+    <div class="signoff">
+      <h3>F.A.E. COMPETENCY SIGN-OFF</h3>
+      <p class="cs">ROLE: ________________________ · SPORT (IF COACH): ____________</p>
+      <div class="chk"><div class="box"></div><span>Trainee has <b>read the full role playbook</b> and asked their questions.</span></div>
+      <div class="chk"><div class="box"></div><span>Trainee <b>watched</b> a senior person do the job for at least one full shift/session.</span></div>
+      <div class="chk"><div class="box"></div><span>Trainee did the job <b>with the trainer beside them</b>, leading it themselves.</span></div>
+      <div class="chk"><div class="box"></div><span>Trainee <b>passed teach-back</b> on the hard scenarios for this role.</span></div>
+      <div class="chk"><div class="box"></div><span>Trainer judges the trainee <b>ready and comfortable</b> to work this job alone.</span></div>
+      <div class="sign-lines">
+        <div class="sl"><label>Trainee — sign &amp; date</label><div class="nm">Name: ____________________</div></div>
+        <div class="sl"><label>Trainer — sign &amp; date</label><div class="nm">Name: ____________________</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section class="sec" id="roles">
+    <p class="sec-no">08</p>
+    <h2>The roles</h2>
+    <p>Each role has its own playbook built on this method. As we hire, each new person is handed their playbook on day one.</p>
+    <div class="roles">
+      <div class="role"><span class="st live">LIVE</span><b>Court Attendant</b><p>Front desk — bookings, payments, incidents, the building.</p><a href="playbook.html">Open playbook →</a></div>
+      <div class="role"><span class="st live">LIVE</span><b>Coach Track</b><p>Entry → Assistant → Senior. Sessions, 1:1s, open runs.</p><a href="playbook-coach.html">Open playbook →</a></div>
+      <div class="role"><span class="st live">LIVE</span><b>Admin</b><p>COH reports, records, coordination with the attendant.</p><a href="playbook-admin.html">Open playbook →</a></div>
+      <div class="role"><span class="st live">LIVE</span><b>Social Media Marketer</b><p>The daily online cadence — posts, Messenger, recaps.</p><a href="playbook-marketer.html">Open playbook →</a></div>
+      <div class="role"><span class="st live">LIVE</span><b>Custodian</b><p>Cleaning and readiness of the court and facilities.</p><a href="playbook-custodian.html">Open playbook →</a></div>
+      <div class="role"><span class="st soon">TEMPLATE</span><b>Referee</b><p>Officiating open runs — a lighter checklist role.</p><a href="role-template.html">See template →</a></div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <div>THE F.A.E. WAY · v1.0 · 2026-09-13 · Filamelite Basketball / F.A.E. Court</div>
+    <div>PRINT IT · TRAIN TO IT · SIGN IT</div>
+  </div>
+</div>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fil-Am Elite Management — F.A.E.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fae-playbook-light.css?v=1">
+<style>
+  .hero{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:center;padding:14px 0 6px}
+  .hero img{width:190px;height:auto;filter:drop-shadow(0 4px 14px rgba(20,24,31,.12))}
+  .hero .ht h1{margin:0 0 12px}
+  .hero .ht .tag{font-size:18px;line-height:1.5;color:var(--mute);max-width:58ch;margin:0}
+  .hero .ht .tag b{color:var(--ink)}
+  .flag{display:flex;gap:6px;margin:0 0 14px}
+  .flag span{width:34px;height:5px;border-radius:3px}
+  .flag .r{background:var(--red)}.flag .g{background:var(--gold)}.flag .b{background:var(--navy)}
+  @media(max-width:640px){.hero{grid-template-columns:1fr;text-align:center}.hero img{width:150px;margin:0 auto}.flag{justify-content:center}}
+
+  .offer{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:22px}
+  .ocard{border:1px solid var(--line);border-radius:13px;padding:20px;background:var(--surface);box-shadow:0 1px 2px rgba(20,24,31,.04)}
+  .ocard .ic{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;
+             background:rgba(11,77,162,.1);color:var(--navy);font-family:var(--disp);font-weight:900;font-size:18px}
+  .ocard b{display:block;font-family:var(--disp);font-weight:800;font-size:16.5px;color:var(--ink);margin-bottom:5px}
+  .ocard p{margin:0;font-size:13.5px;line-height:1.55;color:var(--body)}
+
+  .progs{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:24px}
+  .prog{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surface);box-shadow:0 2px 10px rgba(20,24,31,.06)}
+  .prog .bar{height:7px}
+  .prog.bball .bar{background:linear-gradient(90deg,var(--red),var(--gold))}
+  .prog.vball .bar{background:linear-gradient(90deg,var(--navy),var(--navy-hi))}
+  .prog.league .bar{background:linear-gradient(90deg,var(--gold),var(--red))}
+  .prog.court .bar{background:linear-gradient(90deg,var(--navy),var(--gold))}
+  .prog.events .bar{background:linear-gradient(90deg,var(--red),var(--navy))}
+  .prog .in{padding:22px}
+  .prog .kk{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--navy);margin-bottom:8px}
+  .prog h3{font-family:var(--disp);font-weight:900;font-size:21px;color:var(--ink);margin:0 0 8px;letter-spacing:-.01em}
+  .prog p{margin:0 0 12px;font-size:14px;line-height:1.6;color:var(--body)}
+  .prog ul{margin:0;padding-left:18px}
+  .prog li{font-size:13.5px;line-height:1.7;color:var(--body)}
+  .prog li b{color:var(--ink)}
+
+  .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:22px}
+  .fact{border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--surface2);text-align:center}
+  .fact b{display:block;font-family:var(--disp);font-weight:900;font-size:22px;color:var(--navy);letter-spacing:-.01em}
+  .fact span{display:block;font-size:12.5px;color:var(--mute);margin-top:5px}
+
+  /* contact + branches */
+  .reach{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:22px}
+  .rc{border:1px solid var(--line);border-radius:13px;padding:18px 20px;background:var(--surface);box-shadow:0 1px 2px rgba(20,24,31,.04)}
+  .rc .kk{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--navy);margin-bottom:8px}
+  .rc b{display:block;font-family:var(--disp);font-weight:800;font-size:16px;color:var(--ink);margin-bottom:4px}
+  .rc p{margin:0;font-size:13.5px;line-height:1.6;color:var(--body)}
+  .rc a{color:var(--navy);text-decoration:none}
+  .todo{color:var(--gold-hi);font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="nav"><div class="nav-in">
+  <a class="home" href="console.html">← COMMAND CENTER</a>
+  <a href="#about">ABOUT</a>
+  <a href="#offer">WHAT WE OFFER</a>
+  <a href="#programs">PROGRAMS</a>
+  <a href="#reach">FIND US</a>
+  <a href="#standards">OUR STANDARDS</a>
+  <span class="sp"></span>
+  <button class="btn-print" onclick="window.print()">PRINT</button>
+</div></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <img src="assets/fae-logo.png" alt="Fil-Am Elite Management logo">
+    <div class="ht">
+      <div class="flag"><span class="r"></span><span class="g"></span><span class="b"></span></div>
+      <h1>Fil-Am Elite<br>Management</h1>
+      <p class="tag">A Filipino-American sports development group — <b>basketball and volleyball training, court rental, and tournaments</b> — with branches in <b>Lipa City, Batangas</b> and <b>Malolos, Bulacan</b>.</p>
+    </div>
+  </div>
+
+  <section class="sec" id="about">
+    <p class="sec-no">ABOUT US</p>
+    <h2>Who we are</h2>
+    <p><b>Fil-Am Elite Management (F.A.E.)</b> is a sports development organization founded by <b>Coach Junior Raymundo</b>, built around one belief: young athletes deserve real coaching and a place to play that is run properly. We operate <b>Filamelite Basketball</b>, our volleyball program, and <b>F.A.E. Court</b> — bringing structured training, a well-kept facility, and organized competition to the community across our Lipa and Malolos branches.</p>
+    <p>What sets us apart is not just the game — it is how we run the operation. Every coach and staff member is trained and signed off to a set standard before they work with a single player or parent. When you train or play with F.A.E., you are getting a team that takes it seriously.</p>
+    <div class="facts">
+      <div class="fact"><b>2</b><span>Branches — Lipa &amp; Malolos</span></div>
+      <div class="fact"><b>DTI</b><span>Registered (No. 8355964)</span></div>
+      <div class="fact"><b>All ages</b><span>Kids, teens &amp; adults</span></div>
+      <div class="fact"><b>1:1 &amp; Group</b><span>Training formats</span></div>
+    </div>
+  </section>
+
+  <section class="sec" id="offer">
+    <p class="sec-no">WHAT WE DO</p>
+    <h2>What we offer</h2>
+    <div class="offer">
+      <div class="ocard"><div class="ic">T</div><b>Training programs</b><p>Basketball and volleyball development — 1:1, small-group, and big-group coaching in structured cycles.</p></div>
+      <div class="ocard"><div class="ic">C</div><b>Court rental</b><p>Book the court for basketball, volleyball, or pickleball — by the hour, member or walk-in.</p></div>
+      <div class="ocard"><div class="ic">O</div><b>Open runs</b><p>Organized open play for kids, teens, and adults across both sports.</p></div>
+      <div class="ocard"><div class="ic">E</div><b>Tournaments &amp; events</b><p>Competitions like our Summer Tip-Off Classics, plus batch awarding and league play.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="programs">
+    <p class="sec-no">OUR PROGRAMS</p>
+    <h2>Programs under F.A.E. Management</h2>
+    <p>Everything we run carries the F.A.E. standard — trained coaches, real session plans, and a safe, well-run floor.</p>
+    <div class="progs">
+      <div class="prog bball"><div class="bar"></div><div class="in">
+        <div class="kk">FILAMELITE BASKETBALL</div>
+        <h3>FAE Basketball Program</h3>
+        <p>Our flagship program. Skills development for young players through structured batch cycles, culminating in scrimmages, tournaments, and batch awarding.</p>
+        <ul>
+          <li><b>1:1, small-group &amp; big-group</b> training</li>
+          <li><b>Batch cycles</b> for kids, teens &amp; adults</li>
+          <li><b>Open runs</b> and in-house tournaments</li>
+          <li>Certificates and awarding each cycle</li>
+        </ul>
+      </div></div>
+
+      <div class="prog vball"><div class="bar"></div><div class="in">
+        <div class="kk">FILAMELITE VOLLEYBALL</div>
+        <h3>FAE Volleyball Program</h3>
+        <p>Volleyball development on the same F.A.E. standard — coached sessions, batch play, and organized games for every level.</p>
+        <ul>
+          <li><b>Batch training</b> and coached sessions</li>
+          <li><b>Open runs</b> for social and competitive play</li>
+          <li>Batch games with Player-of-the-Game recognition</li>
+          <li>Certificates and awarding each cycle</li>
+        </ul>
+      </div></div>
+
+      <div class="prog court"><div class="bar"></div><div class="in">
+        <div class="kk">FACILITY</div>
+        <h3>F.A.E. Court</h3>
+        <p>Our home court — available for rental across basketball, volleyball, and pickleball, and the venue for our programs and events.</p>
+        <ul>
+          <li><b>Hourly court rental</b>, member and walk-in rates</li>
+          <li>Basketball · Volleyball · Pickleball</li>
+          <li>Host venue for open runs &amp; tournaments</li>
+        </ul>
+      </div></div>
+
+      <div class="prog events"><div class="bar"></div><div class="in">
+        <div class="kk">COMPETITION</div>
+        <h3>Tournaments &amp; Events</h3>
+        <p>Organized competition that gives our athletes real games to aim for — including our own <b>Summer Tip-Off Classics</b>.</p>
+        <ul>
+          <li><b>Summer Tip-Off Classics</b> — with a teens division</li>
+          <li>In-house tournaments and scrimmages</li>
+          <li>Batch awarding and certificates</li>
+        </ul>
+      </div></div>
+
+      <div class="prog league"><div class="bar"></div><div class="in">
+        <div class="kk">AFFILIATED LEAGUE</div>
+        <h3>NXGEN Premier League</h3>
+        <p>Our affiliated competitive league — bringing organized, next-generation basketball competition to F.A.E. athletes and the wider community.</p>
+        <ul>
+          <li>Organized league competition</li>
+          <li>A pathway from training to real games</li>
+          <li>Its own schedule, stats &amp; standings</li>
+        </ul>
+      </div></div>
+    </div>
+  </section>
+
+  <section class="sec" id="reach">
+    <p class="sec-no">FIND US</p>
+    <h2>Where to find us</h2>
+    <div class="reach">
+      <div class="rc"><div class="kk">BRANCHES</div><b>Lipa &amp; Malolos</b><p>Lipa City, Batangas<br>Malolos, Bulacan</p></div>
+      <div class="rc"><div class="kk">CALL / TEXT</div><b>+63 917 501 8835</b><p>Inquiries, bookings &amp; enrolment</p></div>
+      <div class="rc"><div class="kk">EMAIL</div><b>Filamelitebasketball@gmail.com</b><p>For details and requests</p></div>
+      <div class="rc"><div class="kk">FACEBOOK</div><b>Filamelite Basketball</b><p><a href="https://www.facebook.com/FilAmEliteBasketball/" target="_blank" rel="noopener">facebook.com/FilAmEliteBasketball</a></p></div>
+    </div>
+    <p style="margin-top:16px;font-size:13.5px;color:var(--mute)"><span class="todo">Optional:</span> give me the exact court street address and a booking link and I'll add them here.</p>
+  </section>
+
+  <section class="sec" id="standards">
+    <p class="sec-no">HOW WE RUN IT</p>
+    <h2>Run to a professional standard</h2>
+    <p>Behind every session is an operating system we hold ourselves to — <b>The F.A.E. Way</b>. Every coach and staff member is trained, has to demonstrate they can handle the job, and is signed off before they work solo. It is why the experience is consistent, whichever coach you get and whichever day you come.</p>
+    <div class="golden">
+      <b>For our team</b>
+      <p>Staff and coaches: your training method, role playbooks, and sign-off sheets live in the Command Center. <a href="the-fae-way.html">Open The F.A.E. Way →</a></p>
+    </div>
+  </section>
+
+  <div class="foot">
+    <div>FIL-AM ELITE MANAGEMENT · F.A.E. · Filamelite Basketball · F.A.E. Court · Lipa &amp; Malolos</div>
+    <div>DTI BUSINESS NAME No. 8355964 · +63 917 501 8835</div>
+  </div>
+</div>
+</body>
+</html>

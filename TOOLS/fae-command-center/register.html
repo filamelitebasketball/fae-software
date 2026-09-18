@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050507">
+<title>F.A.E. — Visitor Registration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<script src="assets/fae-core.js?v=6"></script>
+<style>
+:root{
+  --void:#050507; --panel:#0d0d12; --panel2:#121218; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#E8C766; --ink:#F4F4F6; --mute:#8B8B98; --dim:#5f5f6d;
+  --red:#D2453B; --green:#3FA66A; --blue:#4A7FB5;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;padding-bottom:90px}
+.wrap{max-width:620px;margin:0 auto;padding:16px 14px 30px}
+a{color:inherit;text-decoration:none}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;
+     padding-bottom:12px;border-bottom:2px solid var(--gold);margin-bottom:16px}
+.brand b{display:block;font-family:var(--disp);font-weight:900;font-size:17px;letter-spacing:.03em;line-height:1.1}
+.brand span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--gold);margin-top:4px}
+.home{flex:none;font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--gold);
+      border:1px solid var(--line2);border-radius:6px;padding:7px 10px}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px;margin-bottom:13px}
+.card h2{font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.1em;margin:0 0 12px;color:var(--gold)}
+label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--dim);margin-bottom:5px}
+label i{font-style:normal;color:var(--gold)}
+input[type=text],input[type=tel],input[type=email],input[type=number],textarea{
+  width:100%;background:#08080c;border:1px solid var(--line2);color:var(--ink);
+  border-radius:9px;padding:12px 12px;font-size:16px;font-family:var(--sans)}
+/* 16px above is deliberate: anything smaller makes iOS Safari zoom on focus */
+textarea{min-height:70px;resize:vertical;line-height:1.5}
+input:focus,textarea:focus{outline:none;border-color:var(--gold)}
+input.bad,textarea.bad{border-color:var(--red)}
+.f{margin-bottom:13px}
+.f:last-child{margin-bottom:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err{display:none;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:#E88A83;margin-top:6px}
+.err.on{display:block}
+
+.btn{display:block;width:100%;border:1px solid var(--line2);background:var(--panel2);color:var(--ink);
+     border-radius:10px;padding:14px;font-family:var(--disp);font-weight:800;font-size:14px;
+     letter-spacing:.07em;cursor:pointer;margin-top:10px}
+.btn.go{background:var(--gold);border-color:var(--gold);color:#100c00}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sm{width:auto;display:inline-block;padding:9px 14px;font-size:11.5px;margin:0}
+
+.note{font-size:12px;color:var(--mute);line-height:1.55;margin-top:9px}
+.fine{font-size:11.5px;color:var(--dim);line-height:1.6;margin-top:10px}
+
+/* returning-visitor lookup: phone + button side by side, still thumb sized at 360px */
+.look{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}
+.look .btn{margin-top:0;padding:12px 13px;font-size:11.5px;white-space:nowrap}
+.found{display:none;font-size:13px;line-height:1.5;margin-top:11px;padding:11px 12px;border-radius:9px;
+       border:1px solid var(--line2);background:var(--panel2)}
+.found.on{display:block}
+.found b{color:var(--gold-hi)}
+
+/* one dependent = one bordered block, so a phone screen still reads as rows */
+.dep{border:1px solid var(--line2);background:var(--panel2);border-radius:11px;padding:12px;margin-bottom:10px}
+.dephead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.dephead span{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--gold)}
+.x{flex:none;width:32px;height:32px;border-radius:8px;border:1px solid var(--line2);background:#08080c;
+   color:var(--mute);font-size:17px;line-height:1;cursor:pointer;font-family:var(--sans)}
+.x:active{border-color:var(--red);color:#E88A83}
+.dep .two{grid-template-columns:1fr 88px}
+
+/* consent — big tap target, the whole row toggles it */
+.consent{display:flex;align-items:flex-start;gap:11px;padding:4px 0;cursor:pointer}
+.consent .box{flex:none;width:25px;height:25px;border-radius:6px;border:1.5px solid var(--line2);
+              display:flex;align-items:center;justify-content:center;font-size:14px;color:transparent;margin-top:1px}
+.consent.on .box{background:var(--green);border-color:var(--green);color:#04120a}
+.consent .tx{font-size:14px;line-height:1.45}
+
+/* who is in this household */
+.person{display:flex;justify-content:space-between;align-items:center;gap:10px;
+        padding:11px 0;border-bottom:1px solid var(--line)}
+.person:last-child{border-bottom:0}
+.person b{font-size:14px;display:block}
+.person em{font-style:normal;font-family:var(--mono);font-size:10.5px;color:var(--mute)}
+.tag{flex:none;font-family:var(--mono);font-size:9px;letter-spacing:.13em;padding:3px 8px;border-radius:4px}
+.tag.adult{background:rgba(201,162,39,.16);color:var(--gold-hi)}
+.tag.youth{background:rgba(74,127,181,.18);color:#7FAEDC}
+
+.hid{display:none}
+.big{font-family:var(--mono);font-weight:700;font-size:23px;letter-spacing:.06em;color:var(--gold-hi);
+     background:#08080c;border:1px solid var(--line2);border-radius:10px;padding:16px 12px;
+     text-align:center;word-break:break-all;margin:4px 0 12px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--panel2);
+  border:1px solid var(--gold);color:var(--ink);border-radius:10px;padding:12px 18px;font-size:13px;
+  z-index:60;max-width:92vw;text-align:center;box-shadow:0 12px 34px -14px #000}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand"><b>VISITOR REGISTRATION</b><span>F.A.E. SPORTS &#183; LIPA CITY</span></div>
+    <a class="home" href="console.html">&#8592; HOME</a>
+  </div>
+
+  <!-- tells the visitor, before they type, whether this goes straight to the front desk -->
+  <div id="link" class="card" style="display:flex;align-items:center;gap:11px;padding:12px 14px;font-size:12.5px;line-height:1.45"></div>
+
+  <!-- everything below hides once the form is submitted -->
+  <div id="form">
+
+    <!-- ── returning visitor ────────────────────────────────────────── -->
+    <div class="card">
+      <h2>BEEN HERE BEFORE?</h2>
+      <label>YOUR MOBILE NUMBER</label>
+      <div class="look">
+        <input type="tel" id="lookPhone" inputmode="tel" autocomplete="tel" placeholder="09XX XXX XXXX">
+        <button class="btn ghost" onclick="lookUp()">FIND MY RECORD</button>
+      </div>
+      <div class="err" id="lookErr"></div>
+      <div class="found" id="found"></div>
+      <div class="note">First time here? Skip this and just fill in the form below.</div>
+    </div>
+
+    <!-- ── the adult ────────────────────────────────────────────────── -->
+    <div class="card">
+      <h2>1 &#183; YOUR DETAILS</h2>
+      <div class="f">
+        <label>FULL NAME <i>*</i></label>
+        <input type="text" id="name" autocomplete="name" placeholder="Juan Dela Cruz">
+        <div class="err" id="nameErr"></div>
+      </div>
+      <div class="f">
+        <label>MOBILE NUMBER <i>*</i></label>
+        <input type="tel" id="phone" inputmode="tel" autocomplete="tel" placeholder="09XX XXX XXXX">
+        <div class="err" id="phoneErr"></div>
+      </div>
+      <div class="f">
+        <label>EMAIL</label>
+        <input type="email" id="email" inputmode="email" autocomplete="email" placeholder="Optional">
+      </div>
+      <div class="f">
+        <label>HOME ADDRESS</label>
+        <input type="text" id="address" autocomplete="street-address" placeholder="Barangay, Lipa City">
+      </div>
+      <div class="two">
+        <div class="f">
+          <label>EMERGENCY CONTACT</label>
+          <input type="text" id="emergency" placeholder="Who to call">
+        </div>
+        <div class="f">
+          <label>THEIR NUMBER</label>
+          <input type="tel" id="emergencyPhone" inputmode="tel" placeholder="09XX XXX XXXX">
+        </div>
+      </div>
+    </div>
+
+    <!-- ── dependents ───────────────────────────────────────────────── -->
+    <div class="card">
+      <h2>2 &#183; ADD THE YOUTH YOU ARE RESPONSIBLE FOR</h2>
+      <div id="deps"></div>
+      <div class="note" id="depHint">No children added yet. If you brought any youth with you today, add them here
+        so the front desk knows who they are with.</div>
+      <button class="btn ghost sm" style="margin-top:12px" onclick="addDep()">+ Add another child</button>
+    </div>
+
+        <!-- consent -----------------------------------------------------------
+         Consent under the Data Privacy Act has to be SPECIFIC and FREELY GIVEN.
+         That rules out one tick covering everything: what we must have to run
+         the place safely is separated from what is genuinely optional, and
+         refusing the optional part changes nothing about their visit. -->
+    <div class="card">
+      <h2>3 &#183; WHAT YOU ARE AGREEING TO</h2>
+
+      <!-- layered notice: the short version here, the full version one tap away -->
+      <div class="fine" style="margin:0 0 14px">
+        F.A.E. Sports Management Services, Lipa City, keeps these details to run bookings, to know
+        who is in the building, and to reach someone if you are hurt. We do not sell them and we do
+        not share them with advertisers. Registrations are deleted 2 years after your last visit.
+        You can see, correct or delete your record any time by asking the front desk.
+      </div>
+      <a class="btn ghost sm" id="termsLink" href="terms.html" target="_blank" rel="noopener"
+         onclick="markTermsOpened()" style="margin-bottom:14px">&#128196; Read the Terms, Waiver &amp; Privacy Notice</a>
+
+      <!-- 1. required: the waiver -->
+      <div class="consent" id="cTerms" onclick="toggleC('cTerms')">
+        <div class="box">&#10003;</div>
+        <div class="tx"><b>I have read and accept the Terms, Waiver and Privacy Notice.</b>
+          <span style="display:block;font-size:12px;color:var(--mute);margin-top:3px">
+            Includes the risks of court sport and permission to arrange emergency treatment.</span></div>
+      </div>
+
+      <!-- 2. required: holding the details -->
+      <div class="consent" id="cData" onclick="toggleC('cData')">
+        <div class="box">&#10003;</div>
+        <div class="tx"><b>F.A.E. may keep these details</b> for bookings, building safety and emergencies.
+          <span style="display:block;font-size:12px;color:var(--mute);margin-top:3px">
+            Required &#8212; we cannot let someone in unrecorded.</span></div>
+      </div>
+
+      <!-- 3. required ONLY when a child is on the form -->
+      <div id="guardianWrap" style="display:none">
+        <div class="consent" id="cGuardian" onclick="toggleC('cGuardian')">
+          <div class="box">&#10003;</div>
+          <div class="tx"><b>I am the parent or legal guardian</b> of the children listed above, or I have
+            their parent's permission to sign them in.
+            <span style="display:block;font-size:12px;color:var(--mute);margin-top:3px">
+              I accept the waiver on their behalf and I stay responsible for them in the building.
+              A child cannot sign for themselves.</span></div>
+        </div>
+      </div>
+
+      <!-- 4. optional, and it must be safe to say no -->
+      <div class="consent" id="cPhoto" onclick="toggleC('cPhoto')">
+        <div class="box">&#10003;</div>
+        <div class="tx">F.A.E. may take photos or video that include me
+          <span id="photoKids"></span> for its page and league coverage.
+          <span style="display:block;font-size:12px;color:var(--green);margin-top:3px">
+            Optional. Leave this blank and nothing changes about your visit &#8212; you can also change
+            your mind later.</span></div>
+      </div>
+
+      <div class="err" id="consentErr"></div>
+    </div>
+
+<!-- ── submit ───────────────────────────────────────────────────── -->
+    <div class="card">
+      <button class="btn go" id="btnSubmit" onclick="submitForm()" disabled>REGISTER</button>
+      <div class="note" id="sendNote">Tick the box above to finish.</div>
+    </div>
+
+  </div><!-- /form -->
+
+  <!-- ── success ──────────────────────────────────────────────────── -->
+  <div class="card hid" id="done">
+    <h2 id="doneHead">REGISTERED</h2>
+    <div class="big" id="doneId">&#8212;</div>
+    <div class="note" id="doneNote" style="margin-top:0">Show this at the front desk, or just give your name.</div>
+    <div id="doneBtns">
+      <button class="btn ghost" onclick="resetForm()">REGISTER ANOTHER PERSON</button>
+      <button class="btn go" onclick="finish()">DONE</button>
+    </div>
+  </div>
+
+  <!-- ── my family ────────────────────────────────────────────────── -->
+  <div class="card hid" id="family">
+    <h2>MY FAMILY</h2>
+    <div id="familyList"></div>
+  </div>
+
+</div>
+
+<script>
+/* ===========================================================================
+   Visitor Registration — the QR by the door lands here.
+
+   One ADULT registers themselves plus the youth they are responsible for.
+   That pairing is the whole point: when a child is on the court the front desk
+   can answer "whose child is this, and who do we call?" from one record.
+
+   A visitor is NOT staff. They never see, and never need, the office code —
+   the code only gates staff submissions on the office receiver. If the office
+   turns this away, the record still lives on this phone and goes to the
+   outbox to retry, so nothing a visitor typed is ever thrown away.
+   ========================================================================= */
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function toast(msg, ms){
+  var t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(function(){ t.remove(); }, ms || 3200);
+}
+function digits(s){ return String(s==null?'':s).replace(/\D/g,''); }
+function val(id){ return ($(id).value || '').trim(); }
+
+/* The household being edited. Null = a brand new registration.
+   The pids are carried separately because check-in rows point at a PERSON id,
+   not at a name — re-saving an edited household must keep those ids alive or
+   today's check-ins would suddenly belong to nobody. */
+var EDIT_ID = null, ADULT_PID = '';
+
+/* ---- inline errors (never alert(); an alert on a phone hides the field) ---- */
+function showErr(fieldId, errId, msg){
+  var f = $(fieldId), e = $(errId);
+  if(f) f.classList.add('bad');
+  if(e){ e.textContent = msg; e.classList.add('on'); }
+}
+function clearErr(fieldId, errId){
+  var f = $(fieldId), e = $(errId);
+  if(f) f.classList.remove('bad');
+  if(e){ e.textContent = ''; e.classList.remove('on'); }
+}
+
+/* ---- connection strip ------------------------------------------------------
+   Same pattern as tasks.html, minus the staff-code prompt. A visitor with no
+   code still gets a calm message, because their record is safe either way. */
+function paintLink(){
+  var el = $('link'); if(!el) return;
+  function set(colour, dot, text){
+    el.style.borderColor = colour;
+    el.innerHTML = '<span class="fae-live-dot" style="background:' + dot + '"></span><span>' + text + '</span>';
+  }
+  set('var(--line)', '#8B8B98', 'Checking the link to the office&#8230;');
+  FAE.officeOnline().then(function(ok){
+    /* ok.codeRequired means the office wants a STAFF code. We never ask a
+       visitor for it — we simply fall back to the neutral wording. */
+    if(ok && !(ok.codeRequired && !FAE.staffCode())){
+      set('rgba(63,166,106,.5)', '#3FA66A',
+        '<b style="color:#6FD79B">Connected to the office computer.</b> Your details go straight to the front desk.');
+      return;
+    }
+    set('rgba(201,162,39,.5)', '#C9A227',
+      '<b style="color:var(--gold-hi)">Not connected</b> &#8212; your details save on this phone and send when you are back.');
+  }).catch(function(){
+    set('rgba(201,162,39,.5)', '#C9A227',
+      '<b style="color:var(--gold-hi)">Not connected</b> &#8212; your details save on this phone and send when you are back.');
+  });
+}
+
+/* ---- returning visitor -----------------------------------------------------
+   Phone is the lookup key, not the name: one family spells "Dela Cruz" three
+   ways but gives the same number every time. fae-core compares digits only, so
+   spaces and dashes do not matter — 0917-555-1234 and 0917 555 1234 are the
+   same household. (It is a plain digit match, so a visitor who registered as
+   0917… and searches as +63917… will be told there is no record and simply
+   register again; the front desk merges those by hand.) */
+function lookUp(){
+  clearErr('lookPhone','lookErr');
+  var p = val('lookPhone');
+  if(digits(p).length < 7){
+    showErr('lookPhone','lookErr','Type your full mobile number so we can find you.');
+    return;
+  }
+  var h = null;
+  try{ h = FAE.findByPhone(p); }catch(e){}
+  var box = $('found');
+  if(!h){
+    box.className = 'found on';
+    box.innerHTML = 'No record yet &#8212; fill in the form below.';
+    /* carry the number they already typed into the form so they type it once */
+    if(!val('phone')) $('phone').value = p;
+    return;
+  }
+  loadHousehold(h);
+  box.className = 'found on';
+  box.innerHTML = 'Welcome back, <b>' + esc((h.adult||{}).name || 'friend') + '</b>. '
+                + 'Check your details below and press Register to update them.';
+  toast('Record found. Check it is still correct.');
+}
+
+/* prefill everything, dependents included, and remember the ids we must keep */
+function loadHousehold(h){
+  var a = h.adult || {};
+  EDIT_ID = h.id || null;
+  ADULT_PID = a.pid || '';
+  $('name').value = a.name || '';
+  $('phone').value = a.phone || '';
+  $('email').value = a.email || '';
+  $('address').value = a.address || '';
+  $('emergency').value = a.emergency || '';
+  $('emergencyPhone').value = a.emergencyPhone || '';
+  $('deps').innerHTML = '';
+  (h.dependents || []).forEach(function(d){ addDep(d); });
+  depHint();
+  /* A returning family re-confirms rather than inheriting a silent yes: the
+     required ticks come back only if they accepted THIS version of the terms.
+     A terms change has to be agreed again. */
+  var c = h.consents || {};
+  if(c.termsVersion === TERMS_VERSION){
+    if(c.service) $('cData').classList.add('on');
+    if(c.readTerms){ termsOpened = true; $('cTerms').classList.add('on'); }
+    if(c.guardian) $('cGuardian').classList.add('on');
+  }
+  if(c.photo) $('cPhoto').classList.add('on');
+  refreshConsent();
+  paintFamily(h);
+}
+
+/* ---- dependents ------------------------------------------------------------
+   Rows are real DOM nodes and are only ever appended or removed. Nothing is
+   re-rendered from a model, so removing child 2 cannot wipe what is half typed
+   into child 1 or 3. Only the little heading is renumbered afterwards. */
+function addDep(d){
+  d = d || {};
+  var row = document.createElement('div');
+  row.className = 'dep';
+  row.innerHTML =
+      '<div class="dephead"><span>YOUTH</span>'
+    +   '<button class="x" type="button" aria-label="Remove this child">&#215;</button></div>'
+    + '<div class="two">'
+    +   '<div class="f"><label>NAME</label><input type="text" class="dName" placeholder="Child\'s name"></div>'
+    +   '<div class="f"><label>AGE</label><input type="number" class="dAge" inputmode="numeric" min="0" max="120" placeholder="—"></div>'
+    + '</div>'
+    + '<div class="f"><label>TEAM / ALLERGY / CONDITION &#183; OPTIONAL</label>'
+    +   '<input type="text" class="dNotes" placeholder="Only if staff should know in an emergency"></div>';
+  row.querySelector('.dName').value = d.name || '';
+  row.querySelector('.dAge').value = (d.age === 0 || d.age) ? d.age : '';
+  row.querySelector('.dNotes').value = d.notes || '';
+  if(d.pid) row.dataset.pid = d.pid;
+  row.querySelector('.x').onclick = function(){ row.remove(); depHint(); };
+  $('deps').appendChild(row);
+  depHint();
+  return row;
+}
+function depHint(){
+  var rows = $('deps').children;
+  $('depHint').style.display = rows.length ? 'none' : 'block';
+  /* adding or removing a child changes whether the guardian confirmation is
+     required, so the consent block is refreshed from the same choke point */
+  try{ refreshConsent(); }catch(e){}
+  for(var i=0;i<rows.length;i++){
+    rows[i].querySelector('.dephead span').textContent = 'YOUTH ' + (i+1);
+  }
+}
+/* read the rows back out, skipping any blank one the visitor added and left empty */
+function readDeps(){
+  var out = [], rows = $('deps').children;
+  for(var i=0;i<rows.length;i++){
+    var r = rows[i];
+    var nm = (r.querySelector('.dName').value || '').trim();
+    if(!nm) continue;
+    var rec = { name:nm,
+                age: (r.querySelector('.dAge').value || '').trim(),
+                notes: (r.querySelector('.dNotes').value || '').trim() };
+    if(r.dataset.pid) rec.pid = r.dataset.pid;
+    out.push(rec);
+  }
+  return out;
+}
+
+/* ---- consent --------------------------------------------------------------
+   Submit stays disabled until this is ticked. We are collecting minors' data,
+   so the tick has to be a deliberate act, not something buried in small print. */
+var TERMS_VERSION = '1.0';
+var termsOpened = false;
+
+function markTermsOpened(){ termsOpened = true; }
+function isOn(id){ var e = $(id); return !!(e && e.classList.contains('on')); }
+function toggleC(id){
+  $(id).classList.toggle('on');
+  refreshConsent();
+  clearErr(null, 'consentErr');
+}
+/* The guardian question only exists when a child is actually on the form, and
+   the photo wording names the children - a parent should never have to guess
+   whether a permission covers their child. */
+function refreshConsent(){
+  var kids = document.querySelectorAll('#deps .dep').length;
+  var gw = $('guardianWrap');
+  if(gw) gw.style.display = kids ? 'block' : 'none';
+  var pk = $('photoKids');
+  if(pk) pk.textContent = kids ? 'and the children I listed' : '';
+  if(!kids && isOn('cGuardian')) $('cGuardian').classList.remove('on');
+
+  var ready = isOn('cTerms') && isOn('cData') && (!kids || isOn('cGuardian'));
+  $('btnSubmit').disabled = !ready;
+  $('sendNote').textContent = ready
+    ? 'Ready to send.'
+    : (kids && isOn('cTerms') && isOn('cData')
+        ? 'Confirm you are the parent or guardian of the children listed.'
+        : 'Tick the two required boxes above to finish.');
+}
+/* kept so any older call site still works */
+function toggleConsent(){ toggleC('cData'); }
+
+/* ---- validate + submit ---------------------------------------------------- */
+function validate(){
+  var ok = true;
+  clearErr('name','nameErr'); clearErr('phone','phoneErr');
+  if(!val('name')){ showErr('name','nameErr','Please type your full name.'); ok = false; }
+  if(digits(val('phone')).length < 7){
+    showErr('phone','phoneErr','Please type a mobile number we can reach you on.'); ok = false;
+  }
+  var kids = document.querySelectorAll('#deps .dep').length;
+  var e = $('consentErr');
+  if(!isOn('cTerms')){
+    e.textContent = 'Please open and accept the Terms, Waiver and Privacy Notice.'; e.classList.add('on'); ok = false;
+  } else if(!isOn('cData')){
+    e.textContent = 'Please agree that we may keep these details.'; e.classList.add('on'); ok = false;
+  } else if(kids && !isOn('cGuardian')){
+    e.textContent = 'Only a parent or guardian may register a child. Please confirm.'; e.classList.add('on'); ok = false;
+  }
+  return ok;
+}
+
+function submitForm(){
+  if(!validate()){
+    toast('Please check the fields marked in red.');
+    var bad = document.querySelector('.bad');
+    if(bad) bad.scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
+
+  /* If they never used the lookup but their number is already on this device,
+     adopt that household instead of creating a second one for the same family. */
+  if(!EDIT_ID){
+    var existing = null;
+    try{ existing = FAE.findByPhone(val('phone')); }catch(e){}
+    if(existing){ EDIT_ID = existing.id; ADULT_PID = (existing.adult||{}).pid || ''; }
+  }
+
+  var household = {
+    adult: {
+      name: val('name'),
+      phone: val('phone'),
+      email: val('email'),
+      address: val('address'),
+      emergency: val('emergency'),
+      emergencyPhone: val('emergencyPhone')
+    },
+    dependents: readDeps(),
+    consent: true,                      /* kept for older code that reads a boolean */
+    /* The auditable record: WHAT was agreed, to WHICH version, WHEN and HOW.
+       "They ticked a box once" is not a defensible answer to a parent asking
+       why we hold their child's name. */
+    consents: {
+      termsVersion: TERMS_VERSION,
+      acceptedAt: new Date().toISOString(),
+      readTerms: termsOpened,           /* did they actually open the document */
+      service: isOn('cData'),           /* required: hold details for bookings + safety */
+      guardian: isOn('cGuardian'),      /* required when children are listed */
+      photo: isOn('cPhoto'),            /* optional, refusable, withdrawable */
+      health: readDeps().some(function(d){ return (d.notes||'').trim(); }),
+      method: 'self-service (QR)',
+      device: (navigator.userAgent||'').slice(0,120)
+    },
+    source: 'walk-in-qr'
+  };
+  if(EDIT_ID) household.id = EDIT_ID;            /* editing: update, do not duplicate */
+  if(ADULT_PID) household.adult.pid = ADULT_PID; /* keep today's check-ins pointing at the same person */
+
+  /* Stored FIRST, sent second. From here on the data cannot be lost, whatever
+     the network does. */
+  var saved = FAE.visitorSave(household);
+
+  var btn = $('btnSubmit');
+  btn.disabled = true;
+  $('sendNote').textContent = 'Sending…';
+
+  FAE.deliver({ type:'visitor_register', household: saved }).then(function(r){
+    var via = r && r.via;
+    if(via === 'office'){
+      finishCard(saved, '#6FD79B', 'Registered. Salamat!',
+        'Show this at the front desk, or just give your name.');
+      toast('Registered. Salamat!');
+    } else if(via === 'online'){
+      finishCard(saved, '#6FD79B', 'Registered. Salamat!',
+        'Sent to the command centre. Show this at the front desk, or just give your name.');
+      toast('Registered. Salamat!');
+    } else {
+      /* 'queued', or 'rejected' because the office wanted a staff code this
+         phone does not have. Either way it is a staff problem, never the
+         visitor's — so the wording is the same and the record stays safe. */
+      if(via === 'rejected'){
+        /* deliver() does not queue a rejection, so queue it ourselves and it
+           will go up with everything else next time the link is good. */
+        try{ FAE.outboxAdd({ type:'visitor_register', household: saved }); }catch(e){}
+      }
+      finishCard(saved, 'var(--gold-hi)', 'Saved on this phone',
+        'It will send to the office by itself once this phone is back on the court Wi-Fi. '
+        + 'Show this at the front desk, or just give your name.');
+      toast('Saved. Show your name at the front desk.');
+    }
+    /* one flat row for the Google Sheet, queued in the outbox either way */
+    try{ FAE.sheetPush('VISITORS', [sheetRow(saved)]); }catch(e){}
+  }).catch(function(){
+    /* deliver() always resolves, but never let a surprise strand the visitor */
+    finishCard(saved, 'var(--gold-hi)', 'Saved on this phone',
+      'Show this at the front desk, or just give your name.');
+  });
+}
+
+function stamp(iso){
+  try{
+    var d = iso ? new Date(iso) : new Date(), p = function(n){ return (n<10?'0':'')+n; };
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+  }catch(e){ return ''; }
+}
+function sheetRow(h){
+  var a = h.adult || {}, deps = h.dependents || [];
+  return {
+    Household: h.id,
+    Registered: stamp(h.createdAt),
+    Adult: a.name || '',
+    Phone: a.phone || '',
+    Email: a.email || '',
+    Address: a.address || '',
+    Emergency: a.emergency || '',
+    EmergencyPhone: a.emergencyPhone || '',
+    Dependents: deps.length,
+    DependentNames: deps.map(function(d){ return d.name; }).join(' | '),
+    Source: h.source || 'walk-in-qr'
+  };
+}
+
+/* ---- success + family ----------------------------------------------------- */
+function finishCard(h, colour, head, note){
+  $('form').classList.add('hid');
+  $('done').classList.remove('hid');
+  $('doneHead').textContent = head;
+  $('doneHead').style.color = colour;
+  $('doneId').textContent = h.id;
+  $('doneNote').textContent = note;
+  $('doneBtns').style.display = 'block';
+  paintFamily(h);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+function paintFamily(h){
+  var people = [];
+  try{ people = FAE.householdPeople(h); }catch(e){}
+  if(!people.length){ $('family').classList.add('hid'); return; }
+  $('family').classList.remove('hid');
+  $('familyList').innerHTML = people.map(function(p){
+    var youth = p.role === 'youth';
+    var sub = youth
+      ? (p.age !== '' && p.age != null ? esc(p.age) + ' years old' : 'age not given')
+      : (p.phone ? esc(p.phone) : 'guardian');
+    return '<div class="person"><div><b>' + esc(p.name) + '</b><em>' + sub + '</em></div>'
+         + '<span class="tag ' + (youth ? 'youth' : 'adult') + '">' + (youth ? 'YOUTH' : 'ADULT') + '</span></div>';
+  }).join('');
+}
+
+/* ---- after submit --------------------------------------------------------- */
+function resetForm(){
+  EDIT_ID = null; ADULT_PID = '';
+  ['lookPhone','name','phone','email','address','emergency','emergencyPhone'].forEach(function(id){
+    $(id).value = ''; $(id).classList.remove('bad');
+  });
+  ['lookErr','nameErr','phoneErr','consentErr'].forEach(function(id){
+    $(id).textContent = ''; $(id).classList.remove('on');
+  });
+  $('found').className = 'found';
+  $('deps').innerHTML = ''; depHint();
+  ['cTerms','cData','cGuardian','cPhoto'].forEach(function(id){
+    var e = $(id); if(e) e.classList.remove('on');
+  });
+  termsOpened = false;
+  refreshConsent();
+  $('sendNote').textContent = 'Tick the box above to finish.';
+  $('done').classList.add('hid');
+  $('family').classList.add('hid');
+  $('form').classList.remove('hid');
+  window.scrollTo({ top:0, behavior:'smooth' });
+  $('name').focus();
+}
+/* "Done" hands the phone back — it must NOT drop a visitor into the staff
+   console, so it just closes the card out. */
+function finish(){
+  $('doneBtns').style.display = 'none';
+  $('doneNote').textContent = 'All set. You can hand the phone back now. Salamat po!';
+  toast('Salamat po!');
+}
+
+/* ---- boot ---- */
+(function(){
+  depHint();
+  paintLink();
+})();
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

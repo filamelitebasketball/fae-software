@@ -1,0 +1,1366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. — FilAm Elite Programs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<script src="assets/fae-core.js?v=10"></script>
+<script src="assets/fae-export.js?v=1"></script>
+<style>
+:root{
+  --void:#050507; --panel:#0d0d12; --panel2:#121218; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#EBCB6B; --ink:#F7F7FA; --mute:#AEB2BD; --dim:#7C808C;
+  --red:#D2453B; --green:#3FA66A; --blue:#5B9BD5; --purple:#2FA6A0; --orange:#E0913A;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;padding-bottom:50px}
+.wrap{max-width:1400px;margin:0 auto;padding:18px 16px 40px}
+a{color:inherit;text-decoration:none}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
+     padding-bottom:13px;border-bottom:2px solid var(--gold);margin-bottom:16px}
+.brand b{display:block;font-family:var(--disp);font-weight:900;font-size:19px;letter-spacing:.02em;line-height:1.15}
+.brand span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--gold);margin-top:5px}
+.home{font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--gold);
+      border:1px solid var(--line2);border-radius:6px;padding:8px 11px;white-space:nowrap}
+
+/* program switch */
+.sports{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.sport{border:1px solid var(--line2);background:var(--panel);color:var(--mute);border-radius:10px;
+  padding:11px 20px;font-family:var(--disp);font-weight:800;font-size:14px;cursor:pointer;letter-spacing:.02em}
+.sport.on{border-color:var(--gold);background:linear-gradient(155deg,rgba(201,162,39,.16),transparent);color:var(--gold-hi)}
+
+.bar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+select,input[type=text],input[type=date],input[type=number]{
+  background:var(--panel);border:1px solid var(--line2);color:var(--ink);border-radius:9px;
+  padding:9px 11px;font-family:var(--sans);font-size:13.5px}
+select:focus,input:focus{outline:none;border-color:var(--gold)}
+.btn{border:1px solid var(--line2);background:var(--panel2);color:var(--ink);border-radius:9px;
+  padding:9px 14px;font-family:var(--disp);font-weight:700;font-size:12.5px;letter-spacing:.03em;cursor:pointer}
+.btn.go{background:var(--gold);border-color:var(--gold);color:#100c00}
+.btn.sm{padding:6px 10px;font-size:11px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.flow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+@media(max-width:720px){.flow{grid-template-columns:1fr}}
+.flow-col{border:1px solid var(--line);border-radius:12px;padding:15px;background:var(--panel)}
+.flow-col.biz{border-top:3px solid var(--green)}
+.flow-col.sys{border-top:3px solid var(--gold)}
+.flow-col h3{font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.04em;margin:0 0 11px}
+.flow-links{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px}
+.flow-tasks{margin:0;padding-left:18px;font-size:12.5px;color:var(--mute);line-height:1.8}
+.flow-tasks li b{color:var(--ink)}
+.card h2{font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.09em;margin:0 0 4px;color:var(--gold-hi);
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.card h2 .sp{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--dim);font-weight:400}
+.sub{font-size:11.5px;color:var(--mute);margin-bottom:13px;line-height:1.5}
+
+/* the eight-week strip */
+.weeks{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.wk{background:var(--panel2);border:1px solid var(--line2);border-radius:9px;padding:10px 8px;text-align:center;min-height:88px}
+.wk.now{border-color:var(--gold);background:linear-gradient(160deg,rgba(201,162,39,.16),transparent)}
+.wk.tour{border-color:var(--purple)}
+.wk.open{border-color:var(--blue)}
+.wk .n{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--dim)}
+.wk .k{font-family:var(--disp);font-weight:800;font-size:11.5px;margin:5px 0 3px;line-height:1.25}
+.wk.tour .k{color:#B49BE8} .wk.open .k{color:#7FAEDC} .wk.now .k{color:var(--gold-hi)}
+.wk .d{font-family:var(--mono);font-size:8.5px;color:var(--mute);line-height:1.5}
+@media(max-width:900px){.weeks{grid-template-columns:repeat(4,1fr)}}
+
+/* drafting board */
+.board{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;align-items:flex-start}
+.col{flex:0 0 232px;background:var(--panel2);border:1px solid var(--line2);border-radius:11px;padding:11px;min-height:260px}
+.col.pool{border-color:var(--line2);background:#0a0a0f}
+.col.over{border-color:var(--gold);background:rgba(201,162,39,.07)}
+.col h3{font-family:var(--disp);font-weight:800;font-size:12.5px;margin:0 0 3px;display:flex;align-items:center;gap:7px}
+.col .cnt{font-family:var(--mono);font-size:9.5px;color:var(--dim);margin-bottom:9px;display:block}
+.col .cnt.bad{color:#E88A83} .col .cnt.good{color:#6FD79B}
+.col .del{margin-left:auto;background:none;border:0;color:var(--red);cursor:pointer;font-size:14px;line-height:1;padding:0 2px}
+
+.pl{background:var(--panel);border:1px solid var(--line2);border-radius:8px;padding:8px 10px;margin-bottom:7px;
+  cursor:grab;font-size:12.5px;display:flex;align-items:center;gap:8px;user-select:none}
+.pl:active{cursor:grabbing}
+.pl.drag{opacity:.35}
+.pl .jn{font-family:var(--mono);font-size:10px;color:var(--gold);flex:none;min-width:22px}
+.pl .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl .ag{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;padding:2px 6px;border-radius:8px;flex:none}
+.pl .ag.kids{background:rgba(63,166,106,.16);color:#6FD79B}
+.pl .ag.teens{background:rgba(74,127,181,.18);color:#7FAEDC}
+.empty{color:var(--dim);font-size:11.5px;text-align:center;padding:22px 8px;line-height:1.6}
+/* clickable label chips on a draft card */
+.pl .chip{font-family:var(--mono);font-size:8.5px;letter-spacing:.05em;padding:2px 6px;border-radius:6px;border:1px solid var(--line2);background:transparent;color:var(--mute);cursor:pointer;flex:none}
+.pl .chip.pos{color:var(--gold-hi)}
+.pl .chip:hover{border-color:var(--gold)}
+/* Gold edge showing where the card will land in the order. */
+.tray-group{background:#0d0d12;color:var(--gold-hi,#EBCB6B);border:1px solid var(--line2,#2e2e39);
+  border-radius:6px;font-family:var(--mono);font-size:9.5px;padding:2px 5px;cursor:pointer;vertical-align:middle}
+.pl.ins-before{box-shadow:0 -2px 0 0 var(--gold)}
+.pl.ins-after{box-shadow:0 2px 0 0 var(--gold)}
+/* Same chip look, but a real <select>: one click opens the list, one picks.
+   The cycling buttons these replaced needed up to five clicks to reach the far
+   end of the list, which is slow across a whole batch. */
+.pl select.chip{appearance:none;-webkit-appearance:none;max-width:66px;height:17px;
+  padding-right:5px;line-height:1.3;text-overflow:ellipsis}
+.pl select.chip:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.pl select.chip option{background:#0d0d12;color:#F4F4F6;font-family:var(--mono)}
+/* wide undrafted pool tray under the team boxes */
+.pooltray{margin-top:14px}
+.pooltray.over .tray-grid{border-color:var(--gold);background:rgba(201,162,39,.07)}
+.tray-head{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--dim);margin:2px 0 9px}
+.tray-head b{color:var(--gold-hi)}
+.tray-hint{color:var(--dim);text-transform:none;letter-spacing:0;font-size:10px;margin-left:6px}
+.tray-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:8px;background:#0a0a0f;border:1px solid var(--line2);border-radius:11px;padding:11px;min-height:74px;margin-bottom:10px}
+.tray-grid .pl{margin-bottom:0}
+.tray-sub{font-family:var(--disp);font-weight:800;font-size:11px;letter-spacing:.06em;margin:2px 0 6px}
+.pl button.ag{cursor:pointer;border:1px solid transparent;font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;padding:2px 6px;border-radius:8px;flex:none}
+.pl button.ag:hover{border-color:var(--gold)}
+
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--dim);
+   padding:8px;border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--panel2);
+  border:1px solid var(--gold);color:var(--ink);border-radius:10px;padding:12px 18px;font-size:13px;z-index:200;
+  max-width:92vw;text-align:center;box-shadow:0 14px 38px -14px #000}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:150;padding:20px}
+.ov.on{display:flex}
+.ov .box{background:var(--panel);border:1px solid var(--line2);border-radius:13px;padding:20px;max-width:460px;width:100%}
+.f{margin-bottom:11px}
+.f label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;color:var(--dim);margin-bottom:5px}
+.f input,.f select{width:100%}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.note{font-size:11.5px;color:var(--mute);line-height:1.55;margin-top:9px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 14px}
+.kpi b{display:block;font-family:var(--disp);font-weight:900;font-size:24px;letter-spacing:-.02em}
+.kpi span{font-family:var(--mono);font-size:9px;letter-spacing:.13em;color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand"><b>FILAM ELITE PROGRAMS</b><span>BATCHES &middot; PLAYERS &middot; DRAFTING &middot; TOURNAMENTS</span></div>
+    <a class="home" href="console.html">&#8592; HOME</a>
+  </div>
+
+  <div class="sports">
+    <button class="sport on" id="sp-basketball" onclick="setProgram('basketball')">&#127936; FAEBASKETBALL</button>
+    <button class="sport" id="sp-volleyball" onclick="setProgram('volleyball')">&#127952; FAEVOLLEYBALL</button>
+  </div>
+
+  <!-- ── two-side workflow: business/income vs system/team-dev ──── -->
+  <div class="flow">
+    <div class="flow-col biz">
+      <h3>&#128176; BUSINESS · INCOME FLOW</h3>
+      <div class="flow-links">
+        <a class="btn" href="batch23-checkout.html">Checkout &amp; check-in</a>
+        <a class="btn" href="take-payment.html">Take payment</a>
+        <a class="btn" href="tournament.html">Balance sheet</a>
+      </div>
+      <ul class="flow-tasks">
+        <li>Collect fees / tournament fee</li>
+        <li>Check players in on arrival</li>
+        <li>Release tournament uniforms</li>
+        <li>Reconcile balance to ₱0</li>
+      </ul>
+      <div id="progIncome" style="margin-top:8px;font-size:11px;color:var(--mute)"></div>
+    </div>
+    <div class="flow-col sys">
+      <h3>&#127919; SYSTEM · TEAM DEVELOPMENT</h3>
+      <div class="flow-links">
+        <a class="btn" href="#draftBoard">Drafting board</a>
+        <a class="btn" href="tournament.html">Matchmaking (double-elim)</a>
+      </div>
+      <ul class="flow-tasks">
+        <li>Week 6: evaluate players</li>
+        <li>Set each player's <b>position</b> + <b>skill tier</b></li>
+        <li>Drag into balanced teams (Captain / Core / Advanced / Intermediate)</li>
+        <li>Seed the double-elimination bracket</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <!-- ── batch + 8 week strip ─────────────────────────────────── -->
+  <div class="card">
+    <h2>BATCH <span class="sp" id="specLine"></span></h2>
+    <div class="bar">
+      <select id="batchSel" onchange="render()"></select>
+      <button class="btn" onclick="openNewBatch()">+ New batch</button>
+      <button class="btn" onclick="seedBatchTemplates()" title="Create empty Batch 1–30 shells — fill any batch's data later">+ Batches 1–30</button>
+      <button class="btn sm" onclick="closeBatch()">Mark finished</button>
+    </div>
+    <div class="weeks" id="weeks"></div>
+    <div class="note" id="weekNote"></div>
+  </div>
+
+  <!-- ── drafting board ───────────────────────────────────────── -->
+  <div class="card" id="draftBoard">
+    <h2>TEAM DRAFTING
+      <span class="sp">DRAG A PLAYER ONTO A TEAM &middot; OR TAP TO MOVE</span></h2>
+    <div class="sub">Week 6 is for evaluation; this is where you turn that into balanced teams.
+      Nothing is saved until you press <b>Save rosters</b>.</div>
+    <div class="bar">
+      <select id="ageSel" onchange="render()">
+        <option value="">All age groups</option>
+        <option value="kids">Kids only</option>
+        <option value="teens">Teens only</option>
+      </select>
+      <select id="fmtSel" onchange="render()"></select>
+      <button class="btn" onclick="addTeam()">+ Add team</button>
+      <button class="btn" onclick="autoBalance()">&#9878; Auto-balance</button>
+      <button class="btn go" id="saveBtn" onclick="saveRosters()">Save rosters</button>
+      <span id="dirty" style="font-family:var(--mono);font-size:10.5px;color:var(--gold-hi)"></span>
+    </div>
+    <div class="board" id="board"></div>
+    <div class="pooltray" id="pooltray" data-team="" ondragover="dragOver(event,this)" ondragleave="dragOut(this)" ondrop="drop(event,this)"></div>
+  </div>
+
+  <!-- ── players ──────────────────────────────────────────────── -->
+  <div class="card">
+    <h2>PLAYERS <span class="sp" id="plCount"></span></h2>
+    <div class="bar">
+      <input type="text" id="plSearch" placeholder="Search a player or parent..." oninput="render()" style="min-width:220px">
+      <select id="plDiv" onchange="render()" title="Division directory" style="background:var(--panel,#121218);color:inherit;border:1px solid var(--line2,#2e2e39);border-radius:8px;padding:8px 10px">
+        <option value="">All divisions</option>
+        <option value="kids">Kids</option>
+        <option value="teens">Teens</option>
+      </select>
+      <button class="btn" onclick="openNewPlayer()">+ Add player</button>
+      <button class="btn" onclick="document.getElementById('impFile').click()">&#128193; Import spreadsheet</button>
+      <button class="btn" onclick="loadBatch23()" title="Feed the Batch 23 tournament-checkout data into the program — matches by name, no duplicates">&#127936; Load Batch 23</button>
+      <button class="btn" onclick="loadTeens()" title="Add the coach's 43 teens players as active minor members">&#127939; Load Teens (43)</button>
+      <button class="btn" style="border-color:var(--red);color:#f0b4ae" onclick="clearPlayers()" title="Delete the shown division (or all) so you can reload it clean">&#128465; Clear players</button>
+      <a class="btn" href="tournament.html" style="text-decoration:none">&#127942; Matchmaking &amp; balance</a>
+      <a class="btn" href="batch23-checkout.html" style="text-decoration:none">&#128203; Tournament checkout</a>
+      <input type="file" id="impFile" accept=".csv,.xlsx,.xls" style="display:none" onchange="importFile(this)">
+      <button class="btn go" onclick="FAEExport.open(this,'players')">&#8681; Export</button>
+    </div>
+    <div style="overflow-x:auto"><table id="plTable"></table></div>
+  </div>
+
+</div>
+
+<!-- new batch -->
+<div class="ov" id="ovBatch">
+  <div class="box">
+    <h2 style="font-family:var(--disp);font-size:16px;margin:0 0 14px">New batch</h2>
+    <div class="two">
+      <div class="f"><label>BATCH NUMBER</label><input type="number" id="nbNum" min="1"></div>
+      <div class="f"><label>FIRST SATURDAY</label><input type="date" id="nbStart"></div>
+    </div>
+    <div class="note">Eight weeks are laid out from that date: five weekends of skills, one of
+      open runs, then the kids and teens tournaments.</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:15px">
+      <button class="btn" onclick="closeOv('ovBatch')">Cancel</button>
+      <button class="btn go" onclick="createBatch()">Create batch</button>
+    </div>
+  </div>
+</div>
+
+<!-- new / edit player -->
+<div class="ov" id="ovPlayer">
+  <div class="box">
+    <h2 style="font-family:var(--disp);font-size:16px;margin:0 0 14px" id="npTitle">Add player</h2>
+    <div class="f"><label>PLAYER NAME</label><input type="text" id="npName"></div>
+    <div class="two">
+      <div class="f"><label>DATE OF BIRTH</label><input type="date" id="npDob" onchange="npAuto()"></div>
+      <div class="f"><label>AGE GROUP</label><select id="npAge"><option value="kids">Kids</option><option value="teens">Teens</option></select></div>
+    </div>
+    <div class="two">
+      <div class="f"><label>JERSEY SIZE</label><select id="npSize"><option>XS</option><option>S</option><option selected>M</option><option>L</option><option>XL</option></select></div>
+      <div class="f"><label>PREFERRED NUMBER</label><input type="number" id="npNum" min="0" max="99"></div>
+    </div>
+    <div class="two">
+      <div class="f"><label>SKILL TIER</label><select id="npTier">
+        <option value="">—</option>
+        <option value="Captain">Captain</option>
+        <option value="Core">Core</option>
+        <option value="Advanced">Advanced</option>
+        <option value="Intermediate">Intermediate</option>
+      </select></div>
+      <div class="f"><label>POSITION</label><select id="npPos">
+        <option value="">—</option>
+        <option value="PG">PG — Point Guard</option>
+        <option value="SG">SG — Shooting Guard</option>
+        <option value="SF">SF — Small Forward</option>
+        <option value="PF">PF — Power Forward</option>
+        <option value="C">C — Center</option>
+      </select></div>
+    </div>
+    <div class="f"><label>PARENT / GUARDIAN NAME</label><input type="text" id="npParent"></div>
+    <div class="two">
+      <div class="f"><label>PARENT MOBILE</label><input type="text" id="npPhone"></div>
+      <div class="f"><label>PARENT EMAIL</label><input type="text" id="npEmail"></div>
+    </div>
+    <div class="two">
+      <div class="f"><label>HEADSHOT</label>
+        <input type="file" id="npPhotoHead" accept="image/*" onchange="npPhoto(this,'head')">
+        <div id="npHeadPrev"></div></div>
+      <div class="f"><label>FULL BODY</label>
+        <input type="file" id="npPhotoBody" accept="image/*" onchange="npPhoto(this,'body')">
+        <div id="npBodyPrev"></div></div>
+    </div>
+    <div class="note" id="npNote"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:15px">
+      <button class="btn" style="margin-right:auto;color:var(--red)" id="npDel" onclick="deletePlayer()">Remove</button>
+      <button class="btn" onclick="closeOv('ovPlayer')">Cancel</button>
+      <button class="btn go" onclick="savePlayer()">Save player</button>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="ovPhotos">
+  <div class="box" style="max-width:420px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h2 style="font-family:var(--disp);font-size:16px;margin:0" id="photosTitle">Photos</h2>
+      <button class="btn" onclick="closeOv('ovPhotos')">Close</button>
+    </div>
+    <div id="photosBody" style="display:grid;gap:14px"></div>
+  </div>
+</div>
+
+<script src="assets/vendor/xlsx.mini.min.js" onerror="window.__noXLSX=1"></script>
+<script>
+/* ===========================================================================
+   FilAm Elite Programs — batches, players, drag-and-drop drafting, tournaments.
+
+   The written spec describes this as Prisma + Postgres + Express + React. This
+   is the same system built the way the rest of the Command Center is built:
+   plain records in the shared store, no server, no build step, no npm. It runs
+   from a folder on the office PC exactly like every other screen.
+
+   The one structural change worth knowing: the spec's Parent model is the
+   visitor HOUSEHOLD we already hold, so a child registered at the door and a
+   player on a roster are the same person rather than two files to keep in step.
+   ========================================================================= */
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function toast(m, ms){ var t=document.createElement('div'); t.className='toast'; t.textContent=m;
+  document.body.appendChild(t); setTimeout(function(){ t.remove(); }, ms||3000); }
+function closeOv(id){ $(id).classList.remove('on'); }
+/* tournament-checkout display helpers */
+function peso(n){ return (n===null||n===undefined||n==='') ? '—' : '₱'+Number(n).toLocaleString('en-PH'); }
+/* Colour tracks the hierarchy: gold, green, blue, grey - top to bottom. */
+function tierColor(t){ return t==='Captain'?'var(--gold-hi)':t==='Core'?'#3FA66A':t==='Advanced'?'#4A7FB5':'var(--mute)'; }
+function catBadge(c){
+  if(!c) return '<span style="color:var(--mute)">—</span>';
+  var col = c==='New' ? '#f2a900' : c==='Re-enrolled' ? '#3b82f6' : '#a855f7';
+  return '<span style="font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:8px;border:1px solid '+col+';color:'+col+'">'+esc(c)+'</span>';
+}
+function tfBadge(b){
+  if(!b || !b.tf) return '<span style="color:var(--mute)">—</span>';
+  var m = b.tf==='paid' ? ['paid','#22c55e'] : b.tf==='waived' ? ['waived','#3b82f6'] : ['unpaid','#f97316'];
+  return '<span style="font-family:var(--mono);font-size:9px;color:'+m[1]+'">'+m[0]+'</span>';
+}
+
+var PROGRAM = 'basketball';
+var POOL_GROUPS = ['division','position','tier','postier','none'];
+var TIER_RANK = ['Captain','Core','Advanced','Intermediate'];
+/* How the undrafted tray is segregated. Remembered, because a coach works one
+   way for a whole batch and should not have to reset it every visit. */
+var POOL_GROUP = (function(){
+  try{ var v = localStorage.getItem('fae-pool-group'); return POOL_GROUPS.indexOf(v)>=0 ? v : 'division'; }
+  catch(e){ return 'division'; }
+})();
+function setPoolGroup(v){
+  POOL_GROUP = POOL_GROUPS.indexOf(v) >= 0 ? v : 'division';
+  try{ localStorage.setItem('fae-pool-group', POOL_GROUP); }catch(e){}
+  render();
+}
+var DRAFT = null;        /* the unsaved board: { pool:[ids], teams:{teamId:[ids]} } */
+var EDIT_PID = '';
+var COLLAPSE = {};       /* which division groups are minimized, keyed 'r:'/'p:'+label */
+function toggleGroup(k){ COLLAPSE[k] = !COLLAPSE[k]; render(); }
+
+function spec(){ return FAE.programSpec[PROGRAM]; }
+function currentBatch(){
+  var id = $('batchSel').value;
+  var all = FAE.batchesFor(PROGRAM);
+  for(var i=0;i<all.length;i++){ if(all[i].id === id) return all[i]; }
+  return all[0] || null;
+}
+
+function setProgram(p){
+  PROGRAM = p;
+  DRAFT = null;
+  ['basketball','volleyball'].forEach(function(x){ $('sp-'+x).classList.toggle('on', x===p); });
+  fillBatches();
+  fillFormats();
+  render();
+}
+
+function fillBatches(){
+  var sel = $('batchSel'), all = FAE.batchesFor(PROGRAM);
+  sel.innerHTML = all.length
+    ? all.map(function(b){
+        return '<option value="'+esc(b.id)+'">Batch '+b.batchNumber+
+               (b.status==='template'?' (template — no data)':' &middot; '+b.startDate+(b.status==='done'?' (finished)':''))+'</option>'; }).join('')
+    : '<option value="">— no batch yet —</option>';
+}
+function fillFormats(){
+  var f = spec().formats, sel = $('fmtSel');
+  sel.innerHTML = Object.keys(f).map(function(k){
+    return '<option value="'+k+'">'+f[k].label+(f[k].rules?' &middot; '+f[k].rules:'')+'</option>'; }).join('');
+}
+
+/* ---------------------------------------------------------------- batches */
+/* Empty Batch 1–30 shells so the whole history + future is ready. The office
+   fills any batch's data later (Batch 23 is current). Each carries the 8-week
+   frame; no players until filled. Existing batches (e.g. 23) are left untouched. */
+function seedBatchTemplates(){
+  var have = {};
+  FAE.batchesFor(PROGRAM).forEach(function(b){ have[b.batchNumber] = true; });
+  var made = 0, today = FAE.localDay();
+  for(var n=1;n<=30;n++){
+    if(have[n]) continue;
+    var b = FAE.batchCreate(PROGRAM, n, today);
+    var d = FAE.programs(), stored = d.batches.filter(function(x){ return x.id===b.id; })[0];
+    if(stored){ stored.status = 'template'; FAE.programsSave(d); }   /* flag it as an empty shell */
+    made++;
+  }
+  fillBatches(); render();
+  toast(made ? (made + ' batch shells added (1–30)') : 'Batches 1–30 already exist');
+}
+function openNewBatch(){
+  var n = FAE.batchesFor(PROGRAM).length + 1;
+  $('nbNum').value = n;
+  /* default to the coming Saturday, since every batch starts on one */
+  var d = new Date(), day = d.getDay();
+  d.setDate(d.getDate() + ((6 - day + 7) % 7 || 7));
+  $('nbStart').value = FAE.localDay(d);
+  $('ovBatch').classList.add('on');
+}
+function createBatch(){
+  var n = +$('nbNum').value, s = $('nbStart').value;
+  if(!s){ toast('Pick the first Saturday'); return; }
+  var b = FAE.batchCreate(PROGRAM, n, s);
+  closeOv('ovBatch');
+  fillBatches();
+  $('batchSel').value = b.id;
+  DRAFT = null;
+  render();
+  toast('Batch ' + b.batchNumber + ' created — 8 weeks to ' + b.endDate);
+}
+function closeBatch(){
+  var b = currentBatch();
+  if(!b){ return; }
+  if(!confirm('Mark batch ' + b.batchNumber + ' as finished?')) return;
+  var d = FAE.programs();
+  d.batches.forEach(function(x){ if(x.id === b.id) x.status = 'done'; });
+  FAE.programsSave(d);
+  fillBatches(); render();
+  toast('Batch ' + b.batchNumber + ' marked finished');
+}
+
+/* ------------------------------------------------------------ the board */
+/* Build the working copy once per batch. Everything the user drags happens in
+   DRAFT; the stored rosters only change when they press Save. */
+function ensureDraft(){
+  var b = currentBatch();
+  if(!b){ DRAFT = null; return; }
+  if(DRAFT && DRAFT.batchId === b.id) return;
+  var teams = FAE.teamsFor(b.id), map = {};
+  teams.forEach(function(t){ map[t.id] = FAE.rosterFor(t.id).map(function(p){ return p.id; }); });
+  DRAFT = { batchId: b.id, teams: map, dirty: false };
+}
+function draftedIds(){
+  var out = {};
+  if(DRAFT) Object.keys(DRAFT.teams).forEach(function(tid){
+    DRAFT.teams[tid].forEach(function(pid){ out[pid] = tid; });
+  });
+  return out;
+}
+function poolPlayers(){
+  var taken = draftedIds(), age = $('ageSel').value;
+  return FAE.playersFor(PROGRAM, age).filter(function(p){ return !taken[p.id]; });
+}
+function playerById(id){
+  var all = FAE.programs().players;
+  for(var i=0;i<all.length;i++){ if(all[i].id === id) return all[i]; }
+  return null;
+}
+
+function addTeam(){
+  var b = currentBatch();
+  if(!b){ toast('Create a batch first'); return; }
+  var n = FAE.teamsFor(b.id).length + 1;
+  var name = prompt('Team name', 'Team ' + n);
+  if(!name) return;
+  var t = FAE.teamCreate(b.id, name.trim());
+  ensureDraft();
+  DRAFT.teams[t.id] = [];
+  render();
+}
+function removeTeam(tid){
+  var t = null, all = FAE.teamsFor(currentBatch().id);
+  for(var i=0;i<all.length;i++){ if(all[i].id === tid) t = all[i]; }
+  if(!t) return;
+  if(!confirm('Remove ' + t.name + '? Its players go back to the undrafted pool.')) return;
+  var d = FAE.programs();
+  d.teams = d.teams.filter(function(x){ return x.id !== tid; });
+  d.rosters = d.rosters.filter(function(r){ return r.teamId !== tid; });
+  FAE.programsSave(d);
+  delete DRAFT.teams[tid];
+  render();
+  toast(t.name + ' removed');
+}
+
+/* Move a player between the pool and a team. Used by both drag-and-drop and the
+   tap fallback, so a touch screen at the desk behaves the same as a mouse. */
+function movePlayer(pid, toTeam, index){
+  ensureDraft();
+  Object.keys(DRAFT.teams).forEach(function(tid){
+    DRAFT.teams[tid] = DRAFT.teams[tid].filter(function(x){ return x !== pid; });
+  });
+  if(toTeam && DRAFT.teams[toTeam]){
+    /* A roster array has always been ordered; nothing ever let you SET the
+       order, because every drop appended. `index` is where the pointer was
+       released, so dragging a player up or down the column is now how the
+       line-up order is set. Undefined index keeps the old append behaviour,
+       which is what tap-to-move still wants. */
+    var arr = DRAFT.teams[toTeam];
+    var i = (index === undefined || index === null || index < 0 || index > arr.length) ? arr.length : index;
+    arr.splice(i, 0, pid);
+  }
+  DRAFT.dirty = true;
+  render();
+}
+
+/* Where in this column the pointer is. The dragged card is excluded so the
+   index is already correct once it has been spliced out - otherwise dragging a
+   player DOWN its own column lands one slot short. */
+function dropIndex(col, e, pid){
+  var cards = [].slice.call(col.querySelectorAll('.pl')).filter(function(el){ return el.dataset.pid !== pid; });
+  for(var i = 0; i < cards.length; i++){
+    var r = cards[i].getBoundingClientRect();
+    if(e.clientY < r.top + r.height / 2) return i;
+  }
+  return cards.length;
+}
+function clearInsertMark(){
+  var m = document.querySelectorAll('.pl.ins-before, .pl.ins-after');
+  for(var i = 0; i < m.length; i++){ m[i].classList.remove('ins-before', 'ins-after'); }
+}
+
+/* Spread the pool across the teams by age group, so nobody has to hand-balance
+   forty children. It fills the smallest team first, alternating groups. */
+function autoBalance(){
+  ensureDraft();
+  var teamIds = Object.keys(DRAFT.teams);
+  if(!teamIds.length){ toast('Add at least one team first'); return; }
+  if(!confirm('Spread every undrafted player across the ' + teamIds.length + ' teams?\n\nAlready-drafted players stay where they are.')) return;
+  var pool = poolPlayers().slice();
+  /* kids and teens alternate so one team does not end up with all the youngest */
+  pool.sort(function(a,b){ return String(a.ageGroup).localeCompare(String(b.ageGroup)); });
+  pool.forEach(function(p){
+    teamIds.sort(function(a,b){ return DRAFT.teams[a].length - DRAFT.teams[b].length; });
+    DRAFT.teams[teamIds[0]].push(p.id);
+  });
+  DRAFT.dirty = true;
+  render();
+  toast(pool.length + ' players spread across ' + teamIds.length + ' teams — adjust by dragging');
+}
+
+function saveRosters(){
+  var b = currentBatch();
+  if(!b || !DRAFT){ toast('Nothing to save'); return; }
+  var assignments = Object.keys(DRAFT.teams).map(function(tid){
+    return { teamId: tid, playerIds: DRAFT.teams[tid] };
+  });
+  FAE.rostersSet(b.id, assignments);
+  DRAFT.dirty = false;
+  /* the office receiver files a copy, and the sheet gets the flat rows */
+  /* team assignments (ids only) go to the office receiver; player rows hold
+     minors' names, guardians and payments, so they NEVER leave this PC. */
+  try{ FAE.deliver({ type:'program_rosters', batch:b, assignments:assignments }); }catch(e){}
+  render();
+  toast('Rosters saved for batch ' + b.batchNumber);
+}
+
+/* ------------------------------------------------------------ players */
+/* ---- player photos: downscale to a data URL so localStorage stays small ----
+   ponytail: max 480px longest edge, jpeg q0.8. Real phone photos are multi-MB;
+   localStorage caps ~5MB per origin, so store the shrunk version, not the raw file. */
+var NP_PHOTOS = {head:'', body:''};
+function npPhotoPrev(){
+  ['head','body'].forEach(function(k){
+    var el = $(k==='head'?'npHeadPrev':'npBodyPrev'); if(!el) return;
+    el.innerHTML = NP_PHOTOS[k]
+      ? '<img src="'+NP_PHOTOS[k]+'" style="max-height:76px;border-radius:8px;margin-top:6px;border:1px solid var(--line2)"> '
+        + '<button class="btn sm" style="color:var(--red)" onclick="npPhotoClear(\''+k+'\')">Remove</button>'
+      : '<span style="color:var(--mute);font-size:10px">none</span>';
+  });
+}
+function npPhotoClear(k){ NP_PHOTOS[k]=''; npPhotoPrev(); }
+function npPhoto(input, k){
+  var f = input.files && input.files[0]; if(!f) return;
+  var img = new Image();
+  img.onload = function(){
+    var m = 480, s = Math.min(1, m/Math.max(img.width, img.height));
+    var c = document.createElement('canvas'); c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    NP_PHOTOS[k] = c.toDataURL('image/jpeg', 0.8);
+    URL.revokeObjectURL(img.src); npPhotoPrev();
+  };
+  img.src = URL.createObjectURL(f);
+}
+function openNewPlayer(pid){
+  EDIT_PID = pid || '';
+  var p = pid ? playerById(pid) : null;
+  $('npTitle').textContent = p ? 'Edit player' : 'Add player';
+  NP_PHOTOS = { head: p ? (p.photoHead||'') : '', body: p ? (p.photoBody||'') : '' };
+  if($('npPhotoHead')) $('npPhotoHead').value = ''; if($('npPhotoBody')) $('npPhotoBody').value = '';
+  npPhotoPrev();
+  $('npName').value = p ? (p.fullName||'') : '';
+  $('npDob').value = p ? (p.dob||'') : '';
+  $('npAge').value = p ? (p.ageGroup||'kids') : 'kids';
+  $('npSize').value = p ? (p.jerseySize||'M') : 'M';
+  $('npNum').value = p && p.preferredNumber !== undefined ? p.preferredNumber : '';
+  $('npTier').value = p ? (p.skillTier||'') : '';
+  $('npPos').value = p ? (p.position||'') : '';
+  $('npParent').value = p ? (p.parentName||'') : '';
+  $('npPhone').value = p ? (p.parentPhone||'') : '';
+  $('npEmail').value = p ? (p.parentEmail||'') : '';
+  $('npDel').style.display = p ? '' : 'none';
+  var bl = p && p.billing;
+  $('npNote').innerHTML = (bl
+      ? '<b>'+esc(p.category||'')+'</b> &middot; Paid '+peso(bl.paid)+' / Due '+(bl.due==null?'TBD':peso(bl.due))
+        +' &middot; Balance <b style="color:'+(bl.balance>0?'#ef4444':'#22c55e')+'">'+(bl.balance==null?'TBD':peso(bl.balance))+'</b>'
+        +(p.uniformSize?'<br>Uniform: '+esc(p.uniformSize):'')
+        +(bl.note?'<br><span style="color:var(--gold-hi)">'+esc(bl.note)+'</span>':'')+'<br>'
+      : '')
+    + (p && p.hid
+        ? 'Linked to the door register — same child who signs in at reception.'
+        : 'Age group is worked out from the date of birth: 12 and under is Kids.');
+  $('ovPlayer').classList.add('on');
+}
+function npAuto(){
+  var d = $('npDob').value;
+  if(d) $('npAge').value = FAE.ageGroupFor(d);
+}
+function savePlayer(){
+  var name = $('npName').value.trim();
+  if(!name){ toast('Type the player name'); return; }
+  var p = EDIT_PID ? playerById(EDIT_PID) : {};
+  p.fullName = name;
+  p.program = PROGRAM;
+  p.dob = $('npDob').value;
+  p.ageGroup = $('npAge').value;
+  p.jerseySize = $('npSize').value;
+  p.preferredNumber = $('npNum').value === '' ? undefined : +$('npNum').value;
+  p.skillTier = $('npTier').value;
+  p.position = $('npPos').value;
+  p.parentName = $('npParent').value.trim();
+  p.parentPhone = $('npPhone').value.trim();
+  p.parentEmail = $('npEmail').value.trim();
+  p.photoHead = NP_PHOTOS.head || '';
+  p.photoBody = NP_PHOTOS.body || '';
+  FAE.playerSave(p);
+  closeOv('ovPlayer');
+  render();
+  toast(name + ' saved');
+}
+function showPhotos(pid){
+  var p = playerById(pid); if(!p) return;
+  var body = (p.photoHead?'<div><div style="font-size:10px;color:var(--mute);margin-bottom:4px">HEADSHOT</div><img src="'+p.photoHead+'" style="max-width:100%;border-radius:10px"></div>':'')
+    + (p.photoBody?'<div><div style="font-size:10px;color:var(--mute);margin-bottom:4px">FULL BODY</div><img src="'+p.photoBody+'" style="max-width:100%;border-radius:10px"></div>':'');
+  if(!body) body = '<div style="color:var(--mute)">No photos on file. Add them from Edit.</div>';
+  $('photosTitle').textContent = p.fullName;
+  $('photosBody').innerHTML = body;
+  $('ovPhotos').classList.add('on');
+}
+function deletePlayer(){
+  if(!EDIT_PID) return;
+  var p = playerById(EDIT_PID);
+  if(!p || !confirm('Remove ' + p.fullName + ' from the programs?')) return;
+  var d = FAE.programs();
+  d.players = d.players.filter(function(x){ return x.id !== EDIT_PID; });
+  d.rosters = d.rosters.filter(function(r){ return r.playerId !== EDIT_PID; });
+  FAE.programsSave(d);
+  try{ FAE.logVoid({ kind:'player', ref:EDIT_PID, summary:p.fullName + ' removed from ' + PROGRAM }); }catch(e){}
+  closeOv('ovPlayer');
+  DRAFT = null;
+  render();
+  toast(p.fullName + ' removed');
+}
+/* Bulk-clear the roster so a division can be reloaded clean. Respects the
+   division filter: if Kids/Teens is selected, only that division is removed;
+   otherwise every player in this program. Destructive but re-loadable
+   (Load Batch 23 / Load Teens rebuild the data). */
+function deletePlayerById(id){
+  var p = playerById(id); if(!p) return;
+  if(!confirm('Remove ' + p.fullName + ' from ' + PROGRAM.toUpperCase() + '?')) return;
+  var d = FAE.programs();
+  d.players = d.players.filter(function(x){ return x.id !== id; });
+  d.rosters = d.rosters.filter(function(r){ return r.playerId !== id; });
+  FAE.programsSave(d);
+  try{ FAE.logVoid({ kind:'player', ref:id, summary:p.fullName + ' removed from ' + PROGRAM }); }catch(e){}
+  DRAFT = null; render();
+  toast(p.fullName + ' removed');
+}
+/* Bulk clear is destructive — gate it behind the admin/master PIN so a stray
+   click can never wipe the roster. */
+function clearPlayers(){
+  var pin = prompt('Admin PIN required to bulk-clear players:');
+  if(pin === null) return;
+  if(!(FAE.checkPin('master', pin) || FAE.checkPin('admin', pin))){ toast('Wrong PIN — nothing cleared'); return; }
+  var div = ($('plDiv')||{}).value || '';
+  var d = FAE.programs();
+  var victims = d.players.filter(function(p){ return p.program===PROGRAM && (!div || p.ageGroup===div); });
+  if(!victims.length){ toast('No ' + (div||'') + ' players to clear'); return; }
+  var what = victims.length + ' ' + (div ? div.toUpperCase() : PROGRAM.toUpperCase()) + ' player' + (victims.length>1?'s':'');
+  if(!confirm('Delete ' + what + '? This cannot be undone (you can re-load them with the Load buttons).')) return;
+  var ids = {}; victims.forEach(function(p){ ids[p.id]=1; });
+  d.players = d.players.filter(function(p){ return !ids[p.id]; });
+  d.rosters = d.rosters.filter(function(r){ return !ids[r.playerId]; });
+  FAE.programsSave(d);
+  try{ FAE.logVoid({ kind:'roster-clear', ref:PROGRAM, summary:'Cleared ' + what }); }catch(e){}
+  DRAFT = null; render();
+  toast('Cleared ' + what);
+}
+function pullFromDoor(){
+  var n = FAE.playersFromHouseholds(PROGRAM);
+  render();
+  toast(n ? (n + ' youth pulled in from the door register') : 'No new youth found on the register');
+}
+
+/* ---- Batch 23 tournament checkout (FilAm Elite Basketball) ----
+   Merges the tournament-checkout sheet onto the program registry BY NAME: a
+   player already on file is updated in place (never duplicated); a name not yet
+   on file is added. Fields fed in: category, jersey name/number, guardian,
+   uniform size, and fees due/paid/balance + tournament-fee status. This is
+   children's payment data, so it lives only in this browser, never the Sheet.
+   Fee schedule (Batch 23): New P10,600, Re-enrolled P8,000, Scholar P2,500. */
+var CHECKOUT = [
+ {name:"Alfonz Miguel Pamilar",cat:"Re-enrolled",jersey:"",no:"",parent:"",due:8000,paid:8000,balance:0,overall:"Fully Paid",tf:"paid",tfLabel:"Paid",uniform:"",note:'',playing:true,flag:false},
+ {name:"Victor Andrew S. Abriza",cat:"Re-enrolled",jersey:"",no:"",parent:"",due:8000,paid:5500,balance:2500,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"",note:'₱5,500 recorded (training). ₱2,500 tournament fee outstanding.',playing:true,flag:false},
+ {name:"Gavin Rojan E. Salva",cat:"Re-enrolled",jersey:"",no:"",parent:"",due:8000,paid:5500,balance:2500,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"",note:'Recorded ₱3,000 + ₱2,500 = ₱5,500. ₱2,500 tournament fee outstanding.',playing:true,flag:false},
+ {name:"Chael Juadines",cat:"New",jersey:"Juadines",no:"30",parent:"Nicole Morada Martija",due:10600,paid:4050,balance:6550,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"Top 9-10, Short 9-10",note:'FB. ₱4,050 recorded.',playing:true,flag:false},
+ {name:"Yohan Ezekiel A. Belen",cat:"Re-enrolled",jersey:"",no:"",parent:"",due:8000,paid:8000,balance:0,overall:"Fully Paid",tf:"paid",tfLabel:"Paid",uniform:"",note:'',playing:true,flag:false},
+ {name:"Francis Yves C. Suavengco",cat:"New",jersey:"Suavengco",no:"05",parent:"Marvin Suavengco",due:10600,paid:5100,balance:5500,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"Age 9-10, Top 37-26, Short 36-15",note:'FB. Recorded ₱5,000/₱5,100.',playing:true,flag:false},
+ {name:"Lucas Adam De Chavez",cat:"New",jersey:"Lucas",no:"27",parent:"Babie DC Valencia",due:10600,paid:4050,balance:6550,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"Top 9-10, Length 26, Short hips 35 / length 18",note:'CONFIRM: uniform "Lucas #27" (parent Babie DC Valencia) matched to this player - verify name.',playing:true,flag:true},
+ {name:"Ram Raynard M. Balanay",cat:"New",jersey:"Balanay",no:"14",parent:"Jennie Medina Balanay",due:10600,paid:4050,balance:6550,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"Top 9-10, Short 9-10",note:'₱4,050 recorded (incl. ₱1,000 uniform).',playing:true,flag:false},
+ {name:"Zeff Elison R. Samson",cat:"Re-enrolled",jersey:"",no:"",parent:"",due:8000,paid:8000,balance:0,overall:"Fully Paid",tf:"paid",tfLabel:"Paid",uniform:"",note:'Recorded ₱5,500 + ₱2,500.',playing:true,flag:false},
+ {name:"Maizon Africa",cat:"New",jersey:"Africa",no:"15",parent:"Analiza Garcia Africa",due:10600,paid:10600,balance:0,overall:"Fully Paid",tf:"paid",tfLabel:"Paid",uniform:"Top 7-8, Short 7-8",note:'',playing:true,flag:false},
+ {name:"Primo Diaz",cat:"New",jersey:"Primo",no:"10",parent:"Jonas Diaz",due:10600,paid:4050,balance:6550,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"Top 9-10, Short 35-18",note:'FB. ₱4,050 recorded (incl. ₱1,000 uniform).',playing:true,flag:false},
+ {name:"Marcus Riley Magpantay",cat:"Re-enrolled",jersey:"",no:"",parent:"",due:8000,paid:8000,balance:0,overall:"Fully Paid",tf:"paid",tfLabel:"Paid",uniform:"",note:'',playing:true,flag:false},
+ {name:"Carl Miguel Prillo",cat:"Scholar",jersey:"",no:"",parent:"",due:2500,paid:0,balance:2500,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"",note:'',playing:true,flag:false},
+ {name:"Jaime David S. Abriza",cat:"Scholar",jersey:"",no:"",parent:"",due:2500,paid:0,balance:2500,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"",note:'',playing:true,flag:false},
+ {name:"Rafael Jose Magundayao",cat:"Re-enrolled",jersey:"",no:"",parent:"",due:8000,paid:0,balance:8000,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"",note:'',playing:true,flag:false},
+ {name:"Filbert Khian Gapud",cat:"Re-enrolled",jersey:"",no:"",parent:"",due:8000,paid:0,balance:8000,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"",note:'',playing:true,flag:false},
+ {name:"Ezekiel Aiden Sison",cat:"Re-enrolled",jersey:"",no:"",parent:"",due:8000,paid:5500,balance:2500,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"",note:'₱5,500 recorded (training). ₱2,500 tournament fee outstanding.',playing:true,flag:false},
+ {name:"Hans Linatoc",cat:"Re-enrolled",jersey:"",no:"",parent:"",due:8000,paid:8000,balance:0,overall:"Fully Paid",tf:"paid",tfLabel:"Paid",uniform:"",note:'Recorded ₱4,000 + ₱4,000.',playing:true,flag:false},
+ {name:"Liam Lonzo Lipana",cat:"Scholar",jersey:"",no:"",parent:"",due:2500,paid:0,balance:2500,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"",note:'',playing:true,flag:false},
+ {name:"Austin Trey U. Rezaba",cat:"New",jersey:"Rezaba",no:"25",parent:"Rustan Rezaba",due:10600,paid:4050,balance:6550,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"Top age 11-12, Short age 11-12",note:'FB. Twin - jersey #25 per your note.',playing:true,flag:false},
+ {name:"Ampersand Verismo Diasanta",cat:"Re-enrolled",jersey:"",no:"",parent:"",due:8000,paid:5500,balance:2500,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"",note:'₱5,500 recorded (training). ₱2,500 tournament fee outstanding.',playing:true,flag:false},
+ {name:"Ethan Von Zachary de Castro",cat:"New",jersey:"Zachary",no:"30",parent:"Jhon Herbert De Castro",due:10600,paid:6500,balance:4100,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"Body 30, Length 21, Short hips 32, Short length 14",note:'FB. ₱6,500 recorded.',playing:true,flag:false},
+ {name:"Kieffer Rov Sanchez",cat:"Scholar",jersey:"",no:"",parent:"",due:2500,paid:2500,balance:0,overall:"Fully Paid",tf:"paid",tfLabel:"Paid",uniform:"",note:'',playing:true,flag:false},
+ {name:"Isidro Raymundo III",cat:"Scholar",jersey:"",no:"",parent:"",due:2500,paid:0,balance:2500,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"",note:'Listed as "Sid".',playing:true,flag:false},
+ {name:"Kristoff De Los Reyes",cat:"Re-enrolled",jersey:"",no:"",parent:"",due:8000,paid:2500,balance:5500,overall:"Balance",tf:"paid",tfLabel:"Paid",uniform:"",note:'₱2,500 recorded - assumed tournament fee. ₱5,500 training balance remains.',playing:true,flag:false},
+ {name:"Daniel Nicolo T. Barranda",cat:"Re-enrolled",jersey:"",no:"",parent:"",due:8000,paid:1000,balance:7000,overall:"Balance",tf:"waived",tfLabel:"Waived",uniform:"",note:'Free Tournament Fee Voucher. ₱1,000 recorded; ₱4,500 training balance remains.',playing:true,flag:false},
+ {name:"Prince Xavier Isaac Lajarca",cat:"Scholar",jersey:"",no:"",parent:"",due:2500,paid:0,balance:2500,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"",note:'Listed as "Lajarca".',playing:true,flag:false},
+ {name:"Yuan Mattheus de Castro",cat:"New",jersey:"Yuan",no:"29",parent:"Jhon Herbert De Castro",due:10600,paid:6500,balance:4100,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"Body 34, Length 25, Short hips 36, Short length 16",note:'FB. ₱6,500 recorded.',playing:true,flag:false},
+ {name:"Enzo Gabriel U. Baes",cat:"New",jersey:"Baes",no:"16",parent:"Apple Umali",due:10600,paid:9100,balance:1500,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"Top S, Short S",note:'₱9,100 recorded. ₱1,500 balance remaining.',playing:true,flag:false},
+ {name:"Jervie Jacob Villena",cat:"Re-enrolled",jersey:"",no:"",parent:"",due:8000,paid:0,balance:8000,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"",note:'Listed as "Jacob Villena".',playing:true,flag:false},
+ {name:"Marcio Noel A. Valencia",cat:"Scholar",jersey:"",no:"",parent:"",due:2500,paid:2500,balance:0,overall:"Fully Paid",tf:"paid",tfLabel:"Paid",uniform:"",note:'',playing:true,flag:false},
+ {name:"Ashton Troy U. Rezaba",cat:"New",jersey:"Rezaba",no:"15",parent:"Rustan Rezaba",due:10600,paid:4050,balance:6550,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"Top age 11-12, Short age 11-12",note:'FB. Twin - jersey #15 per your note.',playing:true,flag:false},
+ {name:"Ian Kaeden Fomodulan",cat:"New",jersey:"Fomodulan",no:"10",parent:"Alice Robles-Famodulan",due:null,paid:4600,balance:null,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"Top 9-10, Short 9-10",note:'7-session package - CONFIRM total due. ₱4,600 recorded (incl. ₱2,000).',playing:true,flag:true},
+ {name:"Yusef Andrei Sy",cat:"Scholar",jersey:"",no:"",parent:"",due:2500,paid:0,balance:2500,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"",note:'',playing:true,flag:false},
+ {name:"Adriel Morelli M. Recinto",cat:"Scholar",jersey:"",no:"",parent:"",due:2500,paid:0,balance:2500,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"",note:'Listed as "Adi".',playing:true,flag:false},
+ {name:"Jeff Moises Geloso",cat:"New",jersey:"Geloso",no:"02",parent:"Vanessa L. Reanzares",due:10600,paid:10600,balance:0,overall:"Fully Paid",tf:"paid",tfLabel:"Paid",uniform:"Top 9-10, Short 9-10",note:'',playing:true,flag:false},
+ {name:"Joel Mercado Panganiban",cat:"New",jersey:"Panganiban",no:"12",parent:"Joel Mercado Panganiban",due:10600,paid:5500,balance:5100,overall:"Balance",tf:"unpaid",tfLabel:"Unpaid",uniform:"Top 11-12, Short 11-12",note:'NOT PLAYING - paid new player with uniform, added for records only.',playing:false,flag:false}
+];
+function loadBatch23(){
+  if(!confirm('Feed the ' + CHECKOUT.length + ' Batch 23 tournament-checkout records into the program? Matching names are updated, new names added — no duplicates.')) return;
+  var byName = {};
+  FAE.programs().players.forEach(function(p){ byName[String(p.fullName||'').toLowerCase().trim()] = p; });
+  var added = 0, merged = 0, now = new Date().toISOString();
+  CHECKOUT.forEach(function(c){
+    var p = byName[c.name.toLowerCase().trim()];
+    var isNew = !p;
+    if(!p) p = { fullName: c.name, program: 'basketball', ageGroup: 'kids', isActive: true };
+    p.batch = 23;
+    p.category = c.cat;
+    p.jerseyName = c.jersey || '';
+    if(c.no) p.preferredNumber = c.no;              /* keep leading zeros ("05") as a string */
+    if(c.parent) p.parentName = c.parent;
+    p.uniformSize = c.uniform || '';
+    p.playing = c.playing !== false;
+    /* Owner update 2026-09-14: Batch 23 fully settled — mark paid in full.
+       Original recorded figures kept in billing.orig so this is reversible. */
+    p.billing = { due: c.due, paid: c.due, balance: 0, status: 'Fully Paid',
+                  tf: 'paid', tfLabel: 'Paid', note: c.note || '', flag: !!c.flag, updatedAt: now,
+                  orig: { paid: c.paid, balance: c.balance, status: c.overall, tf: c.tf, tfLabel: c.tfLabel } };
+    if(!p.source) p.source = 'batch-23-checkout';
+    p.history = p.history || [];
+    if(!p.history.some(function(h){ return h.batch === 23 && h.kind === 'tournament-checkout'; }))
+      p.history.push({ program: 'basketball', batch: 23, kind: 'tournament-checkout', enrolledAt: now });
+    FAE.playerSave(p);
+    if(isNew) added++; else merged++;
+  });
+  var linked = FAE.linkPlayersToParents();
+  setProgram('basketball');
+  toast(merged + ' updated, ' + added + ' added'
+        + (linked ? ', ' + linked + ' auto-linked to a parent' : ''), 5500);
+}
+
+/* ---- teens roster (Coach's 43 players) ----
+   Enrolls the coach's list as active minor teens players so they appear in the
+   drafting pool. Position, skill tier and parent link are filled in later during
+   evaluation. Merges by name, so re-running never duplicates. */
+var TEENS = ["Pio Jaime Emmanuel L. Dimaala","Cj Goldwyn Dalangin Tejada","Kim A Adante","Alwin Stanley Mercado","Braden Candelaria","Steven Mark N Leonidas","Brian Gan Degen","Gab Sebastian Malaluan","Rodrigo Martizano","Justin Ocfemia","Kurt Matthew M Llave","Yeoj dela Cruz","Cody Arceo","Kurk Sañez","Clint Castillo","Karl Andres T. Apuntar","Lee Daniel Mampusti","Jhet Dalangin","Cyrus Hebron Balido","Gabriel Angelo Aguila","Miguel Maranan","Kurt Maranan","King Ornopia","Ron Ishan Manila","Xaj Oliver Valencia","Jaerod Alfonso Mendoza","Krain Sanez","Asher Nathanael Bisa","Lance Andrei T. Garcia","Alejandro Johann R. Teves","Deejay Ramos","Shem Kylie A. Bacquian","Adrain Tyler Recinto","Julian Sedric L. Garcia","Daniel John Ting","Xian Peter Resurreccion","Mark Anthony Arcilla","Jacob Devlin","Noah Devlin","Joaquin Abanto","Nash Mercado","Enzo Denaga","Marcus Pagcaliuangan"];
+function loadTeens(){
+  if(!confirm('Add the ' + TEENS.length + ' teens players as active minor members? Matching names are updated, not duplicated.')) return;
+  var byName = {};
+  FAE.programs().players.forEach(function(p){ byName[String(p.fullName||'').toLowerCase().trim()] = p; });
+  var added = 0, merged = 0, now = new Date().toISOString();
+  TEENS.forEach(function(name){
+    var key = name.toLowerCase().trim(), p = byName[key], isNew = !p;
+    if(!p) p = { fullName: name, program: 'basketball' };
+    p.program = 'basketball';
+    p.ageGroup = 'teens';
+    p.isMinor = true;
+    p.isActive = true;
+    if(!p.source) p.source = 'teens-roster';
+    p.history = p.history || [];
+    if(!p.history.some(function(h){ return h.kind === 'teens-roster'; }))
+      p.history.push({ program: 'basketball', division: 'teens', kind: 'teens-roster', enrolledAt: now });
+    FAE.playerSave(p);
+    if(isNew) added++; else merged++;
+  });
+  var linked = FAE.linkPlayersToParents();
+  setProgram('basketball');
+  toast(added + ' teens added, ' + merged + ' updated'
+        + (linked ? ', ' + linked + ' auto-linked to a parent' : ''), 5500);
+}
+
+/* ---- spreadsheet in ----
+   Reads .xlsx when the local SheetJS build is present, and .csv always, so the
+   office is never blocked by a missing library. */
+function importFile(input){
+  var f = input.files && input.files[0];
+  if(!f) return;
+  var rd = new FileReader();
+  var isCsv = /\.csv$/i.test(f.name);
+  rd.onload = function(){
+    var rows = [];
+    try{
+      if(isCsv) rows = parseCSV(String(rd.result));
+      else if(window.XLSX){
+        var wb = XLSX.read(new Uint8Array(rd.result), { type:'array' });
+        rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+      } else {
+        toast('Save the file as CSV and try again — the Excel reader is not installed', 5000);
+        return;
+      }
+    }catch(e){ toast('Could not read that file'); return; }
+    var r = FAE.playersImport(rows, PROGRAM);
+    DRAFT = null;
+    render();
+    toast(r.added + ' added, ' + r.updated + ' updated' + (r.skipped ? ', ' + r.skipped + ' skipped' : ''), 4200);
+  };
+  if(isCsv) rd.readAsText(f); else rd.readAsArrayBuffer(f);
+  input.value = '';
+}
+/* small CSV reader - handles quoted fields, which names and addresses need */
+function parseCSV(text){
+  var lines = text.replace(/\r\n?/g,'\n').split('\n').filter(function(l){ return l.trim(); });
+  if(!lines.length) return [];
+  function cells(line){
+    var out = [], cur = '', q = false;
+    for(var i=0;i<line.length;i++){
+      var c = line[i];
+      if(q){
+        if(c === '"' && line[i+1] === '"'){ cur += '"'; i++; }
+        else if(c === '"') q = false;
+        else cur += c;
+      } else if(c === '"') q = true;
+      else if(c === ','){ out.push(cur); cur = ''; }
+      else cur += c;
+    }
+    out.push(cur);
+    return out;
+  }
+  var head = cells(lines[0]).map(function(h){ return h.replace(/^﻿/,'').trim(); });
+  return lines.slice(1).map(function(l){
+    var c = cells(l), o = {};
+    head.forEach(function(h,i){ o[h] = (c[i]||'').trim(); });
+    return o;
+  });
+}
+
+/* ------------------------------------------------------------ render */
+function render(){
+  var b = currentBatch();
+  ensureDraft();
+
+  /* --- headline numbers --- */
+  var players = FAE.playersFor(PROGRAM);
+  var teams = b ? FAE.teamsFor(b.id) : [];
+  var wk = b ? FAE.batchCurrentWeek(b) : null;
+  $('kpis').innerHTML = [
+    ['ENROLLED', players.length, 'var(--gold)'],
+    ['KIDS', players.filter(function(p){ return p.ageGroup==='kids'; }).length, 'var(--green)'],
+    ['TEENS', players.filter(function(p){ return p.ageGroup==='teens'; }).length, 'var(--blue)'],
+    ['TEAMS', teams.length, 'var(--purple)'],
+    ['UNDRAFTED', poolPlayers().length, 'var(--orange)'],
+    ['WEEK', wk ? wk.n + ' of 8' : '—', 'var(--gold-hi)']
+  ].map(function(k){
+    return '<div class="kpi"><span>'+k[0]+'</span><b style="color:'+k[2]+'">'+k[1]+'</b></div>';
+  }).join('');
+
+  var sp = spec();
+  $('specLine').textContent = sp.label.toUpperCase() + ' · ' + sp.weeksPerBatch + ' WEEKS · ' +
+    sp.batchesPerYear + ' BATCHES A YEAR · ' + sp.days.join(' & ');
+
+  /* --- the eight weeks --- */
+  if(!b){
+    $('weeks').innerHTML = '<div class="empty" style="grid-column:1/-1">No batch yet. Press <b>+ New batch</b> to lay out the eight weeks.</div>';
+    $('weekNote').textContent = '';
+  } else {
+    var weeks = FAE.batchWeeks(b);
+    $('weeks').innerHTML = weeks.map(function(w){
+      var cls = 'wk' + (w.current ? ' now' : '') + (w.kind==='tournament' ? ' tour' : '') + (w.kind==='openrun' ? ' open' : '');
+      var div = w.division ? (sp.divisions[w.division]||{}).label : '';
+      return '<div class="'+cls+'"><div class="n">WEEK '+w.n+'</div>'
+        + '<div class="k">'+esc(w.kind==='skills'?'Skills':w.kind==='openrun'?'Open runs':(div+' cup'))+'</div>'
+        + '<div class="d">'+esc(w.from.slice(5))+'</div>'
+        + (w.start ? '<div class="d">'+esc(w.start)+'–'+esc(w.end)+'</div>' : '')
+        + '</div>';
+    }).join('');
+    var d = sp.divisions;
+    $('weekNote').innerHTML = 'Training weekends: <b>' + esc(sp.days.join(' & ')) + '</b> — '
+      + Object.keys(d).map(function(k){ return esc(d[k].label)+' '+esc(d[k].start)+'–'+esc(d[k].end); }).join(' · ')
+      + '. Tournaments run 08:00–16:00.'
+      + (wk ? ' <b style="color:var(--gold-hi)">Right now: week ' + wk.n + ' — ' + esc(wk.label) + '.</b>' : '');
+  }
+
+  /* --- drafting board: team columns on top, undrafted pool tray below --- */
+  var fmt = $('fmtSel').value, board = $('board'), tray = $('pooltray');
+  if(!b){
+    board.innerHTML = '<div class="empty">Create a batch to start drafting.</div>';
+    if(tray) tray.innerHTML = '';
+  } else {
+    var cols = [];
+    Object.keys(DRAFT.teams).forEach(function(tid){
+      var t = null;
+      teams.forEach(function(x){ if(x.id === tid) t = x; });
+      if(!t) return;
+      var ids = DRAFT.teams[tid];
+      var chk = FAE.rosterCheck(PROGRAM, fmt, ids.length);
+      cols.push('<div class="col" data-team="'+esc(tid)+'" ondragover="dragOver(event,this)" ondragleave="dragOut(this)" ondrop="drop(event,this)">'
+        + '<h3>'+esc(t.name)+'<button class="del" title="Remove team" onclick="removeTeam(\''+esc(tid)+'\')">&times;</button></h3>'
+        + '<span class="cnt '+(chk.ok?'good':'bad')+'">' + ids.length + ' players · ' + esc(chk.note) + '</span>'
+        + (ids.length ? ids.map(function(pid){ var p = playerById(pid); return p ? playerCard(p) : ''; }).join('')
+                      : '<div class="empty">Drag players here.</div>')
+        + teamSummary(ids)
+        + '</div>');
+    });
+    board.innerHTML = cols.length ? cols.join('') : '<div class="empty">Press <b>+ Add team</b>, then drag players up from the pool below.</div>';
+    /* Undrafted pool as a wide tray, split into collapsible groups. What it
+       splits on is the coach's choice - see GROUPERS below. */
+    var pool = poolPlayers();
+    function subGrid(label, colr, list){
+      if(!list.length) return '';
+      var k = 'p:'+label, off = COLLAPSE[k];
+      return '<div class="tray-sub" onclick="toggleGroup(\''+k+'\')" style="cursor:pointer;color:'+colr+'">'
+        + (off?'&#9656; ':'&#9662; ') + label + ' &middot; ' + list.length + (off?' (hidden)':'') + '</div>'
+        + (off ? '' : '<div class="tray-grid">' + list.map(playerCard).join('') + '</div>');
+    }
+    /* The tray groups on whatever the board is being segregated by. Division
+       stays the default - two age groups blurring together is the mistake that
+       actually costs a game - but once the cards carry POS and TIER those
+       become the useful cuts for building matched teams. */
+    var GROUPERS = {
+      division: { label:'Division',
+                  of:function(p){ return p.ageGroup==='kids' ? 'KIDS' : p.ageGroup==='teens' ? 'TEENS' : 'UNASSIGNED'; },
+                  order:['KIDS','TEENS','UNASSIGNED'],
+                  colr:function(k){ return k==='KIDS' ? '#6FD79B' : k==='TEENS' ? '#7FAEDC' : 'var(--mute)'; } },
+      position: { label:'Position',
+                  of:function(p){ return p.position || 'NO POSITION'; },
+                  order:['PG','SG','SF','PF','C','NO POSITION'],
+                  colr:function(k){ return k==='NO POSITION' ? 'var(--mute)' : 'var(--gold-hi,#EBCB6B)'; } },
+      tier:     { label:'Skill tier',
+                  of:function(p){ return p.skillTier || 'NO TIER'; },
+                  order:['Captain','Core','Advanced','Intermediate','NO TIER'],
+                  colr:function(k){ return k==='NO TIER' ? 'var(--mute)' : tierColor(k); } },
+      postier:  { label:'Position × Tier',
+                  of:function(p){ return p.position || 'NO POSITION'; },
+                  order:['PG','SG','SF','PF','C','NO POSITION'],
+                  colr:function(k){ return k==='NO POSITION' ? 'var(--mute)' : 'var(--gold-hi,#EBCB6B)'; } },
+      none:     { label:'No grouping', of:function(){ return 'EVERYONE'; },
+                  order:['EVERYONE'], colr:function(){ return 'var(--mute)'; } }
+    };
+    var G = GROUPERS[POOL_GROUP] || GROUPERS.division;
+    var buckets = {};
+    pool.forEach(function(pl){ var k = G.of(pl); (buckets[k] = buckets[k] || []).push(pl); });
+    /* Known buckets first, in their natural order; anything unexpected after,
+       so a stray value still shows up instead of vanishing from the tray. */
+    var keys = G.order.filter(function(k){ return buckets[k]; })
+      .concat(Object.keys(buckets).filter(function(k){ return G.order.indexOf(k) < 0; }).sort());
+
+    /* Position x Tier is the one that answers "what am I short of". Sections
+       stay by position so a card is still one drag from a team, but inside each
+       one the players run strongest first, and a counts map on top shows the
+       holes without scrolling every section. */
+    var mapHtml = '';
+    if(POOL_GROUP === 'postier'){
+      keys.forEach(function(k){
+        buckets[k].sort(function(a,b){
+          var ra = TIER_RANK.indexOf(a.skillTier||''), rb = TIER_RANK.indexOf(b.skillTier||'');
+          if(ra < 0) ra = 99; if(rb < 0) rb = 99;
+          return ra - rb || String(a.fullName||'').localeCompare(String(b.fullName||''));
+        });
+      });
+      var cols = TIER_RANK.concat(['NO TIER']);
+      var head = '<tr><td style="padding:2px 7px;color:var(--mute)">POS</td>'
+        + cols.map(function(c){
+            return '<td style="padding:2px 7px;text-align:center;color:'
+              + (c==='NO TIER' ? 'var(--mute)' : tierColor(c)) + '">' + c.slice(0,3).toUpperCase() + '</td>';
+          }).join('') + '<td style="padding:2px 7px;text-align:center;color:var(--mute)">ALL</td></tr>';
+      var body = keys.map(function(k){
+        var row = buckets[k];
+        var cells = cols.map(function(c){
+          var n = row.filter(function(pl){
+            return c==='NO TIER' ? !pl.skillTier : pl.skillTier === c;
+          }).length;
+          /* An empty cell is the point of the map, so it is marked, not blank. */
+          return '<td style="padding:2px 7px;text-align:center;color:'
+            + (n ? 'var(--ink,#F4F4F6)' : 'var(--line2,#3a3a46)') + '">' + (n || '·') + '</td>';
+        }).join('');
+        return '<tr><td style="padding:2px 7px;color:'
+          + (k==='NO POSITION' ? 'var(--mute)' : 'var(--gold-hi,#EBCB6B)') + '"><b>' + esc(k) + '</b></td>'
+          + cells + '<td style="padding:2px 7px;text-align:center"><b>' + row.length + '</b></td></tr>';
+      }).join('');
+      mapHtml = '<div style="margin:8px 0 10px;border:1px solid var(--line2,#2e2e39);border-radius:8px;padding:8px 10px;display:inline-block">'
+        + '<div style="font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--mute);margin-bottom:5px">POOL MAP · POSITION × TIER</div>'
+        + '<table style="border-collapse:collapse;font-size:10px">' + head + body + '</table></div>';
+    }
+
+    var gsel = '<select class="tray-group" onchange="setPoolGroup(this.value)" aria-label="Group the undrafted pool by">'
+      + POOL_GROUPS.map(function(k){
+          return '<option value="'+k+'"'+(k===POOL_GROUP?' selected':'')+'>'+GROUPERS[k].label+'</option>';
+        }).join('')
+      + '</select>';
+
+    tray.innerHTML = '<div class="tray-head">UNDRAFTED POOL · <b>' + pool.length + '</b> waiting · group by ' + gsel
+      + ' <span class="tray-hint">pick POS and TIER from each card · drag a card onto a team</span></div>'
+      + (pool.length
+          ? mapHtml + keys.map(function(k){ return subGrid(k, G.colr(k), buckets[k]); }).join('')
+          : '<div class="tray-grid"><div class="empty" style="grid-column:1/-1">Everyone is on a team.</div></div>');
+  }
+  $('dirty').textContent = DRAFT && DRAFT.dirty ? '● unsaved changes' : '';
+  renderProgIncome();
+
+  /* --- player table --- */
+  var q = ($('plSearch').value||'').toLowerCase().trim();
+  var div = ($('plDiv')||{}).value || '';
+  var rows = players.filter(function(p){
+    if(div && p.ageGroup !== div) return false;
+    if(!q) return true;
+    return [p.fullName,p.parentName,p.jerseyName,p.category,p.uniformSize].join(' ').toLowerCase().indexOf(q) >= 0;
+  });
+  $('plCount').textContent = rows.length + ' OF ' + players.length + ' SHOWN';
+  var taken = draftedIds();
+  function plRow(p){
+    var b = p.billing;
+    var av = p.photoHead ? '<img src="'+p.photoHead+'" title="click to view photos" onclick="showPhotos(\''+esc(p.id)+'\')" style="width:26px;height:26px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;cursor:pointer;border:1px solid var(--line2)">' : '';
+    return '<tr'+(p.playing===false?' style="opacity:.55"':'')+'><td style="font-weight:600">'+av+esc(p.fullName)
+      + (p.hid ? ' <span style="font-size:9px;color:var(--green)" title="registered at the door">●</span>' : '')
+      + (b && b.flag ? ' <span style="color:#eab308;cursor:help" title="Needs confirmation: '+esc(b.note||'')+'">▲</span>' : '')
+      + (p.playing===false ? ' <span style="font-size:9px;color:#f97316" title="records only">not playing</span>' : '')
+      + ' <button title="Remove this player" onclick="deletePlayerById(\''+esc(p.id)+'\')" style="background:none;border:0;color:var(--red);cursor:pointer;font-size:13px;line-height:1;padding:0 2px;float:right">&times;</button>'
+      + '</td>'
+      + '<td>'+catBadge(p.category)+'</td>'
+      + '<td>'+(p.position?'<b>'+esc(p.position)+'</b>':'<span style="color:var(--mute)">—</span>')+(p.skillTier?' <span style="font-size:9px;color:'+tierColor(p.skillTier)+'">'+esc(p.skillTier)+'</span>':'')+'</td>'
+      + '<td>'+(p.preferredNumber?'<b>#'+esc(p.preferredNumber)+'</b> ':'')+esc(p.jerseyName||'—')+'</td>'
+      + '<td style="color:var(--mute);font-size:11px;max-width:190px;white-space:normal">'+esc(p.uniformSize||'—')+'</td>'
+      + '<td style="color:var(--mute)">'+esc(p.parentName||'—')
+      + (p.parentVerified ? ' <span title="matched to a parent/guardian account" style="color:var(--green);font-size:9px">&#10003; linked</span>' : '')
+      + '</td>'
+      + '<td style="font-variant-numeric:tabular-nums;color:'+(b && b.balance>0?'#ef4444':(b?'#22c55e':'var(--mute)'))+'">'+(b?peso(b.balance):'—')+'</td>'
+      + '<td>'+tfBadge(b)+'</td>'
+      + '<td style="text-align:right"><button class="btn sm" onclick="openNewPlayer(\''+esc(p.id)+'\')">Edit</button></td></tr>';
+  }
+  /* KIDS and TEENS are always shown as separate groups */
+  function group(label, colr, list){
+    if(!list.length) return '';
+    var k = 'r:'+label, off = COLLAPSE[k];
+    return '<tr><td colspan="9" onclick="toggleGroup(\''+k+'\')" style="cursor:pointer;background:var(--panel2);font-family:var(--disp);font-weight:800;letter-spacing:.05em;color:'+colr+';font-size:11px">'
+      + (off?'&#9656; ':'&#9662; ') + label + ' &middot; ' + list.length + (off?' (hidden)':'') + '</td></tr>'
+      + (off ? '' : list.map(plRow).join(''));
+  }
+  var kids = rows.filter(function(p){ return p.ageGroup==='kids'; });
+  var teens = rows.filter(function(p){ return p.ageGroup==='teens'; });
+  var other = rows.filter(function(p){ return p.ageGroup!=='kids' && p.ageGroup!=='teens'; });
+  $('plTable').innerHTML = rows.length
+    ? '<thead><tr><th>PLAYER</th><th>CAT</th><th>POS · TIER</th><th>JERSEY</th><th>UNIFORM</th><th>GUARDIAN</th><th>BALANCE</th><th>FEE</th><th></th></tr></thead><tbody>'
+      + group('KIDS DIVISION', '#6FD79B', kids)
+      + group('TEENS DIVISION', '#7FAEDC', teens)
+      + group('UNASSIGNED', 'var(--mute)', other)
+      + '</tbody>'
+    : '<tbody><tr><td class="empty">No players yet. Add one, pull them in from the door register, or import a spreadsheet.</td></tr></tbody>';
+}
+
+/* program income to date for THIS program — same shared ledger the dashboard cash flow reads */
+function renderProgIncome(){
+  var el = $('progIncome'); if(!el) return;
+  if(!(window.FAE && FAE.canSeeMoney && FAE.canSeeMoney() && FAE.incomeTotals)){ el.textContent = ''; return; }
+  var t = FAE.incomeTotals(), v = (PROGRAM==='volleyball') ? t.volleyball : t.basketball;
+  el.innerHTML = '💰 Income recorded to cash flow: <b style="color:var(--gold-hi)">'+peso(v)+'</b>'
+    + ' <span style="color:var(--dim)">('+(PROGRAM==='volleyball'?'FAEVOLLEYBALL':'FAEBASKETBALL')+' · '+t.count+' entries total)</span>';
+}
+function playerCard(p){
+  var pos = p.position || '', tier = p.skillTier || '';
+  var av = p.photoHead ? '<img src="'+p.photoHead+'" style="width:22px;height:22px;border-radius:50%;object-fit:cover;flex:0 0 auto;margin-right:4px" alt="">' : '';
+  return '<div class="pl" draggable="true" data-pid="'+esc(p.id)+'"'
+    + ' ondragstart="dragStart(event,this)" ondragend="dragEnd(this)" onclick="tapMove(\''+esc(p.id)+'\')">'
+    + av
+    + '<span class="jn">'+(p.preferredNumber!==undefined?'#'+esc(p.preferredNumber):'—')+'</span>'
+    + '<span class="nm">'+esc(p.fullName)+'</span>'
+    + selChip('pos',  p.id, pos,  POS_OPTS,  p.fullName)
+    + selChip('tier', p.id, tier, TIER_OPTS, p.fullName, tier ? 'color:'+tierColor(tier)+';border-color:'+tierColor(tier) : '')
+    + '<button class="ag '+esc(p.ageGroup)+'" title="click to switch division (Kids/Teens)" onclick="cycleDiv(event,\''+esc(p.id)+'\')">'+esc(((p.ageGroup||'?')[0]||'?').toUpperCase())+'</button>'
+    + '</div>';
+}
+/* ---- team summary: totals every variable so teams can be compared for balance ----
+   STRENGTH weights the skill tiers (Captain 4 · Core 3 · Advanced 2 · Intermediate 1);
+   even STRENGTH / avg across teams = an even draft. Also shows tier, position and
+   Kids/Teens spread so a matched-up team can be checked against the others at a glance. */
+var TIER_W = { Captain:4, Core:3, Advanced:2, Intermediate:1 };
+function teamStats(ids){
+  var s = { n:0, str:0, tier:{}, pos:{}, kids:0, teens:0 };
+  ids.forEach(function(pid){ var p = playerById(pid); if(!p) return; s.n++;
+    if(p.skillTier){ s.tier[p.skillTier] = (s.tier[p.skillTier]||0)+1; s.str += TIER_W[p.skillTier]||0; }
+    if(p.position){ s.pos[p.position] = (s.pos[p.position]||0)+1; }
+    if(p.ageGroup==='kids') s.kids++; else if(p.ageGroup==='teens') s.teens++;
+  });
+  return s;
+}
+function teamSummary(ids){
+  var s = teamStats(ids); if(!s.n) return '';
+  var tiers = ['Captain','Core','Advanced','Intermediate'].filter(function(t){ return s.tier[t]; })
+    .map(function(t){ return '<span style="color:'+tierColor(t)+'">'+t.slice(0,3)+' '+s.tier[t]+'</span>'; }).join(' · ');
+  var pos = ['PG','SG','SF','PF','C'].filter(function(x){ return s.pos[x]; })
+    .map(function(x){ return x+':'+s.pos[x]; }).join(' ');
+  var div = (s.kids?'K'+s.kids:'') + (s.kids&&s.teens?' ':'') + (s.teens?'T'+s.teens:'');
+  /* Every other field totalled too, because a team is only comparable if you
+     can see what it is short of - not just how strong it adds up to. */
+  var sizes = {}, noPos = 0, noTier = 0, nums = {}, dupes = [];
+  ids.forEach(function(id){
+    var pl = playerById(id); if(!pl) return;
+    var sz = pl.jerseySize || '—';
+    sizes[sz] = (sizes[sz] || 0) + 1;
+    if(!pl.position)  noPos++;
+    if(!pl.skillTier) noTier++;
+    if(pl.preferredNumber !== undefined && pl.preferredNumber !== ''){
+      var k = String(pl.preferredNumber);
+      nums[k] = (nums[k] || 0) + 1;
+      if(nums[k] === 2) dupes.push(k);
+    }
+  });
+  var szTxt = Object.keys(sizes).sort().map(function(k){ return k+':'+sizes[k]; }).join(' ');
+  var gaps = [];
+  if(noPos)  gaps.push(noPos+' no position');
+  if(noTier) gaps.push(noTier+' no tier');
+
+  return '<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--line2,#2e2e39);font-size:10px;line-height:1.6">'
+    + 'STRENGTH <b style="color:var(--gold-hi,#EBCB6B);font-size:13px">'+s.str+'</b>'
+    + ' · avg <b>'+(s.str/s.n).toFixed(1)+'</b>'
+    + ' · <b>'+s.n+'</b> player'+(s.n===1?'':'s') + (div?' · '+div:'')
+    + (tiers?'<br>'+tiers:'')
+    + (pos?'<br><span style="color:var(--mute)">'+pos+'</span>':'')
+    + (szTxt?'<br><span style="color:var(--mute)">sizes '+szTxt+'</span>':'')
+    + (gaps.length?'<br><span style="color:var(--orange,#E08A3C)">'+gaps.join(' · ')+' — not counted in STRENGTH</span>':'')
+    + (dupes.length?'<br><span style="color:var(--red,#D2453B)">duplicate #'+dupes.join(', #')+'</span>':'')
+    + '</div>';
+}
+
+/* ---- side-by-side comparison, the thing you actually match-make from ----
+   Built from the rendered columns rather than from DRAFT, so it always shows
+   exactly what is on screen after a reorder. */
+function compareStrip(){
+  var board = document.getElementById('board'); if(!board) return;
+  var el = document.getElementById('cmpStrip');
+  if(!el){
+    el = document.createElement('div'); el.id = 'cmpStrip';
+    el.style.cssText = 'margin:0 0 12px;font-size:10.5px;line-height:1.7';
+    board.parentNode.insertBefore(el, board);
+  }
+  var cols = [].slice.call(board.querySelectorAll('.col'));
+  if(cols.length < 2){ el.innerHTML = ''; return; }
+
+  var rows = cols.map(function(c, i){
+    var ids = [].slice.call(c.querySelectorAll('.pl')).map(function(x){ return x.dataset.pid; });
+    var st = teamStats(ids);
+    var h = c.querySelector('.col-h, h3, h4, b');
+    return { name: (h ? h.textContent.trim() : ('Team ' + (i+1))).slice(0, 20),
+             n: st.n, str: st.str, avg: st.n ? st.str / st.n : 0 };
+  });
+  var strs = rows.map(function(r){ return r.str; });
+  var ns   = rows.map(function(r){ return r.n; });
+  var spread = Math.max.apply(null, strs) - Math.min.apply(null, strs);
+  var sizeGap = Math.max.apply(null, ns) - Math.min.apply(null, ns);
+  var best = Math.max.apply(null, strs), worst = Math.min.apply(null, strs);
+
+  var cells = rows.map(function(r){
+    var tone = r.str === best ? 'var(--gold-hi,#EBCB6B)' : r.str === worst ? 'var(--mute)' : 'inherit';
+    return '<td style="padding:3px 9px;color:'+tone+'"><b>'+esc(r.name)+'</b></td>'
+      + '<td style="padding:3px 9px;text-align:right">'+r.n+'</td>'
+      + '<td style="padding:3px 9px;text-align:right;color:'+tone+'"><b>'+r.str+'</b></td>'
+      + '<td style="padding:3px 9px;text-align:right">'+r.avg.toFixed(1)+'</td>';
+  });
+  var verdict = spread === 0 ? 'dead even'
+    : spread <= 2 ? 'close enough to play'
+    : 'off by ' + spread + ' — move a ' + (spread >= 4 ? 'Captain or Core' : 'tier') + ' player across';
+  var vTone = spread <= 2 ? 'var(--ok,#3FA66A)' : 'var(--orange,#E08A3C)';
+
+  el.innerHTML = '<div style="border:1px solid var(--line2,#2e2e39);border-radius:10px;padding:10px 12px">'
+    + '<div style="font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--mute);margin-bottom:6px">MATCH-UP</div>'
+    + '<table style="border-collapse:collapse">'
+    + '<tr style="color:var(--mute);font-size:9px"><td style="padding:0 9px">TEAM</td><td style="padding:0 9px;text-align:right">N</td><td style="padding:0 9px;text-align:right">STR</td><td style="padding:0 9px;text-align:right">AVG</td></tr>'
+    + rows.map(function(r, i){ return '<tr>' + cells[i] + '</tr>'; }).join('')
+    + '</table>'
+    + '<div style="margin-top:7px;color:'+vTone+'">Strength spread <b>'+spread+'</b> — '+verdict+'</div>'
+    + (sizeGap > 1 ? '<div style="color:var(--orange,#E08A3C)">Roster sizes differ by '+sizeGap+'</div>' : '')
+    + '</div>';
+}
+
+/* Reordering, moving and editing all funnel through render(), so wrapping it
+   once keeps the comparison in step with the board without touching it. */
+(function(){
+  var r0 = render;
+  render = function(){ var v = r0.apply(this, arguments); try{ compareStrip(); }catch(e){} return v; };
+})();
+
+/* Label a player straight from the card.
+   Stored values stay full words ('Captain') because the team summary and the
+   TIER_W weighting read them; only the visible label is abbreviated, so the
+   chip still fits on one line next to the name. */
+var POS_OPTS  = [['','POS'],['PG','PG'],['SG','SG'],['SF','SF'],['PF','PF'],['C','C']];
+var TIER_OPTS = [['','TIER'],['Captain','CAP'],['Core','CORE'],['Advanced','ADV'],['Intermediate','INT']];
+
+function selChip(kind, pid, cur, opts, who, style){
+  var lab = (kind === 'pos' ? 'Position for ' : 'Skill tier for ') + (who || 'this player');
+  return '<select class="chip ' + kind + '" data-pid="' + esc(pid) + '" data-kind="' + kind + '"'
+    + ' aria-label="' + esc(lab) + '" title="' + esc(lab) + '"'
+    + (style ? ' style="' + style + '"' : '')
+    + '>'
+    + opts.map(function(o){
+        return '<option value="' + esc(o[0]) + '"' + (o[0] === cur ? ' selected' : '') + '>'
+             + esc(o[1]) + '</option>';
+      }).join('')
+    + '</select>';
+}
+
+/* Delegated, because render() replaces the board and tray markup wholesale and
+   inline handlers would have to be re-escaped through three layers of quoting.
+   Two things have to be neutralised for a <select> living inside a draggable
+   card: the card's own onclick arms tapMove, and in several browsers the drag
+   wins over opening the list. */
+document.addEventListener('mousedown', function(e){
+  var sel = e.target.closest && e.target.closest('select.chip');
+  if(!sel) return;
+  var card = sel.closest('.pl'); if(card) card.draggable = false;
+});
+document.addEventListener('click', function(e){
+  if(e.target.closest && e.target.closest('select.chip')) e.stopPropagation();
+}, true);
+document.addEventListener('change', function(e){
+  var sel = e.target.closest && e.target.closest('select.chip');
+  if(!sel) return;
+  e.stopPropagation();
+  var card = sel.closest('.pl'); if(card) card.draggable = true;
+  var pl = playerById(sel.dataset.pid); if(!pl) return;
+  if(sel.dataset.kind === 'pos') pl.position = sel.value; else pl.skillTier = sel.value;
+  FAE.playerSave(pl); render();
+});
+/* Escaping without a change still has to give the card its drag back. */
+document.addEventListener('blur', function(e){
+  var sel = e.target.closest && e.target.closest('select.chip');
+  if(!sel) return;
+  var card = sel.closest('.pl'); if(card) card.draggable = true;
+}, true);
+
+function cycleDiv(e, pid){
+  e.stopPropagation();
+  var p = playerById(pid); if(!p) return;
+  p.ageGroup = p.ageGroup==='kids' ? 'teens' : 'kids';   /* flip division; unassigned -> kids */
+  FAE.playerSave(p); render();
+}
+
+/* ---- drag and drop, native. No library, so nothing to install ---- */
+var DRAGGING = '';
+function dragStart(e, el){
+  DRAGGING = el.dataset.pid;
+  el.classList.add('drag');
+  try{ e.dataTransfer.setData('text/plain', DRAGGING); e.dataTransfer.effectAllowed = 'move'; }catch(x){}
+}
+function dragEnd(el){ el.classList.remove('drag'); DRAGGING = ''; clearInsertMark();
+  var o = document.querySelectorAll('.over'); for(var i=0;i<o.length;i++) o[i].classList.remove('over'); }
+function dragOver(e, col){
+  e.preventDefault(); col.classList.add('over');
+  if(!DRAGGING) return;
+  clearInsertMark();
+  var cards = [].slice.call(col.querySelectorAll('.pl')).filter(function(el){ return el.dataset.pid !== DRAGGING; });
+  if(!cards.length) return;
+  var i = dropIndex(col, e, DRAGGING);
+  if(i < cards.length) cards[i].classList.add('ins-before');
+  else cards[cards.length - 1].classList.add('ins-after');
+}
+function dragOut(col){ col.classList.remove('over'); clearInsertMark(); }
+function drop(e, col){
+  e.preventDefault();
+  col.classList.remove('over');
+  var pid = DRAGGING;
+  try{ pid = e.dataTransfer.getData('text/plain') || DRAGGING; }catch(x){}
+  if(!pid) return;
+  movePlayer(pid, col.dataset.team || '', dropIndex(col, e, pid));
+}
+/* Touch screens do not drag well. Tapping a player picks them up, tapping a
+   team drops them — the desk tablet needs this to be usable with a finger. */
+var PICKED = '';
+function tapMove(pid){
+  if(PICKED === pid){ PICKED = ''; toast('Cancelled'); return; }
+  PICKED = pid;
+  var p = playerById(pid);
+  toast('Tap a team to move ' + (p ? p.fullName : 'this player'), 4000);
+  document.querySelectorAll('.col').forEach(function(col){
+    col.onclick = function(ev){
+      if(!PICKED) return;
+      if(ev.target.closest('.pl') && ev.target.closest('.pl').dataset.pid !== PICKED) return;
+      movePlayer(PICKED, col.dataset.team || '');
+      PICKED = '';
+    };
+  });
+}
+
+/* ---- boot ---- */
+FAEExport.define('players', {
+  /* no sheet target: minors' payment + guardian data stays local (CSV/folder only) */
+  label:'Players', file:'players',
+  rows:function(){ return FAE.playerRows(PROGRAM); }
+});
+fillBatches();
+fillFormats();
+render();
+window.addEventListener('beforeunload', function(e){
+  if(DRAFT && DRAFT.dirty){ e.preventDefault(); e.returnValue = ''; }
+});
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

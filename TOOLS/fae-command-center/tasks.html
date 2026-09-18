@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050507">
+<title>F.A.E. — Daily Task Ticket</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<script src="assets/fae-core.js?v=6"></script>
+<style>
+:root{
+  --void:#050507; --panel:#0d0d12; --panel2:#121218; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#E8C766; --ink:#F4F4F6; --mute:#8B8B98; --dim:#5f5f6d;
+  --red:#D2453B; --green:#3FA66A; --blue:#4A7FB5;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;padding-bottom:90px}
+.wrap{max-width:620px;margin:0 auto;padding:16px 14px 30px}
+a{color:inherit;text-decoration:none}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;
+     padding-bottom:12px;border-bottom:2px solid var(--gold);margin-bottom:16px}
+.brand b{display:block;font-family:var(--disp);font-weight:900;font-size:17px;letter-spacing:.03em;line-height:1.1}
+.brand span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--gold);margin-top:4px}
+.home{font-family:var(--mono);font-size:10px;letter-spacing:.13em;color:var(--gold);
+      border:1px solid var(--line2);border-radius:6px;padding:7px 10px}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px;margin-bottom:13px}
+.card h2{font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.1em;margin:0 0 12px;color:var(--gold)}
+label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--dim);margin-bottom:5px}
+select,input[type=text],input[type=date],textarea{
+  width:100%;background:#08080c;border:1px solid var(--line2);color:var(--ink);
+  border-radius:9px;padding:12px 12px;font-size:16px;font-family:var(--sans)}
+textarea{min-height:96px;resize:vertical;line-height:1.5}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--gold)}
+.f{margin-bottom:13px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* clock buttons — thumb sized for a phone */
+.clock{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cbtn{border:1px solid var(--line2);background:var(--panel2);color:var(--ink);border-radius:12px;
+      padding:16px 10px;text-align:center;cursor:pointer;font-family:var(--disp);font-weight:800;
+      font-size:14px;letter-spacing:.06em}
+.cbtn small{display:block;font-family:var(--mono);font-weight:400;font-size:11px;letter-spacing:.1em;
+            color:var(--mute);margin-top:7px}
+.cbtn.in.set{border-color:var(--green);background:rgba(63,166,106,.12)}
+.cbtn.in.set small{color:#6FD79B}
+.cbtn.out.set{border-color:var(--gold);background:rgba(201,162,39,.12)}
+.cbtn.out.set small{color:var(--gold-hi)}
+.cbtn:disabled{opacity:.4;cursor:not-allowed}
+.hrs{text-align:center;font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:11px}
+.hrs b{color:var(--gold-hi);font-size:17px}
+
+/* checklist */
+.chk{display:flex;align-items:flex-start;gap:11px;padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.chk:last-child{border-bottom:0}
+.chk .box{flex:none;width:23px;height:23px;border-radius:6px;border:1.5px solid var(--line2);
+          display:flex;align-items:center;justify-content:center;font-size:13px;color:transparent;margin-top:1px}
+.chk.on .box{background:var(--green);border-color:var(--green);color:#04120a}
+.chk .tx{font-size:14.5px;line-height:1.4}
+.chk.on .tx{color:var(--mute);text-decoration:line-through}
+.grp{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--gold);
+     margin:14px 0 3px;padding-top:11px;border-top:1px solid var(--line2)}
+.grp:first-child{margin-top:0;padding-top:0;border-top:0}
+.prog{height:5px;border-radius:3px;background:#0a0a0f;overflow:hidden;margin-top:12px}
+.prog i{display:block;height:100%;background:var(--green);width:0;transition:width .35s cubic-bezier(.22,.68,.36,1)}
+
+.btn{display:block;width:100%;border:1px solid var(--line2);background:var(--panel2);color:var(--ink);
+     border-radius:10px;padding:14px;font-family:var(--disp);font-weight:800;font-size:14px;
+     letter-spacing:.07em;cursor:pointer;margin-top:10px}
+.btn.go{background:var(--gold);border-color:var(--gold);color:#100c00}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sm{width:auto;display:inline-block;padding:9px 14px;font-size:11.5px;margin:0}
+
+.note{font-size:12px;color:var(--mute);line-height:1.55;margin-top:9px}
+.code{font-family:var(--mono);font-size:10.5px;color:var(--gold-hi);background:#08080c;border:1px solid var(--line2);
+      border-radius:8px;padding:11px;word-break:break-all;max-height:132px;overflow:auto;margin-top:10px}
+.st{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.13em;padding:3px 8px;border-radius:4px}
+.st.open{background:rgba(201,162,39,.16);color:var(--gold-hi)}
+.st.submitted{background:rgba(63,166,106,.16);color:#6FD79B}
+.st.approved{background:rgba(74,127,181,.18);color:#7FAEDC}
+
+.tk{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
+.tk:last-child{border-bottom:0}
+.tk b{font-size:13.5px;display:block}
+.tk span{font-family:var(--mono);font-size:10.5px;color:var(--mute)}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--panel2);
+  border:1px solid var(--gold);color:var(--ink);border-radius:10px;padding:12px 18px;font-size:13px;
+  z-index:60;max-width:92vw;text-align:center;box-shadow:0 12px 34px -14px #000}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand"><b>DAILY TASK TICKET</b><span>F.A.E. SPORTS · LIPA CITY</span></div>
+    <a class="home" href="console.html">&#8592; HOME</a>
+  </div>
+
+  <!-- tells the employee, before they start, whether this will send by itself -->
+  <div id="link" class="card" style="display:flex;align-items:center;gap:11px;padding:12px 14px;font-size:12.5px;line-height:1.45"></div>
+
+  <!-- ── who + when ───────────────────────────────────────────────── -->
+  <div class="card">
+    <h2>1 &#183; WHO IS ON SHIFT</h2>
+    <div class="f">
+      <label>EMPLOYEE</label>
+      <select id="emp"></select>
+    </div>
+    <div class="f" id="newNameF" style="display:none">
+      <label>YOUR NAME</label>
+      <input type="text" id="newName" placeholder="Type your full name" autocomplete="name">
+    </div>
+    <!-- shown only when this phone still needs the office code -->
+    <div class="f" id="codeF" style="display:none">
+      <label>OFFICE CODE</label>
+      <input type="text" id="staffCode" inputmode="numeric" maxlength="8" placeholder="4-digit code from the office"
+             oninput="FAE.setStaffCode(this.value)">
+      <div class="note" style="margin-top:7px">Ask the office for this once. Your phone remembers it after that.</div>
+    </div>
+    <div class="two">
+      <div class="f" style="margin-bottom:0">
+        <label>DATE</label>
+        <input type="date" id="date">
+      </div>
+      <div class="f" style="margin-bottom:0">
+        <label>SHIFT</label>
+        <select id="shift">
+          <option value="opening">Opening</option>
+          <option value="mid">Mid-day</option>
+          <option value="closing">Closing</option>
+          <option value="whole">Whole day</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── clock ────────────────────────────────────────────────────── -->
+  <div class="card">
+    <h2>2 &#183; TIME IN / TIME OUT</h2>
+    <div class="clock">
+      <div class="cbtn in"  id="btnIn"  onclick="stampIn()">TIME IN<small id="tIn">— not yet —</small></div>
+      <div class="cbtn out" id="btnOut" onclick="stampOut()">TIME OUT<small id="tOut">— not yet —</small></div>
+    </div>
+    <div class="hrs">Hours on shift: <b id="hrs">0.00</b></div>
+    <div class="note">Tap the button at the moment you arrive and again when you leave — it stamps the real
+      time from this phone. Tap a stamped button again to correct it.</div>
+  </div>
+
+  <!-- ── checklist ────────────────────────────────────────────────── -->
+  <div class="card">
+    <h2>3 &#183; TASKS FOR THE SHIFT</h2>
+    <div id="checklist"></div>
+    <div class="prog"><i id="progBar"></i></div>
+    <div class="note" id="progTx">0 of 0 done</div>
+    <button class="btn ghost sm" style="margin-top:12px" onclick="addOwnTask()">+ Add a task I did</button>
+  </div>
+
+  <!-- ── what got done ────────────────────────────────────────────── -->
+  <div class="card">
+    <h2>4 &#183; WHAT I ACCOMPLISHED</h2>
+    <div class="f">
+      <label>SUMMARY (the office reads this)</label>
+      <textarea id="acc" placeholder="e.g. Opened 6am, swept both courts, handled 4 bookings, restocked drinks, closed 9pm. Aircon in office noisy."></textarea>
+    </div>
+    <div class="f" style="margin-bottom:0">
+      <label>ANYTHING BROKEN / NEEDS ATTENTION</label>
+      <input type="text" id="issue" placeholder="Leave blank if nothing">
+    </div>
+  </div>
+
+  <!-- ── submit ───────────────────────────────────────────────────── -->
+  <div class="card">
+    <h2>5 &#183; SEND TO COMMAND CENTER</h2>
+    <button class="btn go" id="btnSubmit" onclick="submitTicket()">SUBMIT TICKET</button>
+    <button class="btn ghost" onclick="saveDraft()">Save draft (finish later)</button>
+    <div class="note" id="sendNote"></div>
+    <div id="codeBox" style="display:none">
+      <div class="note" style="color:var(--gold-hi);margin-top:14px"><b>No internet link set up yet.</b>
+        Copy this ticket code and send it to the office by chat or SMS. At the office, open the
+        Business Dashboard → Daily Tickets → <b>Paste ticket</b>.</div>
+      <div class="code" id="code"></div>
+      <button class="btn ghost sm" style="margin-top:10px" onclick="copyCode()">COPY CODE</button>
+    </div>
+  </div>
+
+  <!-- ── my recent ────────────────────────────────────────────────── -->
+  <div class="card">
+    <h2>MY RECENT TICKETS</h2>
+    <div id="recent"><div class="note">Nothing submitted from this device yet.</div></div>
+  </div>
+
+</div>
+
+<script>
+/* ===========================================================================
+   Daily Task Ticket — an employee fills this on their phone, submits, and the
+   command centre logs their time in / time out and what they accomplished.
+
+   Stored in localStorage key  fae-tasks-v1  (shared with the dashboard's
+   "Daily Tickets" tab). If an online endpoint is configured in Settings the
+   ticket also goes into the sync outbox and up to the Google Sheet. If there
+   is no endpoint yet, the page hands the employee a ticket code to send by
+   chat — the office pastes it into the dashboard. Nothing is ever lost.
+   ========================================================================= */
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function toast(msg, ms){
+  var t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(function(){ t.remove(); }, ms || 3200);
+}
+function todayStr(){
+  var d = new Date(), p = function(n){ return (n<10?'0':'')+n; };
+  return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate());
+}
+function hhmm(iso){
+  if(!iso) return '';
+  var d = new Date(iso), h = d.getHours(), m = d.getMinutes();
+  var ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
+  return h + ':' + (m<10?'0':'') + m + ' ' + ap;
+}
+
+/* ---- default checklist. Master/admin can change it in Settings later; for
+   now it lives in fae-task-template-v1 so it survives updates. ---- */
+var DEF_TEMPLATE = {
+  'OPENING': ['Unlock gate & switch on lights','Walk both courts — check for damage','Sweep / mop playing surface',
+              'Wipe down benches and tables','Stock the drinks fridge','Count the cash float and log it'],
+  'DURING THE SHIFT': ['Log every booking in the schedule','Collect payment and issue the receipt',
+              'Update the drinks / inventory count','Record any incident right away','Keep the CR clean and stocked'],
+  'CLOSING': ['Final sweep of the courts','Turn off lights, fans and aircon','Count cash and reconcile with the day sheet',
+              'Charge the scoreboard / equipment','Lock all doors and the gate','Send the end-of-day photo to the group']
+};
+function template(){
+  try{ var t = JSON.parse(localStorage.getItem('fae-task-template-v1')); if(t) return t; }catch(e){}
+  return DEF_TEMPLATE;
+}
+
+/* ---- current ticket in progress ---- */
+var T = null;
+function blank(){
+  return { id: FAE.taskId(), date: todayStr(), empId:'', name:'', pos:'', shift:'opening',
+           timeIn:'', timeOut:'', hours:0, tasks:[], acc:'', issue:'', status:'open',
+           device: (navigator.userAgent.indexOf('Mobi')>-1 ? 'phone' : 'desktop') };
+}
+function draftKey(){ return 'fae-task-draft'; }
+function loadDraft(){
+  try{ var d = JSON.parse(localStorage.getItem(draftKey()));
+       if(d && d.date === todayStr() && d.status === 'open') return d; }catch(e){}
+  return null;
+}
+/* Only wipe the draft once the ticket is safely somewhere else. A rejected
+   ticket keeps its draft so closing the page never loses the typed work. */
+function clearDraft(){ try{ localStorage.removeItem(draftKey()); }catch(e){} }
+function saveDraft(quiet){
+  collect();
+  try{ localStorage.setItem(draftKey(), JSON.stringify(T)); }catch(e){}
+  if(!quiet) toast('Draft saved on this phone — finish it any time today.');
+}
+
+/* ---- roster ---- */
+function roster(){
+  var out = [], seen = {};
+  try{
+    var d = JSON.parse(localStorage.getItem('fae-payroll-v1'));
+    (d && d.emps || []).forEach(function(e){
+      if(e && e.name && e.active !== false && !seen[e.name.toLowerCase()]){
+        out.push({ id:'p_'+e.id, name:e.name, pos:e.pos||'Staff' }); seen[e.name.toLowerCase()] = 1;
+      }
+    });
+  }catch(e){}
+  try{
+    (JSON.parse(localStorage.getItem('fae-task-names')) || []).forEach(function(n){
+      if(!seen[String(n).toLowerCase()]){ out.push({ id:'n_'+n, name:n, pos:'Staff' }); seen[String(n).toLowerCase()] = 1; }
+    });
+  }catch(e){}
+  return out;
+}
+function fillRoster(){
+  var sel = $('emp'), r = roster();
+  sel.innerHTML = r.map(function(e){ return '<option value="'+esc(e.id)+'" data-name="'+esc(e.name)+'" data-pos="'+esc(e.pos)+'">'+esc(e.name)+' &#183; '+esc(e.pos)+'</option>'; }).join('')
+    + '<option value="__new">+ My name is not on the list</option>';
+  var last = null;
+  try{ last = localStorage.getItem('fae-task-lastemp'); }catch(e){}
+  if(last && sel.querySelector('option[value="'+last.replace(/"/g,'')+'"]')) sel.value = last;
+  sel.onchange = function(){ $('newNameF').style.display = this.value === '__new' ? 'block' : 'none'; };
+  sel.onchange();
+}
+
+/* ---- checklist ---- */
+function buildChecklist(){
+  var t = template(), box = $('checklist'), html = '';
+  var byLabel = {};
+  (T.tasks||[]).forEach(function(x){ byLabel[x.t] = x.done; });
+  Object.keys(t).forEach(function(grp){
+    html += '<div class="grp">'+esc(grp)+'</div>';
+    t[grp].forEach(function(task){
+      var on = byLabel[task] ? ' on' : '';
+      html += '<div class="chk'+on+'" data-t="'+esc(task)+'" data-g="'+esc(grp)+'" onclick="toggleTask(this)">'
+            + '<div class="box">&#10003;</div><div class="tx">'+esc(task)+'</div></div>';
+    });
+  });
+  /* tasks the employee typed themselves */
+  var own = (T.tasks||[]).filter(function(x){ return x.own; });
+  if(own.length){
+    html += '<div class="grp">MY OWN</div>';
+    own.forEach(function(x){
+      html += '<div class="chk'+(x.done?' on':'')+'" data-t="'+esc(x.t)+'" data-g="MY OWN" data-own="1" onclick="toggleTask(this)">'
+            + '<div class="box">&#10003;</div><div class="tx">'+esc(x.t)+'</div></div>';
+    });
+  }
+  box.innerHTML = html;
+  updateProgress();
+}
+function toggleTask(el){ el.classList.toggle('on'); collect(); updateProgress(); saveDraft(true); }
+function addOwnTask(){
+  var v = prompt('What else did you do?');
+  if(!v || !v.trim()) return;
+  collect();
+  T.tasks.push({ t: v.trim(), done: true, g:'MY OWN', own: true });
+  buildChecklist(); saveDraft(true);
+}
+function updateProgress(){
+  var all = document.querySelectorAll('.chk'), done = document.querySelectorAll('.chk.on');
+  var pct = all.length ? Math.round(done.length / all.length * 100) : 0;
+  $('progBar').style.width = pct + '%';
+  $('progTx').textContent = done.length + ' of ' + all.length + ' done  ·  ' + pct + '%';
+}
+
+/* ---- clock ---- */
+function stampIn(){
+  if(T.timeIn && !confirm('Time in is already ' + hhmm(T.timeIn) + '. Replace it with now?')) return;
+  T.timeIn = new Date().toISOString(); paintClock(); saveDraft(true);
+  toast('Timed in at ' + hhmm(T.timeIn));
+}
+function stampOut(){
+  if(!T.timeIn){ toast('Tap TIME IN first.'); return; }
+  if(T.timeOut && !confirm('Time out is already ' + hhmm(T.timeOut) + '. Replace it with now?')) return;
+  T.timeOut = new Date().toISOString(); paintClock(); saveDraft(true);
+  toast('Timed out at ' + hhmm(T.timeOut));
+}
+function paintClock(){
+  $('tIn').textContent  = T.timeIn  ? hhmm(T.timeIn)  : '— not yet —';
+  $('tOut').textContent = T.timeOut ? hhmm(T.timeOut) : '— not yet —';
+  $('btnIn').classList.toggle('set', !!T.timeIn);
+  $('btnOut').classList.toggle('set', !!T.timeOut);
+  T.hours = FAE.hoursBetween(T.timeIn, T.timeOut);
+  $('hrs').textContent = T.hours.toFixed(2);
+}
+
+/* ---- gather the form into the ticket ---- */
+function collect(){
+  var sel = $('emp'), o = sel.options[sel.selectedIndex];
+  if(sel.value === '__new'){
+    T.name = ($('newName').value || '').trim(); T.empId = 'n_' + T.name; T.pos = 'Staff';
+  } else if(o){
+    T.name = o.dataset.name || o.text; T.empId = sel.value; T.pos = o.dataset.pos || 'Staff';
+  }
+  T.date  = $('date').value || todayStr();
+  T.shift = $('shift').value;
+  T.acc   = $('acc').value.trim();
+  T.issue = $('issue').value.trim();
+  var own = (T.tasks||[]).filter(function(x){ return x.own; }).reduce(function(a,x){ a[x.t]=1; return a; }, {});
+  var list = [];
+  document.querySelectorAll('.chk').forEach(function(el){
+    list.push({ t: el.dataset.t, g: el.dataset.g, done: el.classList.contains('on'), own: !!(el.dataset.own || own[el.dataset.t]) });
+  });
+  T.tasks = list;
+  T.hours = FAE.hoursBetween(T.timeIn, T.timeOut);
+  return T;
+}
+
+/* ---- submit ---- */
+function submitTicket(){
+  collect();
+  if(!T.name){ toast('Pick your name first.'); $('emp').focus(); return; }
+  if(!T.timeIn){ toast('Tap TIME IN before submitting.'); return; }
+  if(!T.timeOut && !confirm('No time out stamped yet. Submit anyway?\n(You can open this again and stamp it later.)')) return;
+  var done = T.tasks.filter(function(x){ return x.done; });
+  if(!done.length && !T.acc && !confirm('No tasks ticked and no summary written. Submit an empty ticket?')) return;
+
+  T.status = 'submitted';
+  T.submittedAt = new Date().toISOString();
+  FAE.taskSave(T);
+
+  /* remember the name so the next shift is one tap */
+  try{
+    localStorage.setItem('fae-task-lastemp', T.empId);
+    if(T.empId.indexOf('n_') === 0){
+      var names = JSON.parse(localStorage.getItem('fae-task-names') || '[]');
+      if(names.indexOf(T.name) < 0){ names.push(T.name); localStorage.setItem('fae-task-names', JSON.stringify(names)); }
+    }
+  }catch(e){}
+
+  /* Send it home. FAE.deliver tries the office computer on this Wi-Fi first,
+     then the online endpoint, and falls back to the outbox — so the ticket is
+     never lost, only delayed. */
+  $('btnSubmit').disabled = true;
+  $('sendNote').textContent = 'Sending…';
+  FAE.deliver({ type:'task_ticket', ticket:T }).then(function(r){
+    $('btnSubmit').disabled = false;
+    if(r.via === 'office'){
+      $('sendNote').innerHTML = '<b style="color:#6FD79B">Received by the office computer.</b> Salamat! Your hours are logged.';
+      toast('Sent to the office. Salamat!');
+      FAE.sheetPush('TASKS', [sheetRow(T)]);        /* also stack it for the Google Sheet */
+      clearDraft();
+    } else if(r.via === 'online'){
+      $('sendNote').innerHTML = '<b style="color:#6FD79B">Sent to the command centre.</b> Salamat!';
+      toast('Ticket sent. Salamat!');
+      clearDraft();
+    } else if(r.via === 'rejected'){
+      /* the office answered but turned it away — wrong code, nothing else */
+      T.status = 'open'; FAE.taskSave(T);
+      $('codeF').style.display = 'block';
+      $('staffCode').focus();
+      $('sendNote').innerHTML = '<b style="color:#E88A83">Wrong office code.</b> '
+        + 'Check the code with the front desk, type it above, and press Submit again. '
+        + 'Nothing was lost — your ticket is still here.';
+      toast('Wrong office code');
+    } else {
+      showCode();
+      $('sendNote').innerHTML = '<b style="color:var(--gold-hi)">Saved on this phone — not sent yet.</b> '
+        + 'Either connect to the office Wi-Fi and press Submit again, or copy the code below and send it to the office.';
+      clearDraft();          /* it is queued in the outbox now, and the code is on screen */
+    }
+  });
+  paintRecent();
+}
+function sheetRow(t){
+  return {
+    Ticket: t.id, Date: t.date, Employee: t.name, Position: t.pos, Shift: t.shift,
+    TimeIn: hhmm(t.timeIn), TimeOut: hhmm(t.timeOut), Hours: t.hours,
+    TasksDone: t.tasks.filter(function(x){ return x.done; }).length,
+    TasksTotal: t.tasks.length,
+    Accomplished: t.acc, Issues: t.issue, Status: t.status, SubmittedAt: t.submittedAt || ''
+  };
+}
+function ticketCode(t){
+  try{ return 'FAETKT1:' + btoa(unescape(encodeURIComponent(JSON.stringify(t)))); }
+  catch(e){ return 'FAETKT1:' + JSON.stringify(t); }
+}
+function showCode(){
+  $('codeBox').style.display = 'block';
+  $('code').textContent = ticketCode(T);
+}
+function copyCode(){
+  var tx = $('code').textContent;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(tx).then(function(){ toast('Code copied — paste it to the office.'); },
+      function(){ selectCode(); });
+  } else selectCode();
+}
+function selectCode(){
+  var r = document.createRange(); r.selectNodeContents($('code'));
+  var s = getSelection(); s.removeAllRanges(); s.addRange(r);
+  toast('Code selected — hold and choose Copy.');
+}
+
+/* ---- connection strip: says up front how this ticket will get home ---- */
+function paintLink(){
+  var el = $('link'); if(!el) return;
+  function set(colour, dot, text){
+    el.style.borderColor = colour;
+    el.innerHTML = '<span class="fae-live-dot" style="background:' + dot + '"></span><span>' + text + '</span>';
+  }
+  set('var(--line)', '#8B8B98', 'Checking the link to the office…');
+  FAE.officeOnline().then(function(ok){
+    if(ok){
+      /* a phone needs the office code once; the office PC itself never does */
+      var needCode = ok.codeRequired && !FAE.staffCode();
+      $('codeF').style.display = ok.codeRequired ? 'block' : 'none';
+      $('staffCode').value = FAE.staffCode();
+      if(needCode){
+        set('rgba(201,162,39,.5)', '#C9A227',
+          '<b style="color:var(--gold-hi)">Almost there — type the office code above.</b> Ask the front desk for it once.');
+      } else {
+        set('rgba(63,166,106,.5)', '#3FA66A',
+          '<b style="color:#6FD79B">Connected to the office computer.</b> Submit and it lands there straight away.');
+      }
+      return;
+    }
+    $('codeF').style.display = 'none';
+    var s = FAE.syncCfg();
+    if(s.enabled && s.endpoint){ set('rgba(74,127,181,.5)', '#4A7FB5',
+      '<b style="color:#7FAEDC">Online sync is on.</b> Your ticket goes to the office over the internet.'); return; }
+    set('rgba(201,162,39,.5)', '#C9A227',
+      '<b style="color:var(--gold-hi)">Not connected to the office.</b> You can still fill this in — '
+      + 'it saves on your phone and gives you a code to send. Join the office Wi-Fi to submit it directly.');
+  });
+}
+
+/* ---- my recent tickets ---- */
+function paintRecent(){
+  var all = FAE.tasks().slice().sort(function(a,b){ return (b.submittedAt||b.date) < (a.submittedAt||a.date) ? -1 : 1; });
+  var mine = all.filter(function(t){ return !T.name || t.name === T.name; }).slice(0, 8);
+  if(!mine.length){ $('recent').innerHTML = '<div class="note">Nothing submitted from this device yet.</div>'; return; }
+  $('recent').innerHTML = mine.map(function(t){
+    return '<div class="tk"><div><b>'+esc(t.date)+' &#183; '+esc(t.shift||'')+'</b>'
+      + '<span>'+esc(hhmm(t.timeIn)||'—')+' → '+esc(hhmm(t.timeOut)||'—')+' &#183; '+(t.hours||0).toFixed(2)+' hrs</span></div>'
+      + '<span class="st '+esc(t.status)+'">'+esc((t.status||'').toUpperCase())+'</span></div>';
+  }).join('');
+}
+
+/* ---- boot ---- */
+(function(){
+  T = loadDraft() || blank();
+  fillRoster();
+  $('date').value = T.date || todayStr();
+  $('shift').value = T.shift || 'opening';
+  $('acc').value = T.acc || '';
+  $('issue').value = T.issue || '';
+  if(T.empId){
+    var sel = $('emp');
+    if(sel.querySelector('option[value="'+String(T.empId).replace(/"/g,'')+'"]')) sel.value = T.empId;
+    else if(T.name){ sel.value = '__new'; $('newNameF').style.display = 'block'; $('newName').value = T.name; }
+  }
+  buildChecklist();
+  paintClock();
+  paintRecent();
+  paintLink();
+  ['acc','issue'].forEach(function(id){ $(id).addEventListener('blur', function(){ saveDraft(true); }); });
+  window.addEventListener('beforeunload', function(){ try{ saveDraft(true); }catch(e){} });
+})();
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

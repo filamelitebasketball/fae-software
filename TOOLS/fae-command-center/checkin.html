@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. — Who Is In The Building</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<script src="assets/fae-core.js?v=6"></script>
+<style>
+:root{
+  --void:#050507; --panel:#0d0d12; --panel2:#121218; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#E8C766; --ink:#F4F4F6; --mute:#8B8B98; --dim:#5f5f6d;
+  --red:#D2453B; --green:#3FA66A; --blue:#4A7FB5;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1560px;margin:0 auto;padding:18px 20px 40px}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--sans);cursor:pointer}
+
+/* ---------- header ---------- */
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;
+     padding-bottom:14px;border-bottom:2px solid var(--gold);margin-bottom:16px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand img{height:44px;width:auto;display:block}
+.brand-tx b{display:block;font-family:var(--disp);font-weight:900;font-size:26px;letter-spacing:.01em;line-height:1}
+.brand-tx span{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;color:var(--gold);margin-top:6px}
+.top-r{display:flex;align-items:center;gap:20px}
+.home{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--mute);border:1px solid var(--line2);
+      border-radius:8px;padding:12px 15px;white-space:nowrap}
+.home:hover{border-color:var(--gold);color:var(--gold-hi)}
+.now{text-align:right}
+.now b{display:block;font-family:var(--mono);font-size:40px;font-weight:700;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+.now span{display:block;font-family:var(--disp);font-weight:800;font-size:13px;letter-spacing:.1em;color:var(--gold);margin-top:6px}
+
+/* ---------- count strip ---------- */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+       border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.st{background:var(--panel);padding:16px 18px;min-height:112px;display:flex;flex-direction:column;justify-content:space-between}
+.st dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;color:var(--dim);margin:0}
+.st dd{margin:8px 0 0;font-family:var(--disp);font-weight:900;font-size:46px;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.st dd small{display:block;font-family:var(--sans);font-weight:500;font-size:12px;letter-spacing:0;color:var(--mute);margin-top:7px}
+.st dd.g{color:var(--gold)} .st dd.ok{color:var(--green)} .st dd.b{color:#7FAEDC}
+
+/* ---------- panels ---------- */
+.panel{border:1px solid var(--line);border-radius:12px;background:var(--panel);margin-bottom:16px;overflow:hidden}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ph h2{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--gold);margin:0;font-weight:400}
+.ph .mini{font-family:var(--mono);font-size:10px;color:var(--dim)}
+
+/* ---------- search ---------- */
+.searchbar{display:flex;align-items:center;gap:12px;padding:16px}
+.searchbar input{flex:1;min-width:180px;background:var(--panel2);border:2px solid var(--line2);border-radius:12px;
+       color:var(--ink);font-family:var(--sans);font-size:24px;font-weight:600;padding:18px 20px;outline:none}
+.searchbar input:focus{border-color:var(--gold)}
+.searchbar input::placeholder{color:var(--dim);font-weight:400}
+.btn{border:2px solid var(--line2);background:var(--panel2);color:var(--ink);border-radius:12px;
+     padding:16px 20px;font-size:14px;font-weight:700;letter-spacing:.02em;min-height:58px;white-space:nowrap}
+.btn:hover{border-color:var(--gold)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#0a0800}
+.btn.gold:hover{background:var(--gold-hi);border-color:var(--gold-hi)}
+.btn.ghostred:hover{border-color:var(--red);color:#F09189}
+.btn.sm{padding:10px 14px;min-height:44px;font-size:12.5px;border-width:1px;border-radius:9px}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:disabled:hover{border-color:var(--line2)}
+.undo-hint{font-family:var(--mono);font-size:10px;color:var(--dim);padding:0 16px 14px}
+
+/* ---------- whole-family bar ---------- */
+.fam{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 16px 4px;padding:14px 16px;
+     border:2px dashed rgba(201,162,39,.5);border-radius:12px;background:rgba(201,162,39,.06)}
+.fam .who{flex:1;min-width:200px}
+.fam .who b{display:block;font-family:var(--disp);font-weight:900;font-size:17px;letter-spacing:-.01em}
+.fam .who span{display:block;font-size:12.5px;color:var(--mute);margin-top:3px}
+
+/* ---------- person tiles ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:11px;padding:14px 16px}
+.ptile{min-height:104px;border:2px solid var(--line2);background:var(--panel2);border-radius:13px;padding:14px 15px;
+       text-align:left;color:var(--ink);display:flex;flex-direction:column;justify-content:space-between;gap:8px}
+.ptile:hover{border-color:var(--gold)}
+.ptile.in{border-color:var(--green);background:rgba(63,166,106,.10)}
+.ptile.in:hover{border-color:#6FD79B}
+.ptile b{font-family:var(--disp);font-weight:800;font-size:18px;line-height:1.15;letter-spacing:-.01em;
+         overflow-wrap:anywhere}
+.ptile .guard{display:block;font-size:12px;color:var(--mute);margin-top:4px}
+.ptile .foot{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ptile .state{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--green)}
+.ptile .state.out{color:var(--dim)}
+.chip{display:inline-block;padding:3px 9px;border-radius:4px;font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;white-space:nowrap}
+.chip.adult{background:rgba(201,162,39,.17);color:var(--gold-hi)}
+.chip.youth{background:rgba(74,127,181,.2);color:#7FAEDC}
+
+/* ---------- not registered ---------- */
+.nope{margin:0 16px 16px;padding:22px;border:1px solid var(--line2);border-radius:12px;background:var(--panel2)}
+.nope b{display:block;font-family:var(--disp);font-weight:900;font-size:20px;margin-bottom:8px}
+.nope p{margin:0 0 14px;color:var(--mute);font-size:14px;line-height:1.5}
+
+/* ---------- two columns ---------- */
+.cols{display:grid;grid-template-columns:1.02fr 1fr;gap:16px;align-items:start}
+
+/* ---------- inside list ---------- */
+.inrow{display:flex;align-items:center;gap:14px;padding:13px 16px;border-bottom:1px solid #17171e}
+.inrow:last-child{border-bottom:none}
+.inrow .nm{flex:1;min-width:0}
+.inrow .nm b{display:block;font-size:16px;font-weight:700;overflow-wrap:anywhere}
+.inrow .nm span{display:block;font-size:12px;color:var(--mute);margin-top:3px}
+.inrow .tm{font-family:var(--mono);font-size:12.5px;color:var(--gold);text-align:right;white-space:nowrap}
+.inrow .tm i{display:block;font-style:normal;color:var(--dim);font-size:10.5px;margin-top:3px}
+
+/* ---------- log table ---------- */
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-family:var(--mono);font-size:9px;letter-spacing:.13em;color:var(--dim);font-weight:400;padding:9px 16px;border-bottom:1px solid var(--line)}
+td{padding:10px 16px;border-bottom:1px solid #17171e;font-size:13.5px;color:#C6C6D1}
+tr:last-child td{border-bottom:none}
+td.time{font-family:var(--mono);font-size:12.5px;color:var(--gold);white-space:nowrap}
+td.name{color:var(--ink);font-weight:600}
+tr.void td{color:var(--dim);text-decoration:line-through;opacity:.6}
+tr.void td.time{color:var(--dim)}
+.dirpill{display:inline-block;padding:3px 9px;border-radius:4px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em}
+.dirpill.in{background:rgba(63,166,106,.16);color:var(--green)}
+.dirpill.out{background:rgba(255,255,255,.06);color:var(--mute)}
+.empty{padding:30px 16px;text-align:center;color:var(--dim);font-size:13.5px}
+.scroll{max-height:460px;overflow-y:auto}
+
+/* ---------- toast ---------- */
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:80;
+       background:var(--panel2);border:2px solid var(--gold);border-radius:12px;padding:16px 22px;
+       font-family:var(--disp);font-weight:800;font-size:18px;letter-spacing:-.01em;color:var(--ink);
+       box-shadow:0 18px 44px -18px rgba(0,0,0,.9);max-width:92vw;text-align:center;display:none}
+.toast.show{display:block}
+.toast.ok{border-color:var(--green)}
+.toast.warn{border-color:var(--red)}
+
+.foot{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-family:var(--mono);
+      font-size:9.5px;color:var(--dim);letter-spacing:.08em;padding-top:4px}
+
+@media(max-width:1100px){ .cols{grid-template-columns:1fr} }
+@media(max-width:820px){ .stats{grid-template-columns:1fr} .now b{font-size:30px} .searchbar{flex-wrap:wrap} }
+</style>
+</head>
+<body>
+
+<!-- Staff gate.
+     This screen lists every registered child by name, with the adult responsible
+     for them. That is exactly the information a stranger on the Wi-Fi must never
+     be able to browse, so nothing renders until a staff member signs in on this
+     device. The sign-in sticks, so the door tablet is unlocked once per shift,
+     not once per visitor. -->
+<div id="kioskGate" style="position:fixed;inset:0;background:var(--void);z-index:9999;
+     display:flex;align-items:center;justify-content:center;padding:24px">
+  <div style="max-width:400px;width:100%;text-align:center">
+    <div style="font-family:var(--disp);font-weight:900;font-size:22px;letter-spacing:.02em">FRONT DESK SIGN-IN</div>
+    <div style="font-size:13.5px;color:var(--mute);line-height:1.6;margin:10px 0 22px">
+      This screen shows who is in the building, including children and the adult
+      responsible for them. Sign in to open it.
+    </div>
+    <select id="gateRole" style="width:100%;background:var(--panel);border:1px solid var(--line2);
+      color:var(--ink);border-radius:10px;padding:14px;font-size:16px;margin-bottom:10px">
+      <option value="frontdesk">Front desk</option>
+      <option value="admin">Admin</option>
+      <option value="master">Owner</option>
+    </select>
+    <input id="gatePin" type="password" inputmode="numeric" placeholder="PIN"
+      style="width:100%;background:var(--panel);border:1px solid var(--line2);color:var(--ink);
+      border-radius:10px;padding:14px;font-family:var(--mono);font-size:18px;text-align:center;letter-spacing:.3em">
+    <button onclick="kioskSignIn()" style="width:100%;background:var(--gold);border:none;color:#100c00;
+      border-radius:10px;padding:15px;font-family:var(--disp);font-weight:800;font-size:15px;
+      letter-spacing:.05em;margin-top:12px;cursor:pointer">OPEN THE KIOSK</button>
+    <div id="gateErr" style="color:var(--red);font-size:13px;min-height:18px;margin-top:10px"></div>
+    <a href="console.html" style="display:inline-block;margin-top:14px;font-family:var(--mono);
+      font-size:10px;letter-spacing:.13em;color:var(--mute);text-decoration:none">&#8592; BACK</a>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <img src="assets/fae-logo.png" alt="F.A.E." onerror="this.style.display='none'">
+      <div class="brand-tx"><b>WHO IS IN THE BUILDING</b><span>F.A.E. FRONT DESK · CHECK IN / CHECK OUT</span></div>
+    </div>
+    <div class="top-r">
+      <a class="home" href="#" onclick="lockKiosk();return false" style="margin-right:8px">&#128274; LOCK</a>
+    <a class="home" href="console.html">&larr; HOME</a>
+      <div class="now"><b id="clock">--:--:--</b><span id="today">—</span></div>
+    </div>
+  </div>
+
+  <dl class="stats">
+    <div class="st"><dt>IN THE BUILDING NOW</dt><dd class="ok" id="s-in">—<small>people currently inside</small></dd></div>
+    <div class="st"><dt>CHECKED IN TODAY</dt><dd class="g" id="s-today">—<small>total arrivals logged today</small></dd></div>
+    <div class="st"><dt>YOUTH INSIDE</dt><dd class="b" id="s-youth">—<small>under an adult's responsibility</small></dd></div>
+  </dl>
+
+  <div class="panel">
+    <div class="ph">
+      <h2>TAP A NAME TO CHECK IN OR OUT</h2>
+      <span class="mini" id="match-note">—</span>
+    </div>
+    <div class="searchbar">
+      <input id="q" placeholder="Type a name or phone…" autocomplete="off" autocorrect="off" spellcheck="false">
+      <button class="btn" id="clear" type="button">CLEAR</button>
+      <button class="btn ghostred" id="undo" type="button">UNDO LAST</button>
+    </div>
+    <div class="undo-hint" id="undo-hint">Nothing to undo yet.</div>
+    <div id="fam-wrap"></div>
+    <div class="grid" id="grid"></div>
+    <div id="nope"></div>
+  </div>
+
+  <div class="cols">
+    <div class="panel">
+      <div class="ph"><h2>IN THE BUILDING NOW</h2><span class="mini" id="in-note">longest inside first</span></div>
+      <div class="scroll" id="inside"><div class="empty">Loading…</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="ph">
+        <h2>TODAY'S MOVEMENT LOG</h2>
+        <button class="btn sm" id="export" type="button">EXPORT TODAY (CSV)</button>
+      </div>
+      <div class="scroll" id="log"><div class="empty">Loading…</div></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div>THIS DEVICE · MOVEMENTS ALSO SENT TO THE OFFICE RECEIVER AND QUEUED FOR THE SHEET</div>
+    <div id="ver">—</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---- staff gate ----------------------------------------------------------
+   Front desk needs no PIN unless one has been set in Settings, so this is a
+   deliberate tap rather than an obstacle. What it stops is a visitor opening
+   the kiosk URL on their own phone and reading the children's register. */
+function lockKiosk(){
+  FAE.clearSession();
+  location.reload();
+}
+function kioskSignIn(){
+  var role = document.getElementById('gateRole').value;
+  var pin = document.getElementById('gatePin').value;
+  if(!FAE.checkPin(role, pin)){
+    document.getElementById('gateErr').textContent = 'That PIN was not right.';
+    document.getElementById('gatePin').value = '';
+    return;
+  }
+  FAE.setSession(role, '');
+  document.getElementById('kioskGate').style.display = 'none';
+  document.querySelector('.wrap').style.visibility = '';
+  try{ renderAll(); keepFocus(); }catch(e){ location.reload(); }
+}
+(function(){
+  /* already signed in on this device? then straight through */
+  if(FAE.session()){ document.getElementById('kioskGate').style.display = 'none'; }
+  else {
+    document.querySelector('.wrap').style.visibility = 'hidden';
+    var p = document.getElementById('gatePin');
+    if(p) p.addEventListener('keydown', function(e){ if(e.key === 'Enter') kioskSignIn(); });
+  }
+})();
+</script>
+<script>
+/* ==========================================================================
+   F.A.E. Command Center — Door check-in kiosk
+   Every person on this screen comes from a registered household (register.html).
+   Nothing here creates people; it only records movements.
+   ========================================================================== */
+var VERSION = 'checkin v1.0 · 2026-09-06';
+
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function pad(n){ return (n<10?'0':'') + n; }
+
+/* Two time formats on purpose: staff read 12-hour at the desk, but anything
+   headed for a spreadsheet gets 24-hour so a sort by Time actually works. */
+function t12(iso){
+  var d = new Date(iso); if(isNaN(d)) return '';
+  var h = d.getHours(), ap = h<12?'AM':'PM', h12 = h%12; if(h12===0) h12 = 12;
+  return h12 + ':' + pad(d.getMinutes()) + ' ' + ap;
+}
+function t24(iso){ var d = new Date(iso); return isNaN(d) ? '' : pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+function since(iso){
+  var d = new Date(iso); if(isNaN(d)) return '';
+  var m = Math.max(0, Math.round((Date.now() - d.getTime())/60000));
+  if(m < 60) return m + 'm inside';
+  return Math.floor(m/60) + 'h ' + pad(m%60) + 'm inside';
+}
+
+/* ---------- clock ---------- */
+var DAYS=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+var MONS=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+function tick(){
+  var d = new Date(), h = d.getHours(), ap = h<12?'AM':'PM', h12 = h%12; if(h12===0) h12 = 12;
+  $('clock').textContent = h12 + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) + ' ' + ap;
+  $('today').textContent = DAYS[d.getDay()] + ' · ' + d.getDate() + ' ' + MONS[d.getMonth()] + ' ' + d.getFullYear();
+}
+tick(); setInterval(tick, 1000);
+$('ver').textContent = VERSION;
+
+/* ---------- people, rebuilt on every render ----------
+   A household registered on another tab of this browser must show up here
+   without a reload, so the roster is never cached across renders. */
+var PEOPLE = [], BYPID = {}, HHNAME = {};
+function loadPeople(){
+  try{ PEOPLE = FAE.allPeople() || []; }catch(e){ PEOPLE = []; }
+  BYPID = {};
+  PEOPLE.forEach(function(p){ BYPID[p.pid] = p; });
+  HHNAME = {};
+  try{
+    (FAE.visitors() || []).forEach(function(h){ if(h && h.id) HHNAME[h.id] = (h.adult && h.adult.name) || ''; });
+  }catch(e){}
+}
+function guardianOf(rec){
+  var p = BYPID[rec.pid];
+  if(p && p.guardian) return p.guardian;                 /* live roster wins — a guardian can be corrected later */
+  if(rec.guardian) return rec.guardian;                  /* record fallback for people since removed */
+  return (rec.role === 'youth') ? (HHNAME[rec.hid] || '') : '';
+}
+function householdOf(rec){ return HHNAME[rec.hid] || rec.hid || ''; }
+
+/* ---------- writing a movement ---------- */
+var UNDO = [];   /* stack of batches: one tile tap = 1 id, one family tap = many */
+
+function markOne(p, dir){
+  var rec = null;
+  try{
+    rec = FAE.checkinAdd({ pid:p.pid, hid:p.hid, name:p.name, role:p.role,
+                           guardian:p.guardian || '', dir:dir });
+  }catch(e){ return null; }
+  ship(rec);
+  return rec;
+}
+/* Fire and forget. The tile must flip the instant it is tapped, so neither the
+   office POST nor the sheet queue is allowed to sit in front of the re-render. */
+function ship(rec){
+  if(!rec) return;
+  try{
+    var pr = FAE.deliver({ type:'checkin', record:rec });
+    if(pr && pr.catch) pr.catch(function(){});
+  }catch(e){}
+  try{ FAE.sheetPush('CHECKINS', [sheetRow(rec)]); }catch(e){}
+}
+function sheetRow(rec){
+  return {
+    Time: t24(rec.ts), Day: rec.day, Person: rec.name,
+    Role: String(rec.role || '').toUpperCase(), Guardian: guardianOf(rec),
+    Direction: String(rec.dir || '').toUpperCase(), Household: householdOf(rec)
+  };
+}
+
+function toggle(pid){
+  var p = BYPID[pid];
+  if(!p) return;
+  var dir = 'out';
+  try{ dir = FAE.lastDirection(pid) === 'in' ? 'out' : 'in'; }catch(e){ dir = 'in'; }
+  var rec = markOne(p, dir);
+  if(!rec){ toast('Could not save — storage is full or blocked', 'warn'); return; }
+  UNDO.push([rec.id]);
+  toast(p.name + ' checked ' + dir.toUpperCase() + ' — ' + t12(rec.ts), dir === 'in' ? 'ok' : '');
+  renderAll();
+}
+
+/* ---------- whole-family action ----------
+   Families arrive and leave together. If the desk has to tap five tiles, the
+   check-OUT is the tap that gets skipped and the count drifts all evening. */
+var FAMILY = null;
+function familyMark(dir){
+  if(!FAMILY) return;
+  var ids = [], names = [];
+  FAMILY.members.forEach(function(p){
+    var cur = 'out';
+    try{ cur = FAE.lastDirection(p.pid); }catch(e){}
+    if(cur === dir) return;                     /* already there — don't log a duplicate movement */
+    var rec = markOne(p, dir);
+    if(rec){ ids.push(rec.id); names.push(p.name); }
+  });
+  if(ids.length){
+    UNDO.push(ids);
+    toast(names.length + ' checked ' + dir.toUpperCase() + ' — ' + FAMILY.label, dir === 'in' ? 'ok' : '');
+  } else {
+    toast('Everyone in that family is already ' + dir.toUpperCase());
+  }
+  renderAll();
+}
+
+/* ---------- undo ----------
+   A door gets mis-tapped constantly, so this is one tap and no PIN. The record
+   is voided rather than deleted: whoIsIn() and lastDirection() both skip voided
+   rows, and the struck-through line stays in the log as the paper trail. */
+function latestToday(){
+  var day = FAE.localDay(), best = null;
+  try{
+    (FAE.checkins() || []).forEach(function(c){
+      if(c.day === day && !c.voided && (!best || c.ts >= best.ts)) best = c;
+    });
+  }catch(e){}
+  return best;
+}
+function undoTarget(){
+  for(var i = UNDO.length - 1; i >= 0; i--){ if(UNDO[i] && UNDO[i].length) return UNDO[i]; }
+  var last = latestToday();
+  return last ? [last.id] : null;               /* after a kiosk refresh the stack is empty but the mistake is not */
+}
+function undoLast(){
+  var batch = undoTarget();
+  if(!batch){ toast('Nothing to undo'); return; }
+  var all;
+  try{ all = FAE.checkins() || []; }catch(e){ all = []; }
+  var hit = [];
+  all.forEach(function(c){ if(batch.indexOf(c.id) >= 0 && !c.voided){ c.voided = true; hit.push(c); } });
+  if(!hit.length){ UNDO.pop(); toast('Nothing to undo'); return; }
+  try{ FAE.checkinsSave(all); }catch(e){}
+  hit.forEach(function(c){
+    try{ FAE.logVoid({ kind:'checkin', ref:c.id, summary:c.name + ' ' + c.dir, snapshot:c }); }catch(e){}
+  });
+  if(UNDO.length) UNDO.pop();
+  toast(hit.length === 1
+    ? 'Undone — ' + hit[0].name + ' ' + String(hit[0].dir).toUpperCase()
+    : 'Undone — ' + hit.length + ' movements', 'warn');
+  renderAll();
+}
+function undoLabel(){
+  var batch = undoTarget();
+  if(!batch){ $('undo-hint').textContent = 'Nothing to undo yet.'; $('undo').disabled = true; return; }
+  var all = [];
+  try{ all = FAE.checkins() || []; }catch(e){}
+  var names = [], dir = '';
+  all.forEach(function(c){ if(batch.indexOf(c.id) >= 0 && !c.voided){ names.push(c.name); dir = c.dir; } });
+  if(!names.length){ $('undo-hint').textContent = 'Nothing to undo yet.'; $('undo').disabled = true; return; }
+  $('undo').disabled = false;
+  $('undo-hint').textContent = 'Undo will reverse: ' +
+    (names.length === 1 ? names[0] : names.length + ' people') + ' ' + String(dir).toUpperCase() + '.';
+}
+
+/* ---------- search + tiles ---------- */
+var CAP = 60;                                    /* an untyped kiosk should not paint the whole town */
+/* +63 917…, 0917…, 917… are all the same phone. Core knows the rule, so the
+   search box matches however the desk happens to type it. */
+function digits(s){
+  try{ if(FAE.normPhone) return FAE.normPhone(s); }catch(e){}
+  return String(s||'').replace(/\D/g,'');
+}
+function filtered(){
+  var q = String($('q').value || '').trim().toLowerCase();
+  if(!q) return { list: PEOPLE, q: '' };
+  var qd = digits(q);
+  var list = PEOPLE.filter(function(p){
+    if(String(p.name||'').toLowerCase().indexOf(q) >= 0) return true;
+    /* only adults carry a phone — youth are found by name or by their guardian */
+    if(qd.length >= 3 && p.phone && digits(p.phone).indexOf(qd) >= 0) return true;
+    if(p.role === 'youth' && String(p.guardian||'').toLowerCase().indexOf(q) >= 0) return true;
+    return false;
+  });
+  return { list: list, q: q };
+}
+function renderTiles(){
+  var f = filtered(), list = f.list, shown = list.slice(0, CAP);
+  /* Tiles stay in one stable alphabetical order. Re-sorting by status would move
+     a tile out from under the finger of whoever just tapped it. */
+  $('grid').innerHTML = shown.map(function(p){
+    var dir = 'out';
+    try{ dir = FAE.lastDirection(p.pid); }catch(e){}
+    var inRec = dir === 'in' ? lastRecFor(p.pid) : null;
+    return '<button type="button" class="ptile ' + (dir === 'in' ? 'in' : '') + '" data-pid="' + esc(p.pid) + '">'
+      + '<span><b>' + esc(p.name) + '</b>'
+      + (p.role === 'youth' && p.guardian ? '<span class="guard">with ' + esc(p.guardian) + '</span>' : '')
+      + '</span>'
+      + '<span class="foot">'
+      + '<span class="chip ' + (p.role === 'youth' ? 'youth' : 'adult') + '">' + (p.role === 'youth' ? 'YOUTH' : 'ADULT') + '</span>'
+      + '<span class="state ' + (dir === 'in' ? '' : 'out') + '">'
+      + (dir === 'in' ? 'IN since ' + esc(inRec ? t12(inRec.ts) : '—') : 'TAP TO CHECK IN')
+      + '</span></span></button>';
+  }).join('');
+
+  $('match-note').textContent = PEOPLE.length
+    ? (list.length + ' of ' + PEOPLE.length + ' registered' + (list.length > CAP ? ' · showing first ' + CAP + ', keep typing' : ''))
+    : 'no one registered on this device yet';
+
+  renderFamily(list);
+  renderNope(f.q, list.length);
+}
+function lastRecFor(pid){
+  var day = FAE.localDay(), best = null;
+  try{
+    (FAE.checkins() || []).forEach(function(c){
+      if(c.pid === pid && c.day === day && !c.voided && (!best || c.ts >= best.ts)) best = c;
+    });
+  }catch(e){}
+  return best;
+}
+function renderFamily(list){
+  FAMILY = null;
+  var hids = {};
+  list.forEach(function(p){ if(p.hid) hids[p.hid] = 1; });
+  var keys = Object.keys(hids);
+  if(keys.length === 1){
+    var members = PEOPLE.filter(function(p){ return p.hid === keys[0]; });
+    if(members.length > 1) FAMILY = { hid: keys[0], label: HHNAME[keys[0]] || members[0].name, members: members };
+  }
+  if(!FAMILY){ $('fam-wrap').innerHTML = ''; return; }
+  var inside = 0;
+  FAMILY.members.forEach(function(p){ try{ if(FAE.lastDirection(p.pid) === 'in') inside++; }catch(e){} });
+  $('fam-wrap').innerHTML =
+    '<div class="fam"><div class="who"><b>' + esc(FAMILY.label) + '’s household</b>'
+    + '<span>' + FAMILY.members.length + ' people · ' + inside + ' inside right now</span></div>'
+    + '<button class="btn gold" type="button" data-fam="in">CHECK IN WHOLE FAMILY</button>'
+    + '<button class="btn" type="button" data-fam="out">CHECK OUT WHOLE FAMILY</button></div>';
+}
+function renderNope(q, count){
+  if(count > 0 || (!q && PEOPLE.length)){ $('nope').innerHTML = ''; return; }
+  $('nope').innerHTML =
+    '<div class="nope"><b>Not registered yet?</b>'
+    + '<p>They can scan the QR by the door, or register them here.</p>'
+    + '<a class="btn gold" href="register.html" style="display:inline-block">REGISTER A HOUSEHOLD</a></div>';
+}
+
+/* ---------- in the building now ---------- */
+function renderInside(){
+  var rows = [];
+  try{ rows = FAE.whoIsIn() || []; }catch(e){ rows = []; }
+  /* whoIsIn() hands back name order; the desk wants oldest arrival first so the
+     person who has been inside longest is the first one they think to chase. */
+  rows.sort(function(a,b){ return String(a.ts).localeCompare(String(b.ts)); });
+  $('in-note').textContent = rows.length + ' inside · longest first';
+  if(!rows.length){ $('inside').innerHTML = '<div class="empty">Nobody is checked in right now.</div>'; return; }
+  $('inside').innerHTML = rows.map(function(c){
+    var g = guardianOf(c);
+    return '<div class="inrow">'
+      + '<span class="chip ' + (c.role === 'youth' ? 'youth' : 'adult') + '">' + (c.role === 'youth' ? 'YOUTH' : 'ADULT') + '</span>'
+      + '<span class="nm"><b>' + esc(c.name) + '</b>'
+      + (c.role === 'youth' && g ? '<span>with ' + esc(g) + '</span>' : '') + '</span>'
+      + '<span class="tm">' + esc(t12(c.ts)) + '<i>' + esc(since(c.ts)) + '</i></span>'
+      + '<button class="btn sm" type="button" data-out="' + esc(c.pid) + '">OUT</button>'
+      + '</div>';
+  }).join('');
+}
+
+/* ---------- today's movement log ---------- */
+function todayLog(){
+  var day = FAE.localDay(), rows = [];
+  try{ rows = (FAE.checkins() || []).filter(function(c){ return c.day === day; }); }catch(e){}
+  return rows.sort(function(a,b){ return String(b.ts).localeCompare(String(a.ts)); });
+}
+function renderLog(){
+  var rows = todayLog();
+  if(!rows.length){ $('log').innerHTML = '<div class="empty">No movements logged today yet.</div>'; return; }
+  $('log').innerHTML = '<table><thead><tr><th>TIME</th><th>NAME</th><th>ROLE</th><th>DIRECTION</th></tr></thead><tbody>'
+    + rows.map(function(c){
+        return '<tr class="' + (c.voided ? 'void' : '') + '">'
+          + '<td class="time">' + esc(t12(c.ts)) + '</td>'
+          + '<td class="name">' + esc(c.name) + '</td>'
+          + '<td>' + esc(String(c.role || '').toUpperCase()) + '</td>'
+          + '<td><span class="dirpill ' + (c.dir === 'in' ? 'in' : 'out') + '">' + esc(String(c.dir || '').toUpperCase()) + '</span></td>'
+          + '</tr>';
+      }).join('')
+    + '</tbody></table>';
+}
+
+/* ---------- counts ---------- */
+function renderCounts(){
+  var inside = [], all = [];
+  try{ inside = FAE.whoIsIn() || []; }catch(e){}
+  var day = FAE.localDay();
+  try{ all = (FAE.checkins() || []).filter(function(c){ return c.day === day && !c.voided && c.dir === 'in'; }); }catch(e){}
+  var youth = inside.filter(function(c){ return c.role === 'youth'; }).length;
+  setCount('s-in', inside.length, 'people currently inside');
+  setCount('s-today', all.length, 'total arrivals logged today');
+  setCount('s-youth', youth, "under an adult's responsibility");
+}
+function setCount(id, n, sub){
+  $(id).innerHTML = n + '<small>' + esc(sub) + '</small>';
+}
+
+function renderAll(){
+  loadPeople();
+  renderCounts();
+  renderTiles();
+  renderInside();
+  renderLog();
+  undoLabel();
+}
+
+/* ---------- export ---------- */
+function exportCSV(){
+  var day = FAE.localDay();
+  var rows = todayLog().map(function(c){
+    var r = sheetRow(c);
+    r.Voided = c.voided ? 'YES' : '';           /* corrections stay visible in the export too */
+    return r;
+  });
+  if(!rows.length){ toast('Nothing to export today'); return; }
+  var text = '';
+  try{ text = FAE.csv(rows, ['Time','Day','Person','Role','Guardian','Direction','Household','Voided']); }catch(e){}
+  if(!text){ toast('Export failed', 'warn'); return; }
+  try{ FAE.download('FAE-checkins-' + day + '.csv', text, 'text/csv;charset=utf-8'); }catch(e){}
+  toast('Exported ' + rows.length + ' movements');
+}
+
+/* ---------- toast ---------- */
+var toastT = null;
+function toast(msg, kind){
+  var el = $('toast');
+  el.className = 'toast show ' + (kind || '');
+  el.textContent = msg;
+  if(toastT) clearTimeout(toastT);
+  toastT = setTimeout(function(){ el.className = 'toast'; }, 2600);
+}
+
+/* ---------- wiring ----------
+   Delegated listeners: the tile grid and the inside list are re-rendered on
+   every tap and every 20s, so per-element handlers would be re-bound constantly. */
+function keepFocus(){
+  try{ var el = $('q'); if(el && document.activeElement !== el) el.focus({ preventScroll:true }); }catch(e){}
+}
+$('grid').addEventListener('click', function(e){
+  var t = e.target.closest ? e.target.closest('.ptile') : null;
+  if(!t) return;
+  toggle(t.getAttribute('data-pid'));
+  keepFocus();
+});
+$('fam-wrap').addEventListener('click', function(e){
+  var t = e.target.closest ? e.target.closest('[data-fam]') : null;
+  if(!t) return;
+  familyMark(t.getAttribute('data-fam'));
+  keepFocus();
+});
+$('inside').addEventListener('click', function(e){
+  var t = e.target.closest ? e.target.closest('[data-out]') : null;
+  if(!t) return;
+  var pid = t.getAttribute('data-out'), p = BYPID[pid];
+  if(!p){                                        /* checked in before the household was edited away */
+    toast('That person is no longer in the roster', 'warn'); return;
+  }
+  var rec = markOne(p, 'out');
+  if(rec){ UNDO.push([rec.id]); toast(p.name + ' checked OUT — ' + t12(rec.ts)); }
+  renderAll();
+  keepFocus();
+});
+$('q').addEventListener('input', function(){ renderTiles(); });
+$('q').addEventListener('keydown', function(e){
+  if(e.key !== 'Enter') return;
+  var list = filtered().list;
+  if(list.length === 1) toggle(list[0].pid);     /* one match + Enter = the fastest possible check-in */
+});
+$('clear').addEventListener('click', function(){ $('q').value = ''; renderTiles(); keepFocus(); });
+$('undo').addEventListener('click', function(){ undoLast(); keepFocus(); });
+$('export').addEventListener('click', exportCSV);
+window.addEventListener('focus', keepFocus);
+
+/* Nothing is drawn until a staff member has signed in. Hiding the panel behind
+   an overlay is not enough - the children's names would still be sitting in the
+   page source for anyone curious enough to look. */
+if(FAE.session()){
+  renderAll();
+  keepFocus();
+}
+setInterval(function(){ if(FAE.session()) renderAll(); }, 20000);
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

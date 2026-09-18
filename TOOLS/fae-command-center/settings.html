@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. Settings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#050507; --panel:#0d0d12; --panel2:#131319; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#E8C766; --ink:#F4F4F6; --mute:#8B8B98; --dim:#61616f;
+  --red:#D2453B; --green:#3FA66A;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:720px;margin:0 auto;padding:20px 16px 70px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:2px solid var(--gold);margin-bottom:18px}
+.brand{font-family:var(--disp);font-weight:900;font-size:18px;letter-spacing:.03em}
+.brand small{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:.2em;color:var(--gold);font-weight:400;margin-top:3px}
+.home{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--mute);border:1px solid var(--line);border-radius:7px;padding:7px 11px}
+
+/* PIN gate */
+.gate{max-width:360px;margin:60px auto;text-align:center}
+.gate h2{font-family:var(--disp);font-weight:900;font-size:22px;margin:0 0 6px}
+.gate p{font-size:13.5px;color:var(--mute);margin:0 0 20px;line-height:1.5}
+.gate input{width:100%;background:var(--panel);border:1px solid var(--line2);color:var(--ink);border-radius:10px;padding:14px;font-family:var(--mono);font-size:18px;text-align:center;letter-spacing:.3em}
+.gate button{width:100%;background:var(--gold);color:#0a0800;border:none;border-radius:10px;padding:14px;font-weight:700;font-size:15px;margin-top:12px;cursor:pointer}
+
+.app{display:none}
+.app.show{display:block}
+.note{border:1px solid rgba(201,162,39,.4);background:rgba(201,162,39,.08);border-radius:11px;padding:13px 15px;margin-bottom:18px;font-size:13px;line-height:1.55;color:#D8D2C0}
+.note b{color:var(--gold-hi)}
+
+.card{border:1px solid var(--line);border-radius:14px;background:var(--panel);margin-bottom:16px;overflow:hidden}
+.ch{padding:13px 16px;border-bottom:1px solid var(--line)}
+.ch h2{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--gold);margin:0;font-weight:400}
+.cb{padding:16px}
+.f{margin-bottom:13px}
+.f:last-child{margin-bottom:0}
+.f label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);margin-bottom:6px;text-transform:uppercase}
+.f input{width:100%;background:var(--void);border:1px solid var(--line2);color:var(--ink);border-radius:9px;padding:11px;font-family:var(--sans);font-size:15px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.rate{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #16161d}
+.rate:last-child{border:none}
+.rate .rl{flex:1;font-size:14px}
+.rate .rl small{display:block;font-family:var(--mono);font-size:10px;color:var(--dim)}
+.rate .peso{font-family:var(--disp);font-weight:800;color:var(--gold)}
+.rate input{width:110px;background:var(--void);border:1px solid var(--line2);color:var(--gold-hi);border-radius:8px;padding:9px;font-family:var(--mono);font-size:15px;text-align:right}
+
+.adrow{display:grid;grid-template-columns:1fr 96px 84px 30px;gap:8px;margin-bottom:8px;align-items:center}
+.adrow input{background:var(--void);border:1px solid var(--line2);color:var(--ink);border-radius:8px;padding:9px;font-family:var(--sans);font-size:13px}
+.adrow input.p{font-family:var(--mono);color:var(--gold-hi);text-align:right}
+.adrow input.u{font-family:var(--mono);font-size:11px;color:var(--mute)}
+.adrow button{background:none;border:1px solid var(--line);color:var(--red);border-radius:8px;padding:8px 0;cursor:pointer}
+.adhead{display:grid;grid-template-columns:1fr 96px 84px 30px;gap:8px;font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;color:var(--dim);margin-bottom:7px;text-transform:uppercase}
+.add{background:none;border:1px dashed var(--line2);color:var(--mute);width:100%;padding:10px;border-radius:9px;cursor:pointer;font-family:var(--mono);font-size:11px;margin-top:6px}
+
+.bar{position:sticky;bottom:0;background:linear-gradient(0deg,var(--void) 70%,transparent);padding:14px 0 6px;display:flex;gap:10px}
+.bar button{flex:1;border-radius:11px;padding:14px;font-weight:700;font-size:15px;cursor:pointer;font-family:var(--sans)}
+.bar .save{background:var(--gold);color:#0a0800;border:none}
+.bar .reset{background:none;border:1px solid var(--line2);color:var(--mute)}
+.saved{text-align:center;color:var(--green);font-family:var(--mono);font-size:11px;margin-top:8px;height:14px}
+.foot{margin-top:20px;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.06em;text-align:center;line-height:1.6}
+</style>
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<script src="assets/fae-core.js?v=6"></script>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">F.A.E.<small>SETTINGS · MASTER</small></div>
+    <a class="home" href="console.html">← HOME</a>
+  </div>
+
+  <!-- PIN gate -->
+  <div class="gate" id="gate">
+    <h2>Master settings</h2>
+    <p>Edit pricing and business info here. These are the numbers the whole Command Center reads from. Master PIN required.</p>
+    <input id="pin" type="password" inputmode="numeric" placeholder="••••" maxlength="8">
+    <button onclick="unlock()">Unlock</button>
+    <div class="saved" id="pinMsg"></div>
+  </div>
+
+  <!-- app -->
+  <div class="app" id="app">
+    <div class="note">Change a number here and every tool that reads it updates — <b>Take Payment</b>, the <b>Worker form</b>, the <b>Scoreboard</b> and the <b>advertiser ad</b>. This is the single place the rates live.</div>
+
+    <div class="card">
+      <div class="ch"><h2>BUSINESS INFO</h2></div>
+      <div class="cb">
+        <div class="f"><label>Registered name</label><input id="b_regName"></div>
+        <div class="row2"><div class="f"><label>Owner</label><input id="b_owner"></div><div class="f"><label>Tagline</label><input id="b_tagline"></div></div>
+        <div class="row2"><div class="f"><label>Phone</label><input id="b_phone"></div><div class="f"><label>Email</label><input id="b_email"></div></div>
+        <div class="f"><label>Address</label><input id="b_address"></div>
+        <div class="row2"><div class="f"><label>Brand names</label><input id="b_brands"></div><div class="f"><label>DTI reg. no.</label><input id="b_dti"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><h2>COURT &amp; EQUIPMENT RATES (₱ / HR)</h2></div>
+      <div class="cb">
+        <div style="display:grid;grid-template-columns:1fr 100px 100px;gap:8px;align-items:center;margin-bottom:8px">
+          <span></span><span style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--gold);text-align:right">MEMBER ₱</span><span style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--mute);text-align:right">NON-MEMBER ₱</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 100px 100px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #16161d"><div class="rl">Basketball court<small>per hour</small></div><input id="r_basketball_m" type="number" style="text-align:right"><input id="r_basketball_n" type="number" style="text-align:right"></div>
+        <div style="display:grid;grid-template-columns:1fr 100px 100px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #16161d"><div class="rl">Volleyball court<small>per hour</small></div><input id="r_volleyball_m" type="number" style="text-align:right"><input id="r_volleyball_n" type="number" style="text-align:right"></div>
+        <div style="display:grid;grid-template-columns:1fr 100px 100px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #16161d"><div class="rl">Pickleball court<small>per hour</small></div><input id="r_pickleball_m" type="number" style="text-align:right"><input id="r_pickleball_n" type="number" style="text-align:right"></div>
+        <div class="rate" style="margin-top:6px"><div class="rl">Scoreboard rental<small>per hour</small></div><span class="peso">₱</span><input id="r_scoreboard" type="number"></div>
+        <div class="rate"><div class="rl">Ball rental (2 pcs)<small>per hour</small></div><span class="peso">₱</span><input id="r_ball" type="number"></div>
+        <div class="rate"><div class="rl">Late fee<small>flat, past 10 PM</small></div><span class="peso">₱</span><input id="r_lateFee" type="number"></div>
+      </div>
+      <style>#r_basketball_m,#r_basketball_n,#r_volleyball_m,#r_volleyball_n,#r_pickleball_m,#r_pickleball_n{background:var(--void);border:1px solid var(--line2);color:var(--gold-hi);border-radius:8px;padding:9px;font-family:var(--mono);font-size:14px}</style>
+    </div>
+
+    <div class="card">
+      <div class="ch"><h2>ACCESS &amp; ROLES</h2></div>
+      <div class="cb">
+        <div class="note" style="margin:0 0 14px">Who can see what. <b>Master</b> (you &amp; your wife) sees all figures. <b>Front desk</b> never sees money. <b>Admin</b> is your trusted middle — set their PIN and whether they may see money.</div>
+        <div class="row2">
+          <div class="f"><label>Admin PIN</label><input id="ro_adminPin" placeholder="e.g. 1212"></div>
+          <div class="f"><label>Front desk PIN (blank = none)</label><input id="ro_frontPin" placeholder="blank = no PIN"></div>
+        </div>
+        <label style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink);cursor:pointer;margin-top:4px">
+          <input id="ro_adminMoney" type="checkbox" style="width:18px;height:18px;accent-color:var(--gold)">
+          Admin may see income figures
+        </label>
+        <div class="note" style="margin:12px 0 0;background:rgba(210,69,59,.08);border-color:rgba(210,69,59,.4);color:#E6D3D4">Master PIN is <b>2021</b> and is fixed in the code. This gate stops staff seeing figures — it is not security; anyone opening the file in a text editor can read the data.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><h2>ONLINE SYNC</h2></div>
+      <div class="cb">
+        <div class="note" style="margin:0 0 14px">Where worker submissions auto-send when online. Leave blank to keep everything on-device (QR hand-off still works). The endpoint must accept a JSON <code style="font-family:var(--mono);color:var(--gold-hi)">POST</code> — a Supabase REST URL, a Google Apps Script web app, or a Lovable edge function.</div>
+        <div class="f"><label>POST endpoint URL</label><input id="sy_endpoint" placeholder="https://…"></div>
+        <div class="f"><label>API key / token (optional)</label><input id="sy_key" placeholder="sent as apikey + Bearer"></div>
+        <label style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink);cursor:pointer;margin-top:4px">
+          <input id="sy_enabled" type="checkbox" style="width:18px;height:18px;accent-color:var(--gold)">
+          Auto-send submissions when online
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><h2>DATA PRIVACY</h2></div>
+      <div class="cb">
+        <div class="note" style="margin:0 0 14px">The visitor register holds children's names, ages and
+          sometimes health notes. Under the <b>Data Privacy Act (RA 10173)</b> the business must name someone
+          responsible, tell people how long records are kept, and actually delete them on time. These
+          settings appear in the public privacy notice (<b>terms.html</b>) and drive the retention tools
+          on the Visitors tab.</div>
+        <div class="f"><label>Person responsible for data privacy</label>
+          <input id="pv_officer" placeholder="e.g. Coach Jr / the owner"></div>
+        <div class="f"><label>Privacy contact email or number</label>
+          <input id="pv_contact" placeholder="Where deletion requests go"></div>
+        <div class="row2">
+          <div class="f"><label>Keep registrations (months)</label>
+            <input id="pv_retain" type="number" min="1" max="120" placeholder="24"></div>
+          <div class="f"><label>Keep in/out logs (months)</label>
+            <input id="pv_retainCheck" type="number" min="1" max="120" placeholder="12"></div>
+        </div>
+        <div class="note" style="margin:12px 0 0;background:rgba(210,69,59,.08);border-color:rgba(210,69,59,.4);color:#E6D3D4">
+          If you ever hold records for <b>1,000 people or more</b>, the National Privacy Commission
+          expects you to register as a personal information controller. Court rentals reach that number
+          faster than owners expect &mdash; check the count on the Visitors tab.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><h2>INTERFACE</h2></div>
+      <div class="cb">
+        <div class="note" style="margin:0 0 14px">How much the screens move. <b>Full</b> is the upgraded look —
+          panels slide in, numbers count up, buttons respond to a tap. <b>Subtle</b> keeps only fades.
+          <b>Off</b> is completely still, best on an old front-desk PC. A phone or PC set to
+          "reduce motion" in its own accessibility settings is always respected, whatever is picked here.</div>
+        <div class="f"><label>Motion</label>
+          <select id="ui_motion">
+            <option value="full">Full — animated (recommended)</option>
+            <option value="subtle">Subtle — fades only</option>
+            <option value="off">Off — no animation</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><h2>ADVERTISING RATES</h2></div>
+      <div class="cb">
+        <div class="adhead"><span>Package</span><span style="text-align:right">Price ₱</span><span>Unit</span><span></span></div>
+        <div id="ads"></div>
+        <button class="add" onclick="addAd()">+ add a package</button>
+      </div>
+    </div>
+
+    <div class="bar">
+      <button class="reset" onclick="resetDefaults()">Reset to card</button>
+      <button class="save" onclick="saveAll()">Save settings</button>
+    </div>
+    <div class="saved" id="savedMsg"></div>
+  </div>
+
+  <div class="foot">settings v1.0 · 2026-09-04 · saved on this device (fae-config-v1)<br>PIN stops accidental edits; it is not security.</div>
+</div>
+
+<script>
+/* ============ F.A.E. Settings — single source of truth (fae-config-v1) ============ */
+var CFG_KEY='fae-config-v1', MASTER_PIN='2021';
+/* Defaults: business info from the rate card; court rates from what the live tools
+   currently use (900/750/400). Correct them here — that is the whole point of this page. */
+var DEFAULTS={
+  business:{
+    regName:'F.A.E. SPORTS MANAGEMENT SERVICES',
+    owner:'Isidro V. Raymundo Jr. (Coach Junior)',
+    tagline:'EARNED NOT GIVEN',
+    phone:'0917 501 8835',
+    email:'filamelitebasketball@gmail.com',
+    address:'Purok 4, San Vicente, Brgy. Banaybanay, Lipa City, Batangas',
+    brands:'F.A.E. Court · Fil-Am Elite Management',
+    dti:'8355964'
+  },
+  rates:{ basketball:{member:1000,nonMember:1200}, volleyball:{member:1000,nonMember:1200}, pickleball:{member:500,nonMember:700}, scoreboard:100, ball:100, lateFee:1000 },
+  roles:{ adminPin:'1212', frontPin:'', adminCanSeeMoney:false },
+  sync:{ endpoint:'', key:'', enabled:false },
+  ui:{ motion:'full', density:'comfortable' },
+  privacy:{ officer:'', contact:'', retentionMonths:24, checkinRetentionMonths:12 },
+  ads:[
+    {name:'Courtside Tarpaulin', price:1500, unit:'per month'},
+    {name:'Backboard / Scoreboard Brand', price:2500, unit:'per month'},
+    {name:'Jersey / Uniform Patch', price:5000, unit:'per season'},
+    {name:'Digital Shoutout', price:800, unit:'per post'},
+    {name:'Tournament Title Sponsor', price:10000, unit:'per event'}
+  ]
+};
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/"/g,'&quot;');}
+var store={get:function(k){try{return localStorage.getItem(k);}catch(e){return null;}},set:function(k,v){try{localStorage.setItem(k,v);return true;}catch(e){return false;}}};
+function load(){try{var c=JSON.parse(store.get(CFG_KEY));if(c&&c.rates)return c;}catch(e){}return JSON.parse(JSON.stringify(DEFAULTS));}
+var CFG=load();
+
+function unlock(){
+  if($('pin').value===MASTER_PIN){ $('gate').style.display='none'; $('app').classList.add('show'); fill(); }
+  else { $('pin').value=''; $('pinMsg').textContent='Wrong PIN'; }
+}
+$('pin')&&$('pin').addEventListener('keydown',function(e){if(e.key==='Enter')unlock();});
+
+function fill(){
+  var b=CFG.business||{}, r=CFG.rates||{};
+  ['regName','owner','tagline','phone','email','address','brands','dti'].forEach(function(k){ if($('b_'+k))$('b_'+k).value=b[k]||''; });
+  ['basketball','volleyball','pickleball'].forEach(function(k){
+    var v=r[k]; if(typeof v==='number')v={member:v,nonMember:v}; v=v||{};
+    if($('r_'+k+'_m'))$('r_'+k+'_m').value=(v.member!=null?v.member:'');
+    if($('r_'+k+'_n'))$('r_'+k+'_n').value=(v.nonMember!=null?v.nonMember:'');
+  });
+  ['scoreboard','ball','lateFee'].forEach(function(k){ if($('r_'+k))$('r_'+k).value=(r[k]!=null?r[k]:''); });
+  var ro=CFG.roles||DEFAULTS.roles;
+  if($('ro_adminPin'))$('ro_adminPin').value=ro.adminPin||'';
+  if($('ro_frontPin'))$('ro_frontPin').value=ro.frontPin||'';
+  if($('ro_adminMoney'))$('ro_adminMoney').checked=!!ro.adminCanSeeMoney;
+  var sy=CFG.sync||DEFAULTS.sync;
+  if($('sy_endpoint'))$('sy_endpoint').value=sy.endpoint||'';
+  if($('sy_key'))$('sy_key').value=sy.key||'';
+  if($('sy_enabled'))$('sy_enabled').checked=!!sy.enabled;
+  var uc=CFG.ui||DEFAULTS.ui;
+  if($('ui_motion'))$('ui_motion').value=uc.motion||'full';
+  var pv=CFG.privacy||DEFAULTS.privacy;
+  if($('pv_officer'))$('pv_officer').value=pv.officer||'';
+  if($('pv_contact'))$('pv_contact').value=pv.contact||'';
+  if($('pv_retain'))$('pv_retain').value=pv.retentionMonths||24;
+  if($('pv_retainCheck'))$('pv_retainCheck').value=pv.checkinRetentionMonths||12;
+  renderAds();
+}
+function renderAds(){
+  var h='';
+  (CFG.ads||[]).forEach(function(a,i){
+    h+='<div class="adrow"><input value="'+esc(a.name)+'" data-i="'+i+'" data-f="name" placeholder="Package">'
+      +'<input class="p" type="number" value="'+(a.price||'')+'" data-i="'+i+'" data-f="price">'
+      +'<input class="u" value="'+esc(a.unit)+'" data-i="'+i+'" data-f="unit" placeholder="per month">'
+      +'<button onclick="delAd('+i+')">&times;</button></div>';
+  });
+  $('ads').innerHTML=h;
+}
+function readAds(){
+  var arr=[];
+  $('ads').querySelectorAll('.adrow').forEach(function(row){
+    var n=row.querySelector('[data-f=name]').value.trim();
+    var p=parseInt(row.querySelector('[data-f=price]').value,10)||0;
+    var u=row.querySelector('[data-f=unit]').value.trim()||'per month';
+    if(n) arr.push({name:n,price:p,unit:u});
+  });
+  return arr;
+}
+function addAd(){ CFG.ads=readAds(); CFG.ads.push({name:'',price:0,unit:'per month'}); renderAds(); }
+function delAd(i){ CFG.ads=readAds(); CFG.ads.splice(i,1); renderAds(); }
+
+function collect(){
+  var b={},r={};
+  ['regName','owner','tagline','phone','email','address','brands','dti'].forEach(function(k){ b[k]=$('b_'+k).value.trim(); });
+  ['basketball','volleyball','pickleball'].forEach(function(k){ r[k]={ member:parseInt($('r_'+k+'_m').value,10)||0, nonMember:parseInt($('r_'+k+'_n').value,10)||0 }; });
+  ['scoreboard','ball','lateFee'].forEach(function(k){ r[k]=parseInt($('r_'+k).value,10)||0; });
+  var roles={ adminPin:($('ro_adminPin').value.trim()||'1212'), frontPin:$('ro_frontPin').value.trim(), adminCanSeeMoney:$('ro_adminMoney').checked };
+  var sync={ endpoint:$('sy_endpoint').value.trim(), key:$('sy_key').value.trim(), enabled:$('sy_enabled').checked };
+  var uiCfg={ motion:($('ui_motion')?$('ui_motion').value:'full'), density:'comfortable' };
+  var privacy={ officer:($('pv_officer')?$('pv_officer').value.trim():''),
+                contact:($('pv_contact')?$('pv_contact').value.trim():''),
+                retentionMonths:+($('pv_retain')?$('pv_retain').value:24)||24,
+                checkinRetentionMonths:+($('pv_retainCheck')?$('pv_retainCheck').value:12)||12 };
+  return {business:b, rates:r, roles:roles, sync:sync, ui:uiCfg, privacy:privacy, ads:readAds(), updated:new Date().toISOString()};
+}
+function saveAll(){
+  CFG=collect();
+  if(store.set(CFG_KEY,JSON.stringify(CFG))){ flash('Saved ✓ — the tools will use these now'); }
+  else { flash('Could not save — storage blocked'); }
+}
+function resetDefaults(){ CFG=JSON.parse(JSON.stringify(DEFAULTS)); fill(); flash('Reset to defaults — press Save to keep'); }
+function flash(m){ $('savedMsg').textContent=m; setTimeout(function(){$('savedMsg').textContent='';},2600); }
+</script>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>

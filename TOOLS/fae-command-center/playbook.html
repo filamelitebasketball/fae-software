@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F.A.E. Front Desk Playbook — How We Run the Building</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#050507; --panel:#0d0d12; --panel2:#131319; --line:#22222b; --line2:#2e2e39;
+  --gold:#C9A227; --gold-hi:#E8C766; --ink:#F4F4F6; --mute:#8B8B98; --dim:#61616f;
+  --red:#D2453B; --green:#3FA66A; --blue:#4A7FB5;
+  --sans:'DM Sans',system-ui,sans-serif; --disp:'Archivo',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+a{color:var(--gold-hi)}
+.wrap{max-width:1000px;margin:0 auto;padding:34px 22px 90px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:50;background:rgba(5,5,7,.95);backdrop-filter:blur(10px);
+     border-bottom:1px solid var(--line);margin:-34px -22px 30px;padding:11px 22px}
+.nav-in{max-width:1000px;margin:0 auto;display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.nav a{font-family:var(--mono);font-size:10px;letter-spacing:.11em;color:var(--mute);text-decoration:none;
+       padding:6px 10px;border:1px solid var(--line);border-radius:6px}
+.nav a:hover{color:var(--gold);border-color:var(--gold)}
+.nav a.home{color:var(--gold);border-color:rgba(201,162,39,.45)}
+.nav .sp{flex:1}
+.btn-print{font-family:var(--mono);font-size:10px;letter-spacing:.11em;background:var(--gold);color:#0a0800;
+           border:none;padding:7px 13px;border-radius:6px;cursor:pointer}
+
+h1{font-family:var(--disp);font-weight:900;font-size:clamp(30px,5vw,50px);line-height:1;letter-spacing:-.022em;margin:0 0 14px}
+.sub{font-size:16.5px;line-height:1.6;color:var(--mute);max-width:64ch;margin:0 0 8px}
+.sub b{color:var(--ink);font-weight:600}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:var(--gold);margin:0 0 13px}
+
+h2{font-family:var(--disp);font-weight:900;font-size:26px;letter-spacing:-.015em;margin:0 0 6px}
+.sec{padding:38px 0;border-top:1px solid var(--line)}
+.sec-no{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--gold);margin:0 0 10px}
+.sec p{font-size:15px;line-height:1.65;color:#BEBEC9;max-width:70ch}
+
+/* the one rule */
+.rule-box{border:2px solid var(--red);border-radius:14px;padding:26px;background:linear-gradient(150deg,rgba(210,69,59,.14),transparent);margin:8px 0 0}
+.rule-box b{display:block;font-family:var(--disp);font-weight:900;font-size:23px;line-height:1.15;margin-bottom:9px}
+.rule-box p{margin:0;color:#D6D6DE;max-width:64ch}
+
+/* steps */
+.steps{counter-reset:s;margin-top:22px}
+.step{counter-increment:s;display:grid;grid-template-columns:46px 1fr;gap:16px;padding:17px 0;border-bottom:1px solid var(--line)}
+.step:last-child{border-bottom:none}
+.step::before{content:counter(s);font-family:var(--disp);font-weight:900;font-size:21px;color:var(--gold);
+              border:1.5px solid rgba(201,162,39,.4);border-radius:9px;height:42px;display:flex;align-items:center;justify-content:center}
+.step h3{margin:0 0 5px;font-family:var(--disp);font-weight:800;font-size:17.5px;letter-spacing:-.01em}
+.step p{margin:0;font-size:14.5px;line-height:1.6;color:#B4B4C0}
+.step .say{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:12.5px;color:var(--gold-hi);
+            background:rgba(201,162,39,.1);border-left:2px solid var(--gold);padding:7px 12px;border-radius:0 6px 6px 0}
+
+/* three-column shift flow */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:14px;margin-top:20px}
+.col{border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden}
+.col header{padding:13px 16px;border-bottom:1px solid var(--line);background:var(--panel2)}
+.col header b{display:block;font-family:var(--disp);font-weight:800;font-size:15.5px}
+.col header span{font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;color:var(--gold);display:block;margin-top:4px}
+.col ol{margin:0;padding:14px 16px 16px 32px}
+.col li{font-size:14px;line-height:1.55;color:#BEBEC9;margin-bottom:9px}
+.col li:last-child{margin-bottom:0}
+.col li b{color:var(--ink)}
+
+/* where records live */
+.tiers{display:grid;gap:11px;margin-top:20px}
+.tier{display:grid;grid-template-columns:130px 1fr;gap:16px;align-items:start;border:1px solid var(--line);
+      border-radius:11px;padding:16px;background:var(--panel)}
+.tier .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;padding:6px 9px;border-radius:5px;text-align:center}
+.tier.sheet .tag{background:rgba(74,127,181,.16);color:#7FAEDC}
+.tier.site .tag{background:rgba(63,166,106,.15);color:#6FD79B}
+.tier.dev .tag{background:rgba(201,162,39,.15);color:var(--gold-hi)}
+.tier b{display:block;font-size:14.5px;margin-bottom:5px}
+.tier p{margin:0;font-size:13.5px;line-height:1.55;color:#AFAFBC}
+.golden{margin-top:18px;border:1px solid var(--gold);border-radius:11px;padding:18px 20px;
+        background:linear-gradient(150deg,rgba(201,162,39,.1),transparent)}
+.golden b{font-family:var(--disp);font-weight:900;font-size:17px;color:var(--gold-hi)}
+.golden p{margin:7px 0 0;color:#CFCFD8;font-size:14.5px;max-width:66ch}
+
+/* tables */
+table{width:100%;border-collapse:collapse;margin-top:18px;border:1px solid var(--line);border-radius:11px;overflow:hidden}
+th{text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;color:var(--dim);font-weight:400;
+   padding:11px 15px;background:var(--panel2);border-bottom:1px solid var(--line)}
+td{padding:12px 15px;border-bottom:1px solid #17171e;font-size:14px;color:#BEBEC9;vertical-align:top}
+tr:last-child td{border-bottom:none}
+td b{color:var(--ink)}
+td.who{font-family:var(--disp);font-weight:800;color:var(--gold);white-space:nowrap}
+
+/* rates */
+.rates{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px;margin-top:20px}
+.rate{border:1px solid var(--line2);border-radius:12px;padding:19px;text-align:center;background:var(--panel)}
+.rate b{display:block;font-family:var(--disp);font-weight:900;font-size:33px;color:var(--gold);letter-spacing:-.02em}
+.rate span{display:block;font-size:13.5px;color:var(--mute);margin-top:6px}
+
+/* escalation */
+.esc{display:grid;gap:9px;margin-top:20px}
+.esc-row{display:grid;grid-template-columns:34px 1fr;gap:14px;align-items:center;border-left:2px solid var(--gold);
+         padding:12px 16px;background:var(--panel);border-radius:0 10px 10px 0}
+.esc-row i{font-family:var(--mono);font-size:12px;color:var(--gold);font-style:normal}
+.esc-row p{margin:0;font-size:14px;color:#BEBEC9}
+
+.warn{border:1px solid rgba(210,69,59,.45);background:rgba(210,69,59,.08);border-radius:11px;padding:17px 19px;margin-top:20px}
+.warn b{color:#F08A82;display:block;margin-bottom:6px;font-size:15px}
+.warn p{margin:0;color:#D6D6DE;font-size:14px;line-height:1.6}
+
+/* quick card */
+.card{border:2px solid var(--gold);border-radius:14px;padding:28px;margin-top:22px;background:var(--panel)}
+.card h3{font-family:var(--disp);font-weight:900;font-size:21px;margin:0 0 4px}
+.card .cs{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--gold);margin-bottom:18px}
+.card ol{margin:0;padding-left:20px}
+.card li{font-size:15px;line-height:1.75;color:#CFCFD8}
+.card li b{color:var(--ink)}
+
+.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);
+      font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:.08em;
+      display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+
+@media print{
+  body{background:#fff;color:#000}
+  .nav,.btn-print{display:none}
+  .wrap{max-width:100%;padding:0}
+  .sec{page-break-inside:avoid;border-top:1px solid #ccc}
+  .col,.tier,.rate,.card,.esc-row,.rule-box,.golden,.warn,table{border-color:#bbb !important;background:#fff !important}
+  h1,h2,.step h3,.card h3,.col header b,.tier b,td b{color:#000}
+  .sec p,.step p,.col li,.tier p,td,.card li,.golden p,.warn p{color:#222}
+  .sec-no,.eyebrow,.col header span,.rate b,.card .cs,.esc-row i,.golden b{color:#7a6212}
+  .step::before{color:#7a6212;border-color:#bbb}
+  .card{page-break-before:always}
+}
+</style>
+<link rel="stylesheet" href="assets/fae-motion.css?v=1">
+<script src="assets/fae-core.js?v=6"></script>
+</head>
+<body>
+
+<div class="nav"><div class="nav-in">
+  <a class="home" href="console.html">← COMMAND CENTER</a>
+  <a href="#rule">THE ONE RULE</a>
+  <a href="#records">WHERE RECORDS LIVE</a>
+  <a href="#renter">RENTER FLOW</a>
+  <a href="#shift">THE SHIFT</a>
+  <a href="#money">MONEY</a>
+  <a href="#incident">INCIDENTS</a>
+  <a href="#who">WHO DECIDES</a>
+  <a href="#paper">IF THE PC IS OFF</a>
+  <a href="#card">QUICK CARD</a>
+  <span class="sp"></span>
+  <button class="btn-print" onclick="window.print()"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:5px"><path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-4a2 2 0 012-2h16a2 2 0 012 2v4a2 2 0 01-2 2h-2M6 14h12v7H6z"/></svg>PRINT</button>
+</div></div>
+
+<div class="wrap">
+
+  <p class="eyebrow">F.A.E. MANAGEMENT · FRONT DESK PLAYBOOK</p>
+  <h1>How we run<br>the building.</h1>
+  <p class="sub">This is the whole job in one page. If you are new, read it top to bottom once — it takes about ten minutes. After that, use the <b>Quick Card</b> at the bottom; print it and keep it at the desk.</p>
+  <p class="sub">Everything here is the same for everyone. When something goes wrong, nobody should have to guess what the right move was.</p>
+
+  <!-- 1 -->
+  <section class="sec" id="rule">
+    <p class="sec-no">01</p>
+    <h2>The one rule</h2>
+    <div class="rule-box">
+      <b>Log it the moment it happens. Not at the end of your shift.</b>
+      <p>No-show, damage, injury, argument, overtime, a renter who paid differently than agreed — press <strong>Log an Incident</strong> and write it down while the person is still standing there. A logged incident is a solved incident. An unlogged one becomes your word against theirs a week later.</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="sec" id="records">
+    <p class="sec-no">02</p>
+    <h2>Where records live</h2>
+    <p>We run on several machines. Some things are shared across all of them; some are saved only on the computer in front of you. Getting this wrong is how records go missing, so learn these three:</p>
+
+    <div class="tiers">
+      <div class="tier sheet"><span class="tag">GOOGLE SHEET</span>
+        <div><b>The court schedule</b>
+        <p>Every booking, for every day. Same on every device, updates instantly. This is the only booking record that counts — never take a renter's word over it.</p></div>
+      </div>
+      <div class="tier site"><span class="tag">LIVE SITE</span>
+        <div><b>Members, payments, roles, stock</b>
+        <p>Kept on the F.A.E. website's admin page. Same on every device. Anything another person needs to see later goes here.</p></div>
+      </div>
+      <div class="tier dev"><span class="tag">THIS DEVICE</span>
+        <div><b>Checklist ticks, drinks count, daily task submissions, incident drafts</b>
+        <p>Saved in the browser on that one computer only. Useful for running your shift. It does <strong>not</strong> travel to any other machine, and it is lost if the browser data is cleared.</p></div>
+      </div>
+    </div>
+
+    <div class="golden">
+      <b>The rule that follows from this</b>
+      <p>If it must match on every device, it does not live in this folder. Put it on the Sheet or the live site. When in doubt, do both and tell the Master.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="sec" id="renter">
+    <p class="sec-no">03</p>
+    <h2>When a renter arrives</h2>
+    <p>In order, every single time. This sequence is what stops the mix-ups.</p>
+
+    <div class="steps">
+      <div class="step"><div><h3>Open the live court schedule first</h3>
+        <p>Before anything else, look at today's column. Never take someone's word for their booking.</p></div></div>
+
+      <div class="step"><div><h3>Match the person to the booking</h3>
+        <p>Name, court, start time, end time. If they are not on the schedule, they are not booked — take the booking properly before they play.</p></div></div>
+
+      <div class="step"><div><h3>Say the end time out loud</h3>
+        <p>Saying it out loud is what prevents the overtime argument later.</p>
+        <span class="say">"You're on Court 1 until 4 PM."</span></div></div>
+
+      <div class="step"><div><h3>Collect payment now, not later</h3>
+        <p>Cash or GCash. Mark it the moment it is in your hand — not after they finish playing.</p></div></div>
+
+      <div class="step"><div><h3>Check the court before they start</h3>
+        <p>Lights, nets, floor, rubbish. If something is already broken, log it now so it is not blamed on this group.</p></div></div>
+
+      <div class="step"><div><h3>Watch the clock near the end</h3>
+        <p>Give a 10-minute warning. If they run over, that is overtime — log it as an incident and charge it.</p></div></div>
+
+      <div class="step"><div><h3>Log anything that goes wrong, immediately</h3>
+        <p>No-show, damage, injury, argument, overtime. See rule 01.</p></div></div>
+
+      <div class="step"><div><h3>Hand over cleanly</h3>
+        <p>Before you leave: tasks submitted, drinks counted, cash matches, next shift told what happened.</p></div></div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="sec" id="shift">
+    <p class="sec-no">04</p>
+    <h2>The shift, start to finish</h2>
+    <p>Shift blocks give 24-hour coverage: <b>A Morning 06:00–14:00</b>, <b>B Afternoon 14:00–22:00</b>, <b>C Graveyard 22:00–06:00</b>.</p>
+
+    <div class="cols">
+      <div class="col">
+        <header><b>Opening</b><span>FIRST 15 MINUTES</span></header>
+        <ol>
+          <li>Open the <b>Command Center</b> and read today's schedule top to bottom.</li>
+          <li>Open courts — lights, fans, doors.</li>
+          <li><b>Count the cash float</b> before you take a single payment.</li>
+          <li><b>Fridge count</b> — start of shift, in the Staff Hub.</li>
+          <li>Clock in on the Staff Hub and check your hours are right.</li>
+        </ol>
+      </div>
+      <div class="col">
+        <header><b>During</b><span>ALL SHIFT</span></header>
+        <ol>
+          <li>Confirm every renter on arrival against the schedule.</li>
+          <li>Mark each payment <b>immediately</b>.</li>
+          <li>Log anything that goes wrong, immediately.</li>
+          <li>Keep the courts clear between bookings.</li>
+          <li>Tick daily tasks as you complete them, not in one batch at the end.</li>
+        </ol>
+      </div>
+      <div class="col">
+        <header><b>Closing</b><span>LAST 20 MINUTES</span></header>
+        <ol>
+          <li>Note no-shows and tomorrow's first booking.</li>
+          <li><b>Fridge count</b> — end of shift.</li>
+          <li>End-of-day cash count. It must match what was marked paid.</li>
+          <li>Submit your daily tasks — this locks the day under your name.</li>
+          <li>Secure the court, lock up, tell the next shift what happened.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="warn"><b>If the cash does not match</b>
+      <p>Do not adjust the number to make it fit and do not wait until tomorrow. Log it as an incident with the amount and what you think happened, then tell the Master before you leave. An honest short count is a small problem; a hidden one is a big one.</p></div>
+  </section>
+
+  <!-- 5 -->
+  <section class="sec" id="money">
+    <p class="sec-no">05</p>
+    <h2>Money</h2>
+
+    <div class="rates">
+      <div class="rate"><b id="rateBball">₱1000 / ₱1200</b><span>Basketball · member / non-member · per hour</span></div>
+      <div class="rate"><b id="rateVball">₱1000 / ₱1200</b><span>Volleyball · member / non-member · per hour</span></div>
+      <div class="rate"><b id="ratePickle">₱500 / ₱700</b><span>Pickleball · member / non-member · per hour</span></div>
+    </div>
+    <script>
+    /* rates from Settings (fae-config-v1); shows member / non-member. Deferred so the Quick
+       Card (later in the page) exists when we rewrite it. */
+    (function(){
+      function px(s,mem){try{var c=JSON.parse(localStorage.getItem('fae-config-v1'));var v=c&&c.rates&&c.rates[s];
+        if(v==null)v={basketball:{member:1000,nonMember:1200},volleyball:{member:1000,nonMember:1200},pickleball:{member:500,nonMember:700}}[s];
+        if(typeof v==='number')return v; return mem?v.member:v.nonMember;}catch(e){return 0;}}
+      function apply(){
+        var b=document.getElementById('rateBball'),v=document.getElementById('rateVball'),p=document.getElementById('ratePickle');
+        if(b)b.textContent='₱'+px('basketball',1)+' / ₱'+px('basketball',0);
+        if(v)v.textContent='₱'+px('volleyball',1)+' / ₱'+px('volleyball',0);
+        if(p)p.textContent='₱'+px('pickleball',1)+' / ₱'+px('pickleball',0);
+        var qc=document.querySelector('.card .cs');
+        if(qc)qc.textContent='BASKETBALL/VOLLEYBALL ₱'+px('basketball',1)+' M / ₱'+px('basketball',0)+' N · PICKLEBALL ₱'+px('pickleball',1)+' M / ₱'+px('pickleball',0)+' N (per hr)';
+      }
+      if(document.readyState!=='loading')apply();else document.addEventListener('DOMContentLoaded',apply);
+    })();
+    </script>
+
+    <p style="margin-top:22px">Every peso follows the same path. Do not skip a step, and do not do them out of order:</p>
+
+    <table>
+      <tr><th>STEP</th><th>WHAT HAPPENS</th><th>WHERE IT IS RECORDED</th></tr>
+      <tr><td class="who">1 · Quote</td><td>Agree the sport, court, hours and total before anything is booked.</td><td>Verbal, then straight to the booking</td></tr>
+      <tr><td class="who">2 · Book</td><td>Write the renter into the schedule with the exact start and end time.</td><td><b>Google Sheet</b></td></tr>
+      <tr><td class="who">3 · Collect</td><td>Cash or GCash, taken on arrival — before they play, not after.</td><td>In hand</td></tr>
+      <tr><td class="who">4 · Mark paid</td><td>Record the amount and the method the moment it is in your hand.</td><td><b>Google Sheet</b> amount + status column</td></tr>
+      <tr><td class="who">5 · Issue OR</td><td>Give the official receipt. Never skip this because the renter says not to bother.</td><td>OR book</td></tr>
+      <tr><td class="who">6 · Log</td><td>Anything unusual about the payment — short, split, promised later, refunded.</td><td><b>Incident log</b></td></tr>
+    </table>
+
+    <div class="warn"><b>Never</b>
+      <p>Never let anyone play on a promise to pay afterwards without logging it as an incident first. Never take a payment without marking it. Never change a marked payment without saying so in the log.</p></div>
+  </section>
+
+  <!-- 6 -->
+  <section class="sec" id="incident">
+    <p class="sec-no">06</p>
+    <h2>Incidents</h2>
+    <p>An incident is anything you would want proof of later. If you are wondering whether it counts, it counts.</p>
+
+    <table>
+      <tr><th>TYPE</th><th>WHAT TO CAPTURE</th></tr>
+      <tr><td><b>No-show</b></td><td>Name, booked slot, how long you waited, whether they paid.</td></tr>
+      <tr><td><b>Damage</b></td><td>Photo before and after if you can, which group was on, estimated cost.</td></tr>
+      <tr><td><b>Injury</b></td><td>Who, what happened, what you did, whether they went to a clinic. Tell the Master straight away.</td></tr>
+      <tr><td><b>Argument</b></td><td>Who was involved, what it was about, how it ended. Stay factual, no opinions.</td></tr>
+      <tr><td><b>Overtime</b></td><td>Booked end time, actual end time, whether the extra was charged.</td></tr>
+      <tr><td><b>Payment problem</b></td><td>Amount expected, amount received, method, what was agreed.</td></tr>
+    </table>
+
+    <p style="margin-top:20px">Attach a photo where it helps — but keep it to a few small photos so it saves reliably. You do not need the person to be a registered member: type their name in the name box and file it.</p>
+  </section>
+
+  <!-- 7 -->
+  <section class="sec" id="who">
+    <p class="sec-no">07</p>
+    <h2>Who decides what</h2>
+
+    <table>
+      <tr><th>ROLE</th><th>DECIDES</th><th>DOES NOT DECIDE</th></tr>
+      <tr><td class="who">Front Desk</td>
+        <td>Confirming bookings, taking payment, issuing OR, logging incidents, running the daily checklist and counts.</td>
+        <td>Discounts, refunds, waiving overtime, changing a locked day, editing someone else's hours.</td></tr>
+      <tr><td class="who">Master</td>
+        <td>Reopening a locked day, correcting hours after a dispute, adjusting stock counts, approving an overtime waiver.</td>
+        <td>Rates, contracts, hiring, anything involving the lease or the league.</td></tr>
+      <tr><td class="who">Owner</td>
+        <td>Rates, refunds beyond a single booking, contracts, staffing, anything legal or financial.</td>
+        <td>—</td></tr>
+    </table>
+
+    <h2 style="margin-top:34px;font-size:20px">When to escalate</h2>
+    <div class="esc">
+      <div class="esc-row"><i>NOW</i><p>Injury, fire, theft, anyone threatening staff or another renter, police involvement.</p></div>
+      <div class="esc-row"><i>NOW</i><p>Cash does not match by any amount you cannot explain.</p></div>
+      <div class="esc-row"><i>TODAY</i><p>Damage to the court or equipment, a refund request, a renter refusing to pay.</p></div>
+      <div class="esc-row"><i>TODAY</i><p>Double booking, or a booking on the Sheet that nobody can account for.</p></div>
+      <div class="esc-row"><i>THIS WEEK</i><p>Repeat no-shows from the same renter, stock running consistently short, equipment wearing out.</p></div>
+    </div>
+    <p style="margin-top:16px">Quick Contacts — Co-Owner, Maintenance, Security, Clinic — are on the Command Center home page, tap to call.</p>
+  </section>
+
+  <!-- 8 -->
+  <section class="sec" id="paper">
+    <p class="sec-no">08</p>
+    <h2>If the computer is off</h2>
+    <p>The building does not stop because a screen does. Fall back to paper and catch up afterwards — that is a normal part of the job, not a failure.</p>
+
+    <div class="cols">
+      <div class="col">
+        <header><b>On paper, right away</b><span>DO NOT SKIP</span></header>
+        <ol>
+          <li>Renter name, sport, court.</li>
+          <li>Start time and end time.</li>
+          <li>Amount, and cash or GCash.</li>
+          <li>OR number issued.</li>
+          <li>Anything that went wrong.</li>
+        </ol>
+      </div>
+      <div class="col">
+        <header><b>When it is back</b><span>SAME SHIFT</span></header>
+        <ol>
+          <li>Enter every booking into the <b>Sheet</b> from your paper notes.</li>
+          <li>Mark each payment with its method.</li>
+          <li>File any incidents you noted.</li>
+          <li>Keep the paper until the Master confirms it is all in.</li>
+        </ol>
+      </div>
+      <div class="col">
+        <header><b>If only the internet is down</b><span>PARTIAL</span></header>
+        <ol>
+          <li>The schedule will not refresh — use your paper notes for today.</li>
+          <li>The Staff Hub and checklist still work; they are on this device.</li>
+          <li>Do not guess at bookings from memory. Write, then reconcile.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 -->
+  <section class="sec" id="card">
+    <p class="sec-no">09</p>
+    <h2>Quick Card</h2>
+    <p>Print this and keep it at the desk. It is the whole playbook in nine lines.</p>
+
+    <div class="card">
+      <h3>F.A.E. FRONT DESK — QUICK CARD</h3>
+      <p class="cs">BASKETBALL ₱900/HR · VOLLEYBALL ₱750/HR · PICKLEBALL ₱400/HR</p>
+      <ol>
+        <li><b>Schedule first.</b> Never take a renter's word for a booking.</li>
+        <li><b>Match name, court, start, end.</b> Not on the Sheet means not booked.</li>
+        <li><b>Say the end time out loud.</b></li>
+        <li><b>Collect on arrival.</b> Mark it paid the moment it is in your hand.</li>
+        <li><b>Check the court before they start.</b> Log anything already broken.</li>
+        <li><b>10-minute warning.</b> Overtime gets logged and charged.</li>
+        <li><b>Log it the moment it happens.</b> Not at the end of the shift.</li>
+        <li><b>Count cash and fridge</b> at the start and at the end.</li>
+        <li><b>Hand over clean.</b> Tasks submitted, counts done, next shift told.</li>
+      </ol>
+    </div>
+  </section>
+
+  <div class="foot">
+    <div>F.A.E. FRONT DESK PLAYBOOK · playbook v2.0 · 2026-09-03</div>
+    <div>PRINT THE QUICK CARD · KEEP IT AT THE DESK</div>
+  </div>
+</div>
+<script src="assets/fae-motion.js?v=1"></script>
+</body>
+</html>
