@@ -1,36 +1,95 @@
-# F.A.E. Launch Checklist (saved reference)
+# 🏀 F.A.E. Launch Reference
 
-Last updated 2026-09-19. Companion to the `fae-launch-status` memory.
+**Quick status:** NXGEN Premier League is **LIVE** at [nxgen.faeph.com](https://nxgen.faeph.com) — off Lovable, running on Supabase + Vercel, with email + Google login working.
 
-## NXGEN Premier League — LAUNCHED ✅
-- [x] Drive reorganized (SITES/ + TOOLS/), pushed to GitHub
-- [x] FAE Hub landing built (SITES/faehq/index.html) — professional-modern theme
-- [x] Domain **faeph.com** bought and wired: nxgen.faeph.com → NXGEN, apex+www → fae-hub
-- [x] NXGEN DB migrated to owner's own Supabase (ref lyyvtzdtebsyuoxgakua)
-- [x] NXGEN deployed to Vercel; env vars set (service_role secret only in Vercel + .env.local)
-- [x] **Lovable fully removed** — pure Vite + TanStack Start + Supabase + Vercel (nitro() plugin
-      required for Vercel; deploy = git push)
-- [x] Site assets self-hosted (public/__l5e); site live at nxgen.faeph.com
-- [x] Email login (OTP + password) working; verified end-to-end
-- [x] Google login set up + enabled (publish the Google app for public use)
-- [x] Admins granted: filamelitebasketball@gmail.com, jhoopin3@gmail.com
-- [~] Apple / Facebook login — deferred (Apple needs paid dev acct; both env-gated off)
-- [~] Branded email templates — built but need custom SMTP (Resend free) to apply; DEFERRED
-      (decision: don't email after login; show user email in admin instead)
+_Last updated: 2026-09-19 · Companion to the `fae-launch-status` memory._
 
-## Next build tasks (in progress / queued)
-- [ ] Admin dashboard: show each user's **email** for lead management
-- [ ] **Free Agent** lead tier: signups = view-only Free Agents (lead capture); rostered
-      division players = full Players
-- [ ] Start social-media marketing (see the NXGEN Marketing Playbook artifact)
+---
 
-## Build-after (other FAE sites)
+## 🔗 Live links
+
+| What | URL | Status |
+|---|---|---|
+| NXGEN Premier League | https://nxgen.faeph.com | 🟢 Live |
+| FAE Hub (umbrella) | https://faeph.com | 🟡 Deployed, to finish |
+| Marketing Playbook | [Artifact](https://claude.ai/artifact/CCswjC7szerWUVfhtjePeZ) | 🟢 Pinned |
+| Management site | management.faeph.com | ⚪ To deploy |
+| LinkMePH | linkme.faeph.com | ⚪ To deploy |
+
+---
+
+## 🔑 Accounts & references (no secrets here)
+
+| Thing | Value |
+|---|---|
+| Umbrella domain | **faeph.com** (bought via Vercel) |
+| NXGEN repo | github.com/filamelitebasketball/nxgenpremierleague (branch `main`) |
+| NXGEN local folder | `06-SOFTWARE/SITES/nxgen` |
+| NXGEN Supabase project | ref **`lyyvtzdtebsyuoxgakua`** (owner's own) |
+| Hosting | Vercel (free Hobby), GitHub-synced auto-deploy |
+| Software repo | github.com/filamelitebasketball/fae-software |
+
+> ⚠️ The Supabase **service_role secret** lives only in Vercel env vars + local `.env.local` — never in git.
+
+---
+
+## 🔐 Login methods
+
+| Method | Status | Notes |
+|---|---|---|
+| Email code + password | 🟢 Working | Supabase built-in (free) |
+| Google | 🟢 Working | Publish the Google app for public users |
+| Facebook | ⚪ Off | Needs a Meta app (free) — button hidden until set up |
+| Apple | 🔴 Skipped | Needs paid Apple Developer acct ($99/yr) |
+| Branded email templates | ⚪ Deferred | Needs custom SMTP (Resend free) to apply |
+
+**Admins:** filamelitebasketball@gmail.com · jhoopin3@gmail.com
+
+---
+
+## 🚀 How to deploy NXGEN (free, no Lovable)
+
+1. Edit code in `06-SOFTWARE/SITES/nxgen`.
+2. `git push origin main` → Vercel auto-builds and deploys.
+3. Vercel only goes live if the build succeeds, so a bad build won't take the site down.
+
+> `vite.config.ts` **must keep the `nitro()` plugin** — without it Vercel 404s every page.
+
+## 🗄️ How to run database SQL
+
+Supabase → **SQL Editor** → New query → paste → Run.
+Direct link: https://supabase.com/dashboard/project/lyyvtzdtebsyuoxgakua/sql/new
+
+---
+
+## ✅ Done
+
+- [x] Drive reorganized + pushed to GitHub
+- [x] Domain faeph.com bought & wired (nxgen → NXGEN, apex+www → hub)
+- [x] NXGEN DB migrated to owner's own Supabase
+- [x] NXGEN deployed to Vercel + env vars set
+- [x] **Lovable fully removed** (pure Vite + TanStack + Supabase + Vercel)
+- [x] Site assets self-hosted; site live
+- [x] Email + Google login working
+- [x] Admins granted
+
+## 🔜 Next (code tasks)
+
+- [ ] **Admin dashboard: show each user's email** — for lead management
+- [ ] **Free Agent lead tier** — signups = view-only Free Agents (leads); rostered players = full Players
+- [ ] Start social-media marketing (see the Playbook)
+
+## 🧱 Build-after (other FAE sites)
+
 - [ ] Deploy FAE Hub (faeph.com) + Management (fae-court-connect) + LinkMePH
-- [ ] FAE Basketball / Volleyball / Events sites
+- [ ] FAE Basketball / Volleyball / Events
 - [ ] Swap monogram badges for real logo files
 - [ ] Wire F.A.E. Command Center to update the sites
 
-## Key facts to remember
-- Deploy NXGEN: `git push origin main` → Vercel auto-builds (see nxgen-lovable-deploy memory).
-- NXGEN Supabase project ref: lyyvtzdtebsyuoxgakua (owner's own).
-- Run NXGEN SQL in the Supabase SQL editor (owner pastes).
+---
+
+## 💡 Optional later
+
+- Facebook login (free Meta app) → enable in Supabase, set `VITE_ENABLE_FACEBOOK=true`
+- Branded emails → connect Resend (free) as Supabase SMTP, then paste templates from
+  `SITES/nxgen/docs/email-templates/`
