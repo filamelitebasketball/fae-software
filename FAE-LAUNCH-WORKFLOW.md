@@ -75,8 +75,8 @@ Direct link: https://supabase.com/dashboard/project/lyyvtzdtebsyuoxgakua/sql/new
 
 ## 🔜 Next (code tasks)
 
-- [ ] **Admin dashboard: show each user's email** — for lead management
-- [ ] **Free Agent lead tier** — signups = view-only Free Agents (leads); rostered players = full Players
+- [x] **Admin dashboard: show each user's email** — for lead management
+- [x] **Free Agent lead tier** — signups = view-only Free Agents (leads); rostered players = full Players
 - [ ] Start social-media marketing (see the Playbook)
 
 ## 🧱 Build-after (other FAE sites)
