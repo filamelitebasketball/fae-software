@@ -1,0 +1,12 @@
+/* FilAmElite Basketball palette, taken from the logo (PH flag yellow / red / blue).
+   The shared NXGEN core CSS still says "gold" everywhere; here "gold" simply means
+   this site's lead accent, so the core needs no rewrite per sport. */
+:root{
+  --gold:#F5C21B; --gold-l:#FFD95A; --gold-d:#B98A0B;
+  --gold-rgb:245,194,27; --gold-l-rgb:255,217,90; --gold-d-rgb:185,138,11;
+  --gold-glow:rgba(245,194,27,.28);
+  --line-g:rgba(245,194,27,.18);
+  --rim:inset 0 1px 0 rgba(245,194,27,.18),0 0 0 1px rgba(245,194,27,.1),0 20px 48px -20px rgba(0,0,0,.95);
+  --on-gold:#060606;
+  --flag-red:#E3262E; --flag-yellow:#F5C21B; --flag-blue:#2F52E6;
+}

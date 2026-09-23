@@ -1,0 +1,14 @@
+/* FilAmElite Volleyball palette, taken from the logo (PH flag blue / red / yellow),
+   led by blue so the sister sites read apart. The shared NXGEN core CSS still says
+   "gold"; here "gold" simply means this site's lead accent. */
+:root{
+  --gold:#4C6FFF; --gold-l:#8FA6FF; --gold-d:#2A45C9;
+  --gold-rgb:76,111,255; --gold-l-rgb:143,166,255; --gold-d-rgb:42,69,201;
+  --gold-glow:rgba(76,111,255,.3);
+  --line-g:rgba(76,111,255,.22);
+  --rim:inset 0 1px 0 rgba(76,111,255,.2),0 0 0 1px rgba(76,111,255,.12),0 20px 48px -20px rgba(0,0,0,.95);
+  --on-gold:#fff;
+  --flag-red:#E3262E; --flag-yellow:#F5C21B; --flag-blue:#2F52E6;
+}
+/* White label on blue: start the gradient darker so button text keeps its contrast. */
+.btn-gold{background:linear-gradient(135deg,var(--gold-d),var(--gold))}

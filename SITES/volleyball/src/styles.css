@@ -1,0 +1,328 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+@import "./styles/nxgen-core.css";
+@import "./styles/theme.css";
+@import "./styles/site.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system definition.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ * All colors MUST use oklch format.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.25rem;
+
+  /* NXGEN premium palette */
+  --black: #0a0a0a;
+  --black-2: #141414;
+  --gold-light: var(--gold-l);
+  --silver: #b8bcc4;
+  --silver-dim: rgba(184, 188, 196, 0.55);
+  --card-bg: rgba(255, 255, 255, 0.035);
+  --card-border: rgba(255, 255, 255, 0.09);
+  --gold-border: rgba(var(--gold-rgb), 0.4);
+
+  --background: #0a0a0a;
+  --foreground: #f4f4f5;
+  --card: var(--card-bg);
+  --card-foreground: #f4f4f5;
+  --popover: #141414;
+  --popover-foreground: #f4f4f5;
+  --primary: var(--gold);
+  --primary-foreground: #0a0a0a;
+  --secondary: rgba(255, 255, 255, 0.07);
+  --secondary-foreground: #f4f4f5;
+  --muted: rgba(255, 255, 255, 0.05);
+  --muted-foreground: var(--silver);
+  --accent: rgba(var(--gold-rgb), 0.12);
+  --accent-foreground: var(--gold-light);
+  --destructive: oklch(0.6 0.19 25);
+  --destructive-foreground: #ffffff;
+  --border: var(--card-border);
+  --input: rgba(255, 255, 255, 0.14);
+  --ring: var(--gold);
+  --chart-1: var(--gold);
+  --chart-2: var(--gold-l);
+  --chart-3: #b8bcc4;
+  --chart-4: #8a8f98;
+  --chart-5: #6b5b18;
+  --sidebar: #141414;
+  --sidebar-foreground: #f4f4f5;
+  --sidebar-primary: var(--gold);
+  --sidebar-primary-foreground: #0a0a0a;
+  --sidebar-accent: rgba(255, 255, 255, 0.06);
+  --sidebar-accent-foreground: var(--gold-light);
+  --sidebar-border: var(--card-border);
+  --sidebar-ring: var(--gold);
+}
+
+@theme inline {
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-silver: var(--silver);
+}
+
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #f4f4f5;
+  --card: var(--card-bg);
+  --card-foreground: #f4f4f5;
+  --popover: #141414;
+  --popover-foreground: #f4f4f5;
+  --primary: var(--gold);
+  --primary-foreground: #0a0a0a;
+  --secondary: rgba(255, 255, 255, 0.07);
+  --secondary-foreground: #f4f4f5;
+  --muted: rgba(255, 255, 255, 0.05);
+  --muted-foreground: var(--silver);
+  --accent: rgba(var(--gold-rgb), 0.12);
+  --accent-foreground: var(--gold-light);
+  --border: var(--card-border);
+  --input: rgba(255, 255, 255, 0.14);
+  --ring: var(--gold);
+  --sidebar: #141414;
+  --sidebar-foreground: #f4f4f5;
+  --sidebar-primary: var(--gold);
+  --sidebar-primary-foreground: #0a0a0a;
+  --sidebar-accent: rgba(255, 255, 255, 0.06);
+  --sidebar-accent-foreground: var(--gold-light);
+  --sidebar-border: var(--card-border);
+  --sidebar-ring: var(--gold);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    background-color: var(--black);
+  }
+
+  body {
+    color: var(--color-foreground);
+    background-color: var(--black);
+    background-image: radial-gradient(ellipse at 50% 0%, #1a1a1a 0%, #0a0a0a 70%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3 {
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* Sitewide 3D tilt card treatment */
+.tilt-card {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+  transition:
+    border-color 260ms ease,
+    box-shadow 260ms ease,
+    background-color 260ms ease;
+  will-change: transform;
+}
+.tilt-card:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+  box-shadow: none;
+  transform: none;
+}
+
+/* Small uppercase silver section labels */
+.section-label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  color: var(--silver-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tilt-card {
+    transform: none !important;
+    transition: none;
+  }
+}
+
+
+/* NXGEN wordmark: shine sweep + periodic fire flash (15s cycle) */
+@keyframes nxgen-shine {
+  0%, 100% { background-position: 200% center; }
+  50% { background-position: -200% center; }
+}
+@keyframes nxgen-fire {
+  0%, 86%, 100% {
+    text-shadow: none;
+    filter: none;
+  }
+  88% {
+    text-shadow: 0 0 4px #ffb347, 0 0 10px #ff6a00, 0 -2px 14px #ff2d00;
+  }
+  92% {
+    text-shadow: 0 -2px 6px #fff2a8, 0 -4px 16px #ffb347, 0 -8px 24px #ff4500, 0 -12px 32px #b30000;
+    filter: brightness(1.35);
+  }
+  96% {
+    text-shadow: 0 0 6px #ffcc66, 0 -2px 14px #ff6a00;
+  }
+}
+.nxgen-wordmark {
+  background: linear-gradient(
+    90deg,
+    var(--color-foreground) 0%,
+    var(--color-foreground) 35%,
+    #ffffff 50%,
+    var(--color-foreground) 65%,
+    var(--color-foreground) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: nxgen-shine 4s linear infinite, nxgen-fire 15s ease-in-out infinite;
+}
+
+/* Division logo backdrop */
+.division-logo-bg {
+  position: relative;
+  background:
+    radial-gradient(circle at 50% 40%, color-mix(in oklab, var(--color-foreground) 12%, transparent) 0%, transparent 60%),
+    repeating-linear-gradient(45deg, color-mix(in oklab, var(--color-foreground) 4%, transparent) 0 2px, transparent 2px 12px),
+    linear-gradient(135deg, var(--color-card) 0%, var(--color-background) 100%);
+  overflow: hidden;
+}
+.division-logo-bg::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, color-mix(in oklab, var(--color-background) 70%, transparent) 100%);
+  pointer-events: none;
+}
+.division-logo-bg::after {
+  content: "";
+  position: absolute; inset: -50%;
+  background: conic-gradient(from 0deg, transparent 0deg, color-mix(in oklab, var(--color-foreground) 10%, transparent) 40deg, transparent 80deg, transparent 360deg);
+  animation: division-spin 14s linear infinite;
+  pointer-events: none;
+}
+@keyframes division-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Scroll-driven section reveal (flat: opacity + slight rise) */
+.scene-3d > * {
+  transform: translateY(12px);
+  opacity: 0;
+  transition:
+    transform 500ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 500ms ease-out;
+  will-change: transform, opacity;
+}
+.scene-3d.scene-3d-in > * {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Scroll reveal: fade + slide up (division cards etc.) */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 600ms ease-out,
+    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal-up.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-3d > * {
+    transform: none;
+    opacity: 1;
+    transition: none;
+  }
+  .reveal-up {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+
+
+
+
+/* Setup Guide typing indicator */
+@keyframes guide-dot-pulse {
+  0%, 80%, 100% { opacity: 0.25; transform: scale(0.85); }
+  40% { opacity: 1; transform: scale(1); }
+}
+.guide-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--gold);
+  animation: guide-dot-pulse 1.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .guide-dot { animation: none; opacity: 0.7; }
+}
