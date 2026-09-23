@@ -8,7 +8,7 @@ over the venue WiFi.
     python highlight_cutter.py --cli match.mp4      command line (see --help)
     python highlight_cutter.py --selftest           quick logic check
 """
-import argparse, functools, http.server, json, os, queue, re, socket, subprocess, sys, tempfile, threading
+import argparse, functools, http.server, json, os, queue, re, socket, subprocess, sys, tempfile, threading, time
 from pathlib import Path
 
 import numpy as np
@@ -18,12 +18,12 @@ FFMPEG = imageio_ffmpeg.get_ffmpeg_exe()          # bundled ffmpeg, nothing to i
 NOWIN = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
 VIDEO_EXT = {".mp4", ".mov", ".mkv", ".avi", ".m4v"}
 RES = {"Original": None, "1080p": 1080, "720p": 720, "480p": 480}
-FMT = {"H.264": "libx264", "H.265": "libx265", "Camera copy": "copy"}
-FPS = {"Original": None, "30": 30, "60": 60}
-WATERMARKS = ("Playhouse logo", "Custom PNG", "None")
+FMT = {"MP4 · H.264 (plays everywhere)": "libx264", "MP4 · H.265 (smaller files)": "libx265",
+       "Same as camera (fastest, no re-encode)": "copy"}
+FPS = {"Original": None, "30 fps": 30, "60 fps": 60}
 CRF = {"High": 18, "Standard": 23, "Small file": 28}
 CHOICES = {"res": RES, "fmt": FMT, "fps": FPS, "quality": CRF}
-DEFAULTS = dict(fmt="H.264", res="720p", fps="Original", wm="Playhouse logo", quality="Standard", reel=True, clips=True, full=False, vertical=True, top=8,
+DEFAULTS = dict(fmt="MP4 · H.264 (plays everywhere)", res="720p", fps="Original", quality="Standard", reel=True, clips=True, full=False, vertical=True, top=8,
                 logo="", sensitivity=6, min_hits=3, gap=2.5, pre=1.8, post=1.2, motion=True, inset=5)
 
 
@@ -179,15 +179,13 @@ def full_game(src, dst, vs):
 
 
 # ---------------------------------------------------------------- the whole job
-def process(src, out_dir, opt, log=print, step=lambda frac, text: None):
+def process(src, out_dir, opt, log=print):
     src = Path(src)
     out = Path(out_dir) / f"{src.stem}-highlights"
     out.mkdir(parents=True, exist_ok=True)
     log(f"Reading {src.name} ...")
-    step(0.03, "Listening for paddle hits")
     dur = duration_of(src)
     hits = audio_hits(src, opt["sensitivity"])
-    step(0.2, "Tracking court motion")
     curve, fps = motion_curve(src, inset=opt["inset"] / 100) if (opt["motion"] or not hits) else (np.array([]), 5)
     if not hits and len(curve):
         hits = motion_peaks(curve, fps)
@@ -195,33 +193,28 @@ def process(src, out_dir, opt, log=print, step=lambda frac, text: None):
     active = make_active(curve, fps) if opt["motion"] and len(curve) else None
     segs = find_rallies(hits, dur, opt["gap"], opt["min_hits"], opt["pre"], opt["post"], active)
     log(f"{len(hits)} hits found, {len(segs)} rallies in {dur / 60:.1f} min of video.")
-    step(0.35, f"{len(segs)} rallies found")
     if not segs:
         raise RuntimeError('No rallies found. Raise the sensitivity or turn off "Require court motion".')
     vs, files = {"res": RES[opt["res"]], "crf": CRF[opt["quality"]], "fmt": FMT[opt["fmt"]], "fps": FPS[opt["fps"]]}, []
     if opt["reel"]:
         top = sorted(sorted(segs, key=lambda s: s[2] + 0.15 * (s[1] - s[0]), reverse=True)[:opt["top"]])
         log(f"Building the highlight reel from the top {len(top)} rallies ...")
-        step(0.4, "Building the highlight reel")
         build_reel(src, top, out / "highlight-reel.mp4", vs, opt["vertical"], opt["logo"] or None)
         files.append(out / "highlight-reel.mp4")
     if opt["clips"]:
         for k, (a, b, n) in enumerate(segs, 1):
             dst = out / f"rally-{k:02d}.mp4"
-            step(0.65 + 0.25 * (k - 1) / len(segs), f"Cutting rally {k} of {len(segs)}")
             cut_clip(src, a, b, dst, vs)
             files.append(dst)
         log(f"Saved {len(segs)} rally clips.")
     if opt["full"]:
         log("Saving the full game ...")
-        step(0.92, "Saving the full game")
         dst = out / f"full-game{src.suffix if vs['fmt'] == 'copy' else '.mp4'}"
         full_game(src, dst, vs)
         files.append(dst)
     (out / "rallies.json").write_text(json.dumps({"source": src.name, "duration_s": round(dur, 1),
         "rallies": [{"start_s": a, "end_s": b, "hits": n} for a, b, n in segs]}, indent=2))
     write_share_page(out, files)
-    step(1.0, f"Done · {len(files)} files")
     log(f"Done. Files are in {out}")
     return out, files, segs
 
@@ -276,37 +269,51 @@ def save_qr(url, path):
 
 
 # ---------------------------------------------------------------- desktop app
-BASE = Path(getattr(sys, "_MEIPASS", Path(__file__).parent))
-BRAND_PNG = BASE / "assets" / "playhouse-logo.png"
-QR_MODES = ("Venue WiFi", "Custom link")
-
 def run_app():
     import tkinter as tk
-    from tkinter import filedialog, messagebox
-    import customtkinter as ctk
-    from PIL import Image
+    from tkinter import ttk, filedialog, messagebox
+    from PIL import Image, ImageTk
 
-    BG, CARD, LINE, FIELD = "#0b0b0d", "#141418", "#26262d", "#1c1c22"
-    INK, MUTED, LIME, LIME2 = "#f3f4ee", "#9a9b93", "#dde01d", "#eef24a"
-    ctk.set_appearance_mode("dark")
-    root = ctk.CTk(fg_color=BG)
-    root.title("Highlight Studio · Playhouse Pickle")
-    root.geometry("1200x820")
-    root.minsize(1060, 700)
-    if (BASE / "icon.ico").exists():
-        root.iconbitmap(str(BASE / "icon.ico"))
-    F = lambda size, bold=False, fam="Segoe UI": ctk.CTkFont(family=fam, size=size, weight="bold" if bold else "normal")
-    H1, H2, TXT, SMALL = F(24, True, "Bahnschrift"), F(13, True, "Bahnschrift"), F(13), F(11)
+    BG, PANEL, INK, MUTED, LIME = "#0b0b0d", "#16161a", "#f3f4ee", "#9a9b93", "#dde01d"
+    root = tk.Tk()
+    root.title("Your Brand Highlight Cutter · Playhouse Pickle")
+    root.configure(bg=BG)
+    root.minsize(900, 640)
+    icon = Path(getattr(sys, "_MEIPASS", Path(__file__).parent)) / "icon.ico"
+    if icon.exists():
+        root.iconbitmap(str(icon))
+    st = ttk.Style(root)
+    st.theme_use("clam")
+    st.configure(".", background=BG, foreground=INK, fieldbackground=PANEL, font=("Segoe UI", 10))
+    st.configure("TLabelframe", background=BG, bordercolor="#2a2a2e")
+    st.configure("TLabelframe.Label", background=BG, foreground=LIME, font=("Segoe UI Semibold", 10))
+    st.configure("TButton", background=PANEL, foreground=INK, bordercolor="#2a2a2e", padding=6)
+    st.map("TButton", background=[("active", "#22222a")])
+    st.configure("Go.TButton", background=LIME, foreground="#0b0b0d", font=("Segoe UI Semibold", 11), padding=10)
+    st.map("Go.TButton", background=[("active", "#eef24a"), ("disabled", "#55561a")])
+    for w in ("TCheckbutton", "TRadiobutton"):
+        st.configure(w, background=BG, foreground=INK, indicatorbackground=PANEL, indicatorforeground=BG)
+        st.map(w, background=[("active", BG)], indicatorbackground=[("selected", LIME), ("active", "#22222a")])
+    st.configure("Muted.TLabel", foreground=MUTED)
+    st.configure("TCombobox", arrowcolor=INK, background=PANEL)
+    st.map("TCombobox", fieldbackground=[("readonly", PANEL)], foreground=[("readonly", INK)],
+           selectbackground=[("readonly", PANEL)], selectforeground=[("readonly", INK)])
+    st.configure("TSpinbox", arrowcolor=INK, background=PANEL)
+    st.configure("Horizontal.TProgressbar", troughcolor=PANEL, background=LIME, bordercolor=BG)
+    root.option_add("*TCombobox*Listbox.background", PANEL)
+    root.option_add("*TCombobox*Listbox.foreground", INK)
+    root.option_add("*TCombobox*Listbox.selectBackground", LIME)
+    root.option_add("*TCombobox*Listbox.selectForeground", BG)
 
-    # ---- state (restored from the last session; the watch switch itself always starts off)
-    v = {}
-    for k, d in {**DEFAULTS, "input": "", "out": str(Path.home() / "Videos" / "Highlight Studio"), "deliver_files": True,
-                 "deliver_qr": True, "qr_mode": QR_MODES[0], "qr_link": "", "watch": False, "watch_dir": ""}.items():
-        v[k] = (tk.BooleanVar if isinstance(d, bool) else tk.DoubleVar if isinstance(d, float)
-                else tk.IntVar if isinstance(d, int) else tk.StringVar)(value=d)
-    allowed = {**CHOICES, "qr_mode": QR_MODES, "wm": WATERMARKS}
-    for k, val in load_settings().items():
-        if k in v and k not in ("input", "watch") and (k not in allowed or val in allowed[k]):
+    v = {k: (tk.BooleanVar(value=d) if isinstance(d, bool) else tk.DoubleVar(value=d) if isinstance(d, float)
+             else tk.IntVar(value=d) if isinstance(d, int) else tk.StringVar(value=d)) for k, d in DEFAULTS.items()}
+    v["input"] = tk.StringVar()
+    v["out"] = tk.StringVar(value=str(Path.home() / "Videos" / "Your Brand Highlights"))
+    v["deliver_files"], v["deliver_qr"] = tk.BooleanVar(value=True), tk.BooleanVar(value=True)
+    v["qr_mode"], v["qr_link"] = tk.StringVar(value="wifi"), tk.StringVar()
+    v["watch"], v["watch_dir"] = tk.BooleanVar(value=False), tk.StringVar()
+    for k, val in load_settings().items():         # restore last session (the watch switch itself stays off)
+        if k in v and k not in ("input", "watch") and (k not in CHOICES or val in CHOICES[k]):
             try:
                 v[k].set(val)
             except tk.TclError:
@@ -315,223 +322,111 @@ def run_app():
     def remember():
         save_settings({k: var.get() for k, var in v.items() if k not in ("input", "watch")})
 
-    msgs, share, state = queue.Queue(), Share(), {"out": None, "busy": False, "seen": set(), "url": ""}
+    msgs, share, state = queue.Queue(), Share(), {"out": None, "busy": False, "seen": set()}
 
-    # ---- building blocks
-    def button(parent, text, cmd, primary=False, **kw):
-        return ctk.CTkButton(parent, text=text, command=cmd, corner_radius=12, font=H2 if primary else TXT,
-                             fg_color=LIME if primary else FIELD, hover_color=LIME2 if primary else LINE,
-                             text_color=BG if primary else INK, border_width=0 if primary else 1, border_color=LINE, **kw)
-
-    def card(title, sub):
-        c = ctk.CTkFrame(left, fg_color=CARD, corner_radius=18, border_width=1, border_color=LINE)
-        c.pack(fill="x", pady=(0, 14), padx=(0, 10))
-        h = ctk.CTkFrame(c, fg_color="transparent")
-        h.pack(fill="x", padx=22, pady=(16, 6))
-        ctk.CTkLabel(h, text=title.upper(), font=H2, text_color=LIME).pack(side="left")
-        ctk.CTkLabel(h, text=sub, font=SMALL, text_color=MUTED).pack(side="left", padx=12)
-        inner = ctk.CTkFrame(c, fg_color="transparent")
-        inner.pack(fill="x", padx=22, pady=(0, 18))
-        return inner
-
-    def line(parent, label):
-        r = ctk.CTkFrame(parent, fg_color="transparent")
-        r.pack(fill="x", pady=5)
-        ctk.CTkLabel(r, text=label, width=118, anchor="w", font=TXT, text_color=MUTED).pack(side="left")
-        return r
-
-    def path_row(parent, label, var, pick):
-        r = line(parent, label)
-        ctk.CTkEntry(r, textvariable=var, fg_color=FIELD, border_color=LINE, text_color=INK, height=38, corner_radius=12,
-                     font=TXT).pack(side="left", fill="x", expand=True)
-        button(r, "Browse", pick, width=92, height=38).pack(side="left", padx=(8, 0))
-        return r
-
-    def seg(parent, label, var, options, hints=None):
-        """Pill toggle group: the selected option is lime with dark text (CTkSegmentedButton can't do per-state text colour)."""
-        r = line(parent, label)
-        g = ctk.CTkFrame(r, fg_color=FIELD, corner_radius=14)
-        g.pack(side="left")
-        hint = ctk.CTkLabel(r, text="", font=SMALL, text_color=MUTED) if hints else None
-        if hint:
-            hint.pack(side="left", padx=14)
-        btns = {o: ctk.CTkButton(g, text=o, height=32, width=64, corner_radius=11, font=TXT, command=lambda o=o: var.set(o))
-                for o in options}
-        for b in btns.values():
-            b.pack(side="left", padx=3, pady=3)
-        def paint(*_):
-            for o, b in btns.items():
-                on = var.get() == o
-                b.configure(fg_color=LIME if on else FIELD, hover_color=LIME2 if on else LINE, text_color=BG if on else INK)
-            if hint:
-                hint.configure(text=hints.get(var.get(), ""))
-        var.trace_add("write", paint)
-        paint()
-        return r
-
-    def switch(parent, text, var, cmd=None):
-        s = ctk.CTkSwitch(parent, text=text, variable=var, onvalue=True, offvalue=False, command=cmd, font=TXT, text_color=INK,
-                          progress_color=LIME, fg_color=LINE, button_color="#ffffff", button_hover_color="#e8e8e8")
-        s.pack(side="left", padx=(0, 22), pady=4)
-        return s
-
-    def slider(parent, label, var, lo, hi, steps, fmt="{:.0f}"):
-        r = line(parent, label)
-        val = ctk.CTkLabel(r, text="", width=44, font=H2, text_color=INK)
-        ctk.CTkSlider(r, from_=lo, to=hi, number_of_steps=steps, variable=var, width=220, progress_color=LIME,
-                      button_color=LIME, button_hover_color=LIME2, fg_color=LINE).pack(side="left")
-        val.pack(side="left", padx=10)
-        show = lambda *_: val.configure(text=fmt.format(var.get()))
-        var.trace_add("write", show)
-        show()
-        return r
-
-    # ---- header: client logo, product name, status
-    top = ctk.CTkFrame(root, fg_color="transparent")
-    top.pack(fill="x", padx=26, pady=(20, 10))
-    if BRAND_PNG.exists():
-        logo = Image.open(BRAND_PNG)
-        ctk.CTkLabel(top, text="", image=ctk.CTkImage(logo, logo, size=(round(logo.width * 40 / logo.height), 40))).pack(side="left")
-        ctk.CTkFrame(top, width=1, height=40, fg_color=LINE).pack(side="left", padx=18)
-    tb = ctk.CTkFrame(top, fg_color="transparent")
-    tb.pack(side="left")
-    ctk.CTkLabel(tb, text="Highlight Studio", font=H1, text_color=INK, height=28).pack(anchor="w")
-    ctk.CTkLabel(tb, text="Powered by Your Brand  ·  full games and instant highlights", font=SMALL, text_color=MUTED, height=16).pack(anchor="w")
-    status = ctk.CTkLabel(top, text="●  Ready", font=H2, text_color=LIME, fg_color=FIELD, corner_radius=14, height=32, width=120)
-    status.pack(side="right")
-
-    body = ctk.CTkFrame(root, fg_color="transparent")
-    body.pack(fill="both", expand=True, padx=26, pady=(4, 22))
-    left = ctk.CTkScrollableFrame(body, fg_color="transparent", scrollbar_button_color=LINE, scrollbar_button_hover_color=MUTED)
+    main = ttk.Frame(root, padding=16)
+    main.pack(fill="both", expand=True)
+    left, right = ttk.Frame(main), ttk.Frame(main)
     left.pack(side="left", fill="both", expand=True)
-    right = ctk.CTkFrame(body, width=350, fg_color=CARD, corner_radius=20, border_width=1, border_color=LINE)
     right.pack(side="right", fill="y", padx=(16, 0))
-    right.pack_propagate(False)
+    tk.Label(left, text="Your Brand Highlight Cutter", bg=BG, fg=LIME, font=("Segoe UI Black", 18)).pack(anchor="w")
+    ttk.Label(left, text="Instant highlights and full game exports for Playhouse Pickle", style="Muted.TLabel").pack(anchor="w", pady=(0, 10))
 
-    # ---- 1 input
-    c = card("Input", "one match, or every new recording from the cameras")
-    path_row(c, "Match video", v["input"], lambda: v["input"].set(filedialog.askopenfilename(
+    def row(parent, label, var, browse=None, width=46):
+        f = ttk.Frame(parent)
+        f.pack(fill="x", pady=3)
+        ttk.Label(f, text=label, width=16).pack(side="left")
+        ttk.Entry(f, textvariable=var, width=width).pack(side="left", fill="x", expand=True)
+        if browse:
+            ttk.Button(f, text="Browse", command=browse).pack(side="left", padx=(6, 0))
+        return f
+
+    box = ttk.LabelFrame(left, text="1  Input video", padding=10)
+    box.pack(fill="x", pady=5)
+    row(box, "Match video", v["input"], lambda: v["input"].set(filedialog.askopenfilename(
         filetypes=[("Video", "*.mp4 *.mov *.mkv *.avi *.m4v"), ("All files", "*.*")]) or v["input"].get()))
-    path_row(c, "Watch folder", v["watch_dir"], lambda: v["watch_dir"].set(filedialog.askdirectory() or v["watch_dir"].get()))
-    r = line(c, "")
-    switch(r, "Auto-process new recordings in the watch folder", v["watch"], lambda: toggle_watch())
+    w = row(box, "Watch folder", v["watch_dir"], lambda: v["watch_dir"].set(filedialog.askdirectory() or v["watch_dir"].get()))
+    ttk.Checkbutton(box, text="Auto-process every new video that lands in the watch folder (camera recordings)",
+                    variable=v["watch"], command=lambda: toggle_watch()).pack(anchor="w", pady=(4, 0))
 
-    # ---- 2 video output
-    c = card("Video output", "format, size and smoothness")
-    seg(c, "Format", v["fmt"], list(FMT), {"H.264": "Plays on every phone and TV", "H.265": "About half the file size",
-                                           "Camera copy": "Instant, no re-encode (reel still encodes)"})
-    seg(c, "Resolution", v["res"], list(RES))
-    seg(c, "Frame rate", v["fps"], list(FPS))
-    seg(c, "Quality", v["quality"], list(CRF))
+    box = ttk.LabelFrame(left, text="2  Video output", padding=10)
+    box.pack(fill="x", pady=5)
+    for items in ([("Format", "fmt", 36), ("Frame rate", "fps", 10)], [("Resolution", "res", 36), ("Quality", "quality", 10)]):
+        f = ttk.Frame(box); f.pack(fill="x", pady=2)
+        for i, (label, key, width) in enumerate(items):
+            ttk.Label(f, text=label if i == 0 else "   " + label, width=16 if i == 0 else None).pack(side="left")
+            ttk.Combobox(f, textvariable=v[key], values=list(CHOICES[key]), state="readonly", width=width).pack(side="left", padx=(6 if i else 0, 0))
+    ttk.Label(box, text="Same as camera copies clips and the full game instantly; the reel is always re-encoded.",
+              style="Muted.TLabel").pack(anchor="w", pady=(4, 0))
 
-    # ---- 3 exports
-    c = card("Exports", "what the player takes home")
-    r = line(c, "Outputs")
-    switch(r, "Highlight reel", v["reel"])
-    switch(r, "Clip per rally", v["clips"])
-    switch(r, "Full game", v["full"])
-    orient = tk.StringVar(value="Vertical 9:16" if v["vertical"].get() else "Landscape 16:9")
-    orient.trace_add("write", lambda *_: v["vertical"].set(orient.get().startswith("Vertical")))
-    seg(c, "Reel shape", orient, ["Vertical 9:16", "Landscape 16:9"], {"Vertical 9:16": "Reels, TikTok, Stories", "Landscape 16:9": "YouTube, Facebook"})
-    slider(c, "Top rallies", v["top"], 1, 20, 19)
-    seg(c, "Watermark", v["wm"], list(WATERMARKS))
-    path_row(c, "Custom PNG", v["logo"], lambda: v["logo"].set(filedialog.askopenfilename(filetypes=[("PNG image", "*.png")]) or v["logo"].get()))
+    box = ttk.LabelFrame(left, text="3  What to export", padding=10)
+    box.pack(fill="x", pady=5)
+    f = ttk.Frame(box); f.pack(fill="x")
+    ttk.Checkbutton(f, text="Highlight reel", variable=v["reel"]).pack(side="left")
+    ttk.Radiobutton(f, text="Vertical 9:16 (Reels, TikTok)", variable=v["vertical"], value=True).pack(side="left", padx=(14, 0))
+    ttk.Radiobutton(f, text="Landscape 16:9", variable=v["vertical"], value=False).pack(side="left", padx=(8, 0))
+    ttk.Label(f, text="  Top rallies").pack(side="left")
+    ttk.Spinbox(f, from_=1, to=30, textvariable=v["top"], width=4).pack(side="left", padx=(6, 0))
+    f = ttk.Frame(box); f.pack(fill="x", pady=(6, 0))
+    ttk.Checkbutton(f, text="One clip per rally", variable=v["clips"]).pack(side="left")
+    ttk.Checkbutton(f, text="Full game copy", variable=v["full"]).pack(side="left", padx=(14, 0))
+    row(box, "Watermark (PNG)", v["logo"], lambda: v["logo"].set(filedialog.askopenfilename(
+        filetypes=[("PNG image", "*.png")]) or v["logo"].get()))
 
-    # ---- 4 delivery
-    c = card("Delivery", "regular files and a QR code to scan")
-    path_row(c, "Output folder", v["out"], lambda: v["out"].set(filedialog.askdirectory() or v["out"].get()))
-    r = line(c, "Deliver")
-    switch(r, "Regular files", v["deliver_files"])
-    switch(r, "QR code", v["deliver_qr"])
-    seg(c, "QR opens", v["qr_mode"], list(QR_MODES), {"Venue WiFi": "Phones on the venue WiFi download directly",
-                                                       "Custom link": "e.g. the player's portal page"})
-    r = line(c, "Custom link")
-    ctk.CTkEntry(r, textvariable=v["qr_link"], fg_color=FIELD, border_color=LINE, text_color=INK, height=38, corner_radius=12,
-                 font=TXT).pack(side="left", fill="x", expand=True)
+    box = ttk.LabelFrame(left, text="4  Delivery", padding=10)
+    box.pack(fill="x", pady=5)
+    ttk.Checkbutton(box, text="Regular files, saved to the output folder", variable=v["deliver_files"]).pack(anchor="w")
+    row(box, "Output folder", v["out"], lambda: v["out"].set(filedialog.askdirectory() or v["out"].get()))
+    f = ttk.Frame(box); f.pack(fill="x", pady=(6, 0))
+    ttk.Checkbutton(f, text="QR code:", variable=v["deliver_qr"]).pack(side="left")
+    ttk.Radiobutton(f, text="Download over venue WiFi", variable=v["qr_mode"], value="wifi").pack(side="left", padx=(8, 0))
+    ttk.Radiobutton(f, text="Custom link", variable=v["qr_mode"], value="link").pack(side="left", padx=(8, 0))
+    ttk.Entry(f, textvariable=v["qr_link"], width=28).pack(side="left", padx=(6, 0), fill="x", expand=True)
 
-    # ---- detection settings (popup keeps the main window short)
     def detection_window():
-        w = ctk.CTkToplevel(root, fg_color=BG)
-        w.title("Detection settings")
-        w.transient(root)
-        w.resizable(False, False)
-        c = ctk.CTkFrame(w, fg_color=CARD, corner_radius=18, border_width=1, border_color=LINE)
-        c.pack(padx=18, pady=18)
-        inner = ctk.CTkFrame(c, fg_color="transparent")
-        inner.pack(padx=22, pady=18)
-        ctk.CTkLabel(inner, text="RALLY DETECTION", font=H2, text_color=LIME).pack(anchor="w", pady=(0, 8))
-        slider(inner, "Sensitivity", v["sensitivity"], 1, 10, 9)
-        slider(inner, "Min hits", v["min_hits"], 2, 10, 8)
-        slider(inner, "Max gap (s)", v["gap"], 1, 6, 10, "{:.1f}")
-        slider(inner, "Pre-roll (s)", v["pre"], 0, 5, 10, "{:.1f}")
-        slider(inner, "Post-roll (s)", v["post"], 0, 5, 10, "{:.1f}")
-        slider(inner, "Ignore edges %", v["inset"], 0, 30, 6)
-        r = line(inner, "")
-        switch(r, "Require court motion (ignores the next court and music)", v["motion"])
-        button(inner, "Done", lambda: (remember(), w.destroy()), primary=True, height=40).pack(anchor="e", pady=(10, 0))
-        w.after(100, w.grab_set)
+        top = tk.Toplevel(root, bg=BG, padx=18, pady=16)
+        top.title("Detection settings")
+        top.transient(root)
+        top.resizable(False, False)
+        for i, (label, key, lo, hi, inc) in enumerate([("Sensitivity (1-10)", "sensitivity", 1, 10, 1), ("Min hits per rally", "min_hits", 2, 10, 1),
+                                                       ("Max gap between hits (s)", "gap", 1.0, 6.0, 0.5), ("Ignore frame edges (%)", "inset", 0, 30, 5),
+                                                       ("Pre-roll (s)", "pre", 0.0, 5.0, 0.5), ("Post-roll (s)", "post", 0.0, 5.0, 0.5)]):
+            ttk.Label(top, text=label).grid(row=i // 2, column=(i % 2) * 2, sticky="w", padx=(0 if i % 2 == 0 else 18, 8), pady=4)
+            ttk.Spinbox(top, from_=lo, to=hi, increment=inc, textvariable=v[key], width=5).grid(row=i // 2, column=(i % 2) * 2 + 1, sticky="w")
+        ttk.Checkbutton(top, text="Require court motion (ignores sound from the next court and music)",
+                        variable=v["motion"]).grid(row=3, column=0, columnspan=4, sticky="w", pady=(8, 0))
+        ttk.Button(top, text="Done", command=lambda: (remember(), top.destroy())).grid(row=4, column=3, sticky="e", pady=(12, 0))
+    ttk.Button(left, text="Detection settings…", command=detection_window).pack(anchor="w", pady=(4, 0))
 
-    # ---- right: export panel
-    ctk.CTkLabel(right, text="EXPORT", font=H2, text_color=LIME).pack(anchor="w", padx=22, pady=(20, 2))
-    summary = ctk.CTkLabel(right, text="", font=SMALL, text_color=MUTED, justify="left", wraplength=300, anchor="w")
-    summary.pack(fill="x", padx=22)
-    def summarize(*_):
-        outs = [n for n, k in (("reel", "reel"), ("rally clips", "clips"), ("full game", "full")) if v[k].get()]
-        try:
-            top_n = int(v["top"].get())
-        except (tk.TclError, ValueError):
-            top_n = 0
-        summary.configure(text=f"{v['fmt'].get()} · {v['res'].get()} · {v['fps'].get()} fps · {v['quality'].get()}\n"
-                               f"{', '.join(outs).capitalize() or 'Nothing selected'}"
-                               f"{f' · top {top_n} rallies' if v['reel'].get() else ''}")
-    for k in ("fmt", "res", "fps", "quality", "reel", "clips", "full", "top"):
-        v[k].trace_add("write", summarize)
-    summarize()
-    go = ctk.CTkButton(right, text="Make highlights", height=54, corner_radius=14, font=F(18, True, "Bahnschrift"),
-                       fg_color=LIME, hover_color=LIME2, text_color=BG, text_color_disabled="#55561a",
-                       command=lambda: start(v["input"].get()))
-    go.pack(fill="x", padx=22, pady=(16, 12))
-    bar = ctk.CTkProgressBar(right, height=8, corner_radius=4, progress_color=LIME, fg_color=FIELD)
-    bar.set(0)
-    bar.pack(fill="x", padx=22)
-    stage = ctk.CTkLabel(right, text="Ready when you are.", font=SMALL, text_color=MUTED, anchor="w")
-    stage.pack(fill="x", padx=22, pady=(4, 10))
-    qr_box = ctk.CTkLabel(right, text="Scan-to-download QR\nappears here", width=220, height=220, fg_color=FIELD,
-                          corner_radius=16, font=SMALL, text_color=MUTED)
-    qr_box.pack(pady=(4, 8))
-    url_lbl = ctk.CTkLabel(right, text="", font=SMALL, text_color=INK, wraplength=300)
-    url_lbl.pack(padx=22)
-    row = ctk.CTkFrame(right, fg_color="transparent")
-    row.pack(fill="x", padx=22, pady=(8, 0))
-    button(row, "Open folder", lambda: state["out"] and os.startfile(state["out"]), height=36).pack(side="left", fill="x", expand=True)
-    button(row, "Copy link", lambda: state["url"] and (root.clipboard_clear(), root.clipboard_append(state["url"]), log("Link copied.")),
-           height=36).pack(side="left", fill="x", expand=True, padx=(8, 0))
-    foot = ctk.CTkFrame(right, fg_color="transparent")
-    foot.pack(side="bottom", fill="x", padx=22, pady=(6, 18))
-    button(foot, "Detection settings", detection_window, height=34).pack(side="left", fill="x", expand=True)
+    go = ttk.Button(left, text="Make highlights", style="Go.TButton", command=lambda: start(v["input"].get()))
+    go.pack(fill="x", pady=(10, 4))
+    bar = ttk.Progressbar(left, mode="indeterminate")
+    bar.pack(fill="x")
+    logbox = tk.Text(left, height=5, bg=PANEL, fg=INK, relief="flat", font=("Consolas", 9), insertbackground=INK)
+    logbox.pack(fill="both", expand=True, pady=(8, 0))
+
+    ttk.Label(right, text="Scan to download", style="Muted.TLabel").pack(anchor="w")
+    qr_label = tk.Label(right, bg=PANEL, width=34, height=16, text="The QR code appears here\nafter export.", fg=MUTED)
+    qr_label.pack(pady=6)
+    url_var = tk.StringVar()
+    ttk.Entry(right, textvariable=url_var, width=40, state="readonly").pack(fill="x")
+    ttk.Button(right, text="Open output folder", command=lambda: state["out"] and os.startfile(state["out"])).pack(fill="x", pady=(10, 0))
+    ttk.Label(right, text="WiFi sharing stays on while this\nwindow is open. Phones must be on\nthe same network.", style="Muted.TLabel", justify="left").pack(anchor="w", pady=(10, 0))
+
     def reset():
         for k, d in DEFAULTS.items():
             v[k].set(d)
-        orient.set("Vertical 9:16" if DEFAULTS["vertical"] else "Landscape 16:9")
         remember()
         log("Settings reset to defaults.")
-    button(foot, "Reset", reset, height=34, width=80).pack(side="left", padx=(8, 0))
-    ctk.CTkLabel(right, text="Settings save automatically. WiFi sharing runs while this window is open.",
-                 font=SMALL, text_color=MUTED, wraplength=300, justify="left").pack(side="bottom", fill="x", padx=22)
-    logbox = ctk.CTkTextbox(right, height=90, fg_color=FIELD, text_color=MUTED, font=F(11, fam="Consolas"), corner_radius=12)
-    logbox.pack(side="bottom", fill="both", expand=True, padx=22, pady=(10, 8))
+    ttk.Button(right, text="Reset settings", command=reset).pack(fill="x", side="bottom")
+    ttk.Label(right, text="Settings are saved automatically.", style="Muted.TLabel").pack(anchor="w", side="bottom", pady=(0, 4))
 
-    # ---- behaviour
     def log(msg):
         msgs.put(("log", msg))
 
-    def set_status(text, color):
-        status.configure(text="●  " + text, text_color=color)
-
     def opts():
         o = {k: v[k].get() for k in DEFAULTS}
-        o["top"], o["min_hits"], o["sensitivity"], o["inset"] = int(o["top"]), int(o["min_hits"]), int(o["sensitivity"]), int(o["inset"])
-        o["logo"] = str(BRAND_PNG) if o["wm"] == "Playhouse logo" and BRAND_PNG.exists() else o["logo"] if o["wm"] == "Custom PNG" else ""
+        o["top"], o["min_hits"] = int(o["top"]), int(o["min_hits"])
         return o
 
     def start(path):
@@ -541,32 +436,34 @@ def run_app():
             messagebox.showwarning("Choose a video", "Pick a match video first.")
             return
         if not (v["reel"].get() or v["clips"].get() or v["full"].get()):
-            messagebox.showwarning("Nothing to export", "Turn on at least one output: reel, clips or full game.")
+            messagebox.showwarning("Nothing to export", "Tick at least one export: reel, clips or full game.")
             return
         remember()
         state["busy"] = True
-        go.configure(state="disabled", text="Working…")
-        set_status("Working", LIME2)
-        bar.set(0)
+        go.state(["disabled"])
+        bar.start(12)
         o, out_dir = opts(), v["out"].get()
         def work():
             try:
-                out, files, segs = process(path, out_dir, o, log, lambda f, t: msgs.put(("step", (f, t))))
+                out, files, segs = process(path, out_dir, o, log)
                 msgs.put(("done", out))
-            except Exception as e:                  # surface ffmpeg or detection errors
+            except Exception as e:                  # surface ffmpeg or detection errors in the log
                 msgs.put(("error", str(e)))
         threading.Thread(target=work, daemon=True).start()
 
     def finish(out):
         state["out"] = out
         if v["deliver_qr"].get():
-            url = v["qr_link"].get().strip() if v["qr_mode"].get() == "Custom link" else share.start(out)
+            url = v["qr_link"].get().strip() if v["qr_mode"].get() == "link" else share.start(out)
             if url:
                 png = save_qr(url, Path(out) / "share-qr.png")
-                qr_box.configure(image=ctk.CTkImage(Image.open(png), Image.open(png), size=(220, 220)), text="")
-                url_lbl.configure(text=url)
-                state["url"] = url
+                img = ImageTk.PhotoImage(Image.open(png).resize((260, 260), Image.NEAREST))
+                qr_label.configure(image=img, width=260, height=260, text="")
+                qr_label.image = img
+                url_var.set(url)
                 log(f"QR code ready: {url}")
+        if not v["deliver_files"].get():
+            log("Files are still kept in the output folder so the QR link can serve them.")
 
     def pump():
         while not msgs.empty():
@@ -574,21 +471,16 @@ def run_app():
             if kind == "log":
                 logbox.insert("end", data + "\n")
                 logbox.see("end")
-            elif kind == "step":
-                bar.set(data[0])
-                stage.configure(text=data[1])
             else:
                 state["busy"] = False
-                go.configure(state="normal", text="Make highlights")
+                go.state(["!disabled"])
+                bar.stop()
                 if kind == "done":
-                    set_status("Done", LIME)
                     finish(data)
                 else:
-                    set_status("Error", "#ff7a6b")
-                    stage.configure(text="Could not finish. See the log.")
                     logbox.insert("end", "Error: " + data + "\n")
                     messagebox.showerror("Could not finish", data)
-        root.after(120, pump)
+        root.after(150, pump)
 
     def toggle_watch():
         if v["watch"].get() and not Path(v["watch_dir"].get()).is_dir():
@@ -598,10 +490,7 @@ def run_app():
             folder = Path(v["watch_dir"].get())
             state["seen"] = {p for p in folder.iterdir() if p.suffix.lower() in VIDEO_EXT}
             log(f"Watching {folder} for new recordings ...")
-            set_status("Watching", LIME)
             watch_tick({})
-        else:
-            set_status("Ready", LIME)
 
     def watch_tick(sizes):
         if not v["watch"].get():
@@ -651,8 +540,7 @@ def main():
     ap.add_argument("--no-reel", action="store_true")
     ap.add_argument("--no-clips", action="store_true")
     ap.add_argument("--full", action="store_true")
-    ap.add_argument("--logo", default="", help="watermark PNG for the reel")
-    ap.add_argument("--brand", action="store_true", help="watermark the reel with the bundled Playhouse Pickle logo")
+    ap.add_argument("--logo", default="")
     ap.add_argument("--sensitivity", type=int, default=6)
     ap.add_argument("--qr", action="store_true", help="save share-qr.png for the venue WiFi link")
     a = ap.parse_args()
@@ -660,9 +548,9 @@ def main():
         return selftest()
     if not a.cli:
         return run_app()
-    fmt = {"h264": "H.264", "h265": "H.265", "copy": "Camera copy"}[a.format]
-    o = dict(DEFAULTS, fmt=fmt, fps=str(a.fps) if a.fps else "Original", res=a.res, quality=a.quality, vertical=not a.landscape, top=a.top, reel=not a.no_reel,
-             clips=not a.no_clips, full=a.full, logo=str(BRAND_PNG) if a.brand else a.logo, sensitivity=a.sensitivity)
+    fmt = next(k for k, c in FMT.items() if c == {"h264": "libx264", "h265": "libx265", "copy": "copy"}[a.format])
+    o = dict(DEFAULTS, fmt=fmt, fps=f"{a.fps} fps" if a.fps else "Original", res=a.res, quality=a.quality, vertical=not a.landscape, top=a.top, reel=not a.no_reel,
+             clips=not a.no_clips, full=a.full, logo=a.logo, sensitivity=a.sensitivity)
     out, files, segs = process(a.cli, a.out, o)
     if a.qr:
         print("QR saved:", save_qr(f"http://{lan_ip()}:8800/", out / "share-qr.png"))

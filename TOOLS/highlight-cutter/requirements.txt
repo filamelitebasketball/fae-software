@@ -2,3 +2,4 @@ numpy
 pillow
 imageio-ffmpeg
 qrcode
+customtkinter
