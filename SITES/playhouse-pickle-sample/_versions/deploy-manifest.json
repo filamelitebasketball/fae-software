@@ -1,0 +1,50 @@
+{
+ "index.html": {
+  "sha": "1eb9ca8b74272c566a4b9ddeb84768bca5e3644b",
+  "size": 23124
+ },
+ "app.css": {
+  "sha": "6d3607533e2264906a49f6b7c908a315e92275f5",
+  "size": 9664
+ },
+ "app.js": {
+  "sha": "817d423764f1974c650e58ba645ad8df50aafb96",
+  "size": 15306
+ },
+ "admin.js": {
+  "sha": "e2d8c6f1075855801557defdf9c80a69623263d7",
+  "size": 29815
+ },
+ "img/brand.webp": {
+  "sha": "046d8332bdd5f7f65ef824023f6dd53fb2a4823c",
+  "size": 19100
+ },
+ "img/p-mark.svg": {
+  "sha": "b22793a1ed19cdc85ad2ce969b8d03a5faf814d0",
+  "size": 18278
+ },
+ "img/keng.webp": {
+  "sha": "c8d9632bcbf58ba25f34458bea64e9d5285c287f",
+  "size": 3514
+ },
+ "img/pat.webp": {
+  "sha": "0744b8954e58c98691bf374b603e0777a93252e7",
+  "size": 6824
+ },
+ "img/junnie.webp": {
+  "sha": "dbea30c1e03517f240c9706590fb4824fafb2220",
+  "size": 5030
+ },
+ "img/dudut.webp": {
+  "sha": "0c02430ef92c78e1b3151d6439335204935ba57b",
+  "size": 9190
+ },
+ "img/teampayaman.webp": {
+  "sha": "e28d0bb8dfc3d8218ceb1a90f70d253bd4df5d3b",
+  "size": 12350
+ },
+ "img/viyline.webp": {
+  "sha": "2bce95cf82d7c290c1ee7d62f7fd409e591df232",
+  "size": 11338
+ }
+}

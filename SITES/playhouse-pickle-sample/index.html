@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playhouse Pickle · Your pickleball playground</title>
+<meta name="description" content="Playhouse Pickle: three covered indoor pickleball courts in Molino, Bacoor, Cavite. Book a court, record every match with PickleCam, and take home instant highlights.">
+<meta property="og:title" content="Playhouse Pickle · Your pickleball playground">
+<meta property="og:description" content="Three covered indoor courts in Bacoor, Cavite. Full game coverage and instant AI highlights on every court.">
+<link rel="icon" href="img/p-mark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=Geist:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{colors:{ink:'#050506',panel:'#101013',panel2:'#17171b',lime:'#DDE01D',lime2:'#EEF24A',gold:'#FACC15',muted:'#9A9BA2'}}}}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body class="min-h-screen overflow-x-hidden">
+<div class="noise" aria-hidden="true"></div>
+
+<!-- Floating nav -->
+<header class="fixed top-3 inset-x-0 z-50 px-3">
+  <nav class="glass max-w-6xl mx-auto rounded-2xl pl-4 pr-2 py-2 flex items-center justify-between gap-3" aria-label="Main">
+    <button onclick="go('home')" aria-label="Playhouse Pickle home" class="shrink-0"><img src="img/brand.svg" alt="Playhouse Pickle" class="h-9 md:h-10 w-auto"></button>
+    <div class="hidden md:flex gap-6 text-sm font-semibold text-slate-300">
+      <a class="cursor-pointer hover:text-lime" onclick="go('home','courts')">Book</a>
+      <a class="cursor-pointer hover:text-lime" onclick="go('home','picklecam')">PickleCam</a>
+      <a class="cursor-pointer hover:text-lime" onclick="go('home','owners')">Owners</a>
+      <a class="cursor-pointer hover:text-lime" onclick="go('wifi')">WiFi</a>
+    </div>
+    <div class="flex items-center gap-1.5">
+      <button onclick="openAdmin()" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-lime px-3 py-2"><i class="fa-solid fa-lock text-[10px]"></i>Owner</button>
+      <button id="loginBtn" onclick="openDlg('dlgAuth')" class="btn btn-ghost !py-2 !px-4 text-sm">Log in</button>
+      <button id="portalBtn" onclick="go('portal')" class="btn btn-lime !py-2 !px-4 text-sm hide">My Playhouse</button>
+    </div>
+  </nav>
+</header>
+
+<main id="main" class="w-full max-w-full">
+
+<!-- ================= HOME ================= -->
+<section id="screen-home">
+
+  <!-- Hero: layered planes, the P serves a ball into the CTA -->
+  <div class="hero" id="hero">
+    <div class="stage">
+      <svg class="plane plane-court" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <g fill="none" stroke="#DDE01D" stroke-opacity=".22" stroke-width="2">
+          <path d="M160 900 L620 360 L980 360 L1440 900"/><path d="M400 900 L740 360 M1200 900 L860 360"/>
+          <path d="M290 750 L1310 750 M470 540 L1130 540"/><path d="M800 360 L800 900" stroke-dasharray="10 14"/>
+        </g>
+      </svg>
+      <div class="plane plane-glow" aria-hidden="true"></div>
+      <img class="plane plane-p" id="heroP" src="img/p-mark.svg" alt="" aria-hidden="true">
+      <div class="scrim" aria-hidden="true"></div>
+      <div class="plane plane-net" aria-hidden="true"></div>
+      <div class="ball" id="heroBall" aria-hidden="true"></div>
+      <div class="hero-copy">
+        <p class="hero-in text-lime font-semibold text-sm tracking-wide mb-5">Molino, Bacoor · Open play every day from 5PM</p>
+        <h1 class="hero-in display max-w-4xl">Your pickleball playground.</h1>
+        <p class="hero-in text-lg md:text-xl text-slate-300 max-w-xl mt-6">Three covered indoor courts by Team Payaman. Book a slot, play your game, and walk out with the full match and your instant highlights.</p>
+        <div class="hero-in flex flex-wrap gap-3 mt-9">
+          <button id="heroCta" onclick="go('home','courts')" class="btn btn-lime text-lg"><i class="fa-solid fa-calendar-check"></i>Book a court</button>
+          <button onclick="go('home','picklecam')" class="btn btn-ghost text-lg"><i class="fa-solid fa-circle-play"></i>How PickleCam works</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Booking: a working surface -->
+  <section id="courts" class="py-24 md:py-32 px-5">
+    <div class="max-w-6xl mx-auto grid lg:grid-cols-5 gap-10 items-start">
+      <div class="lg:col-span-2 reveal">
+        <h2 class="display text-4xl md:text-5xl">Reserve a court.</h2>
+        <p class="text-slate-300 mt-5 max-w-md">Pick a day, a court, and an hour. Every court has an overhead PickleCam, so your booking comes with a recording ready when you are.</p>
+        <dl class="mt-8 grid grid-cols-2 gap-3 max-w-md">
+          <div class="card p-4"><dt class="text-xs text-muted">Court rental</dt><dd class="font-bold text-xl mt-1 num">₱300 <span class="text-sm font-normal text-muted">/ hour</span></dd></div>
+          <div class="card p-4"><dt class="text-xs text-muted">Open play</dt><dd class="font-bold text-xl mt-1 num">₱250 <span class="text-sm font-normal text-muted">/ person</span></dd></div>
+          <div class="card p-4 col-span-2"><dt class="text-xs text-muted">Open play blocks</dt><dd class="font-semibold mt-1">1PM to 5PM · 5PM to 9PM</dd></div>
+        </dl>
+      </div>
+      <div class="lg:col-span-3 card p-5 md:p-7 reveal" id="booker">
+        <div class="flex flex-wrap gap-2" id="dayChips" role="group" aria-label="Day"></div>
+        <div class="flex gap-2 mt-4" id="courtChips" role="group" aria-label="Court"></div>
+        <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-5" id="slotGrid"></div>
+        <div class="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-5">
+          <p id="bookSummary" class="text-sm text-slate-300">Choose an open hour.</p>
+          <button id="bookBtn" onclick="startBooking()" class="btn btn-lime" disabled style="opacity:.45"><i class="fa-solid fa-bolt"></i>Continue</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PickleCam: pinned heading, content scrolls past it -->
+  <section id="picklecam" class="py-24 md:py-32 px-5 border-y border-white/5 bg-black/30">
+    <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12">
+      <div>
+        <div class="sticky-head">
+          <p class="text-lime font-semibold text-sm">PickleCam on every court</p>
+          <h2 class="display text-4xl md:text-6xl mt-3">Every rally, on the record.</h2>
+          <p class="text-slate-300 mt-5 max-w-md">Tap start on the courtside tablet. Tap stop when you are done. The cloud does the rest.</p>
+          <div class="flex flex-wrap gap-3 mt-8">
+            <button onclick="openDlg('dlgGuest')" class="btn btn-ghost"><i class="fa-solid fa-envelope-open-text"></i>Get my video</button>
+            <button onclick="openDlg('dlgAuth')" class="btn btn-lime"><i class="fa-solid fa-user-plus"></i>Save matches free</button>
+          </div>
+        </div>
+      </div>
+      <div class="space-y-5">
+        <article class="card p-7 lift reveal">
+          <i class="fa-solid fa-film text-lime text-2xl"></i>
+          <h3 class="font-bold text-2xl mt-4">Full game coverage</h3>
+          <p class="text-slate-300 mt-2">The overhead camera records the whole match, up to 120 minutes, in 1080p. Your secure link stays live for 30 days.</p>
+        </article>
+        <article class="card p-7 lift reveal" style="border-color:rgba(221,224,29,.3)">
+          <i class="fa-solid fa-wand-magic-sparkles text-lime text-2xl"></i>
+          <h3 class="font-bold text-2xl mt-4">Instant highlights</h3>
+          <p class="text-slate-300 mt-2">The moment you tap stop, AI trims the dead time and cuts your best rallies into a share-ready reel with the Playhouse Pickle watermark.</p>
+        </article>
+        <article class="card p-7 reveal">
+          <ol class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+            <li><span class="text-lime font-bold num">1</span> Walk up. No app needed.</li>
+            <li><span class="text-lime font-bold num">2</span> Tap start on the iPad.</li>
+            <li><span class="text-lime font-bold num">3</span> Play up to 120 minutes.</li>
+            <li><span class="text-lime font-bold num">4</span> Tap stop.</li>
+            <li><span class="text-lime font-bold num">5</span> Enter your email.</li>
+            <li><span class="text-lime font-bold num">6</span> Full game plus highlights arrive.</li>
+          </ol>
+        </article>
+        <article class="card p-7 reveal">
+          <h3 class="font-bold text-xl">Account holders keep everything</h3>
+          <p class="text-slate-300 mt-2">Guests get a 30-day link. Members keep every match in one place, unlock the ones they love, and never retype an email at the kiosk.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Owners -->
+  <section id="owners" class="py-24 md:py-32 px-5">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-wrap items-end justify-between gap-6 mb-12 reveal">
+        <h2 class="display text-4xl md:text-5xl max-w-xl">Built by players, for players.</h2>
+        <p class="text-slate-300 max-w-sm">Co-owned by four members of Team Payaman who play here every week.</p>
+      </div>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-5" id="ownerGrid"></div>
+    </div>
+  </section>
+
+  <!-- Hashtags -->
+  <div class="marquee" aria-label="Find us on social">
+    <div class="marquee-track display text-3xl md:text-5xl text-white/80" id="mq"></div>
+  </div>
+
+  <!-- Partners -->
+  <section class="py-20 px-5">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-sm font-semibold text-muted mb-8 reveal">Partners and family</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 reveal">
+        <a class="partner card p-6 grid place-items-center min-h-[120px]" href="https://www.youtube.com/results?search_query=team+payaman" target="_blank" rel="noopener"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Team_Payaman_logo.png/250px-Team_Payaman_logo.png" referrerpolicy="no-referrer" alt="Team Payaman"></a>
+        <a class="partner card p-6 grid place-items-center min-h-[120px]" href="https://mediagroup.viyline.net/" target="_blank" rel="noopener"><img src="https://mediagroup.viyline.net/wp-content/uploads/2022/03/VMG-logo_white-landscape.png" referrerpolicy="no-referrer" alt="ViyLine Media Group"></a>
+        <a class="partner card p-6 grid place-items-center min-h-[120px] text-center" href="https://tol.com.ph/" target="_blank" rel="noopener"><span class="display text-2xl">TOL<span class="block text-xs font-semibold tracking-widest text-muted mt-1" style="font-stretch:100%">TOURNAMENTS</span></span></a>
+        <button onclick="toast('Sponsorship deck coming soon. Message us on Facebook.')" class="card p-6 grid place-items-center min-h-[120px] border-dashed text-center hover:border-lime"><span><i class="fa-solid fa-plus text-lime"></i><span class="block font-semibold mt-2">Your brand here</span><span class="block text-xs text-muted">2027 tournament sponsors</span></span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Close -->
+  <section class="px-5 pb-24">
+    <div class="max-w-6xl mx-auto card p-8 md:p-14 relative overflow-hidden reveal" style="background:linear-gradient(135deg,#15150c,#0c0c0e 55%)">
+      <img src="img/p-mark.svg" alt="" aria-hidden="true" class="absolute -right-10 -bottom-16 h-[340px] opacity-20">
+      <h2 class="display text-4xl md:text-6xl max-w-3xl relative">See you on court.</h2>
+      <p class="text-slate-300 mt-5 max-w-lg relative">Funnside Ningnangan, Bacoor Blvd., Molino, Bacoor, Cavite. Book online, or walk in for open play.</p>
+      <div class="flex flex-wrap gap-3 mt-8 relative">
+        <button onclick="go('home','courts')" class="btn btn-lime text-lg"><i class="fa-solid fa-calendar-check"></i>Book a court</button>
+        <a class="btn btn-ghost" href="https://maps.google.com/?q=Playhouse+Pickle+Funnside+Ningnangan+Bacoor+Cavite" target="_blank" rel="noopener"><i class="fa-solid fa-location-dot"></i>Directions</a>
+        <a class="btn btn-ghost" href="https://www.facebook.com/playhousepickle" target="_blank" rel="noopener"><i class="fa-brands fa-facebook"></i>Facebook</a>
+        <a class="btn btn-ghost" href="https://www.instagram.com/playhousepickleco/" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i>@playhousepickleco</a>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- ================= PLAYER PORTAL ================= -->
+<section id="screen-portal" class="hide max-w-6xl mx-auto w-full px-5 pt-28 pb-16">
+  <div class="grid lg:grid-cols-3 gap-5">
+    <div class="member-card lg:col-span-1">
+      <img src="img/p-mark.svg" alt="" class="pm" aria-hidden="true">
+      <p class="text-xs text-lime font-semibold">Playhouse member</p>
+      <p class="display text-3xl mt-2" id="pName">Player</p>
+      <p class="text-sm text-slate-400 mt-1" id="pEmail">player@email.com</p>
+      <div class="mt-8 flex gap-6 text-sm relative"><div><p class="text-muted text-xs">Tier</p><p class="font-bold text-gold">Premium</p></div><div><p class="text-muted text-xs">Player ID</p><p class="font-bold num">PH-0142</p></div><div><p class="text-muted text-xs">Renews</p><p class="font-bold num">Jan 14, 2027</p></div></div>
+    </div>
+    <div class="lg:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="card p-5"><p class="display text-3xl text-lime num">28</p><p class="text-xs text-muted mt-2">Games played</p></div>
+      <div class="card p-5"><p class="display text-3xl text-lime num">41h</p><p class="text-xs text-muted mt-2">Court time</p></div>
+      <div class="card p-5"><p class="display text-3xl text-lime num" id="pClips">0</p><p class="text-xs text-muted mt-2">Highlight clips</p></div>
+      <div class="card p-5"><p class="display text-3xl text-gold num" id="pExpiring">0</p><p class="text-xs text-muted mt-2">Expiring soon</p></div>
+      <div class="card p-5 col-span-2 md:col-span-4 flex flex-wrap items-center justify-between gap-4">
+        <div><p class="text-xs text-muted">Next on court</p><p class="font-bold text-lg">Court 1 · Thu, 8:00 AM to 9:00 AM</p></div>
+        <div class="flex gap-2"><button class="btn btn-ghost !py-2 text-sm" onclick="showQR('Check-in pass','Show this at the front desk','PLAYHOUSE-CHECKIN-PH0142')"><i class="fa-solid fa-qrcode"></i>Check-in pass</button><button class="btn btn-lime !py-2 text-sm" onclick="go('home','courts')"><i class="fa-solid fa-plus"></i>Book again</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex gap-1 mt-10 border-b border-white/10 overflow-x-auto" role="tablist">
+    <button class="tab" role="tab" data-ptab="matches" aria-selected="true" onclick="pTab('matches')">My matches</button>
+    <button class="tab" role="tab" data-ptab="bookings" aria-selected="false" onclick="pTab('bookings')">Bookings</button>
+    <button class="tab" role="tab" data-ptab="wifi" aria-selected="false" onclick="pTab('wifi')">WiFi</button>
+    <button class="tab" role="tab" data-ptab="profile" aria-selected="false" onclick="pTab('profile')">Profile</button>
+  </div>
+  <div id="ptab-matches" class="pt-6">
+    <p class="text-sm text-slate-300 mb-5"><span class="text-gold font-semibold">Grace period:</span> every match stays in the cloud for 30 days. Unlock the ones you love to keep them forever, now or any time before the timer runs out.</p>
+    <div id="matchList" class="grid md:grid-cols-2 gap-5"></div>
+  </div>
+  <div id="ptab-bookings" class="pt-6 hide"><div id="myBookings" class="space-y-3"></div></div>
+  <div id="ptab-wifi" class="pt-6 hide"><div id="wifiPortal" class="grid md:grid-cols-3 gap-4"></div></div>
+  <div id="ptab-profile" class="pt-6 hide">
+    <div class="card p-6 max-w-2xl space-y-5">
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div><label for="fName">Name</label><input id="fName"></div>
+        <div><label for="fPhone">Mobile</label><input id="fPhone" placeholder="09XX XXX XXXX"></div>
+        <div><label for="fLevel">Skill level</label><select id="fLevel"><option>Beginner</option><option selected>Intermediate</option><option>Advanced</option><option>DUPR rated</option></select></div>
+        <div><label for="fCourt">Home court</label><select id="fCourt"><option>Court 1</option><option>Court 2</option><option>Court 3</option></select></div>
+      </div>
+      <div class="flex items-center justify-between gap-4 border-t border-white/10 pt-5">
+        <div><p class="font-semibold text-sm">Match updates and offers</p><p class="text-xs text-muted">New footage, open play nights, member deals.</p></div>
+        <button id="mkt" role="switch" aria-checked="true" aria-label="Marketing emails" onclick="toggleSwitch(this)" class="relative w-12 h-7 rounded-full bg-lime shrink-0"><span class="absolute top-1 left-1 w-5 h-5 rounded-full bg-white transition-transform" style="transform:translateX(20px)"></span></button>
+      </div>
+      <div class="flex justify-between items-center"><button class="text-sm text-muted hover:text-red-300" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket mr-1"></i>Log out</button><button class="btn btn-lime !py-2" onclick="toast('Profile saved')">Save</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WIFI ================= -->
+<section id="screen-wifi" class="hide max-w-5xl mx-auto w-full px-5 pt-32 pb-16">
+  <h1 class="display text-4xl md:text-5xl">Venue WiFi.</h1>
+  <p class="text-slate-300 mt-3">Pay with GCash or Maya and get a voucher QR instantly.</p>
+  <div id="wifiPublic" class="grid md:grid-cols-3 gap-4 mt-8"></div>
+</section>
+
+<!-- ================= OWNER CONSOLE ================= -->
+<section id="screen-admin" class="hide max-w-7xl mx-auto w-full px-4 md:px-6 pt-24 pb-16"></section>
+
+</main>
+
+<footer class="border-t border-white/5 py-10 px-5 text-center text-xs text-muted">
+  <img src="img/brand.svg" alt="Playhouse Pickle" class="h-8 w-auto mx-auto mb-4 opacity-90">
+  <p>Funnside Ningnangan, Bacoor Blvd., Molino, Bacoor, Cavite · 0966 875 2617</p>
+  <p class="mt-2">Demo preview by F.A.E. Accounts, bookings and payments are simulated. · <button onclick="openAdmin()" class="underline hover:text-lime">Owner login</button></p>
+</footer>
+
+<!-- ============ DIALOGS ============ -->
+<dialog id="dlgAuth"><form method="dialog" class="p-6 space-y-4 relative">
+  <button class="x" aria-label="Close">&times;</button>
+  <div class="text-center"><img src="img/brand.svg" alt="" class="h-9 mx-auto"><h2 class="font-bold text-xl mt-4">Save every match</h2><p class="text-sm text-muted">Free account. Member rates. No retyping at the kiosk.</p></div>
+  <button type="button" onclick="login('Google')" class="w-full bg-white text-slate-900 font-bold py-3 rounded-xl flex items-center justify-center gap-2"><i class="fa-brands fa-google"></i>Continue with Google</button>
+  <div class="flex items-center gap-3 text-xs text-muted"><span class="flex-1 h-px bg-white/10"></span>or email<span class="flex-1 h-px bg-white/10"></span></div>
+  <input id="aName" placeholder="Your name" autocomplete="name"><input id="aEmail" type="email" placeholder="you@email.com" autocomplete="email">
+  <p id="aErr" class="hide text-sm text-red-300">Enter a valid email address.</p>
+  <button type="button" onclick="login('email')" class="btn btn-lime w-full justify-center">Create account or log in</button>
+  <p class="text-[11px] text-muted text-center">Demo only. No real account is created.</p>
+</form></dialog>
+
+<dialog id="dlgOwner"><form method="dialog" class="p-6 space-y-4 relative">
+  <button class="x" aria-label="Close">&times;</button>
+  <div class="text-center"><div class="w-12 h-12 rounded-2xl mx-auto grid place-items-center bg-lime/15 text-lime text-xl"><i class="fa-solid fa-shield-halved"></i></div><h2 class="font-bold text-xl mt-3">Owner console</h2><p class="text-sm text-muted">Staff and owners only.</p></div>
+  <div><label for="oUser">Email or username</label><input id="oUser" value="jhoopin3@gmail.com" autocomplete="username"></div>
+  <div><label for="oPass">Password</label><input id="oPass" type="password" autocomplete="current-password"></div>
+  <p id="oErr" class="hide text-sm text-red-300">That account does not have owner access.</p>
+  <button type="button" onclick="ownerLogin()" class="btn btn-lime w-full justify-center">Enter console</button>
+  <p class="text-[11px] text-muted text-center">Demo access: owner login is jhoopin3@gmail.com, any password.</p>
+</form></dialog>
+
+<dialog id="dlgGuest"><form method="dialog" class="p-6 space-y-4 relative">
+  <button class="x" aria-label="Close">&times;</button>
+  <h2 class="font-bold text-xl">Get your match video</h2>
+  <p class="text-sm text-muted">Use the email you entered at the court. Your full game and highlights link is valid for 30 days.</p>
+  <input id="gEmail" type="email" placeholder="you@email.com">
+  <p id="gErr" class="hide text-sm text-red-300">Enter a valid email address.</p>
+  <button type="button" onclick="guestSend()" class="btn btn-lime w-full justify-center">Send my links</button>
+  <p class="text-xs text-slate-300 card p-3"><span class="text-gold font-semibold">Tip:</span> a free account keeps matches past 30 days.</p>
+</form></dialog>
+
+<dialog id="dlgPay"><form method="dialog" class="p-6 space-y-4 relative">
+  <button class="x" aria-label="Close">&times;</button>
+  <h2 class="font-bold text-xl" id="payTitle">Confirm</h2>
+  <p class="text-sm text-muted" id="payDesc"></p>
+  <div class="card p-4 flex justify-between items-center"><span class="text-sm">Total</span><span class="display text-2xl text-lime num" id="payAmt">₱0</span></div>
+  <div class="grid grid-cols-2 gap-3"><button type="button" onclick="pay('GCash')" class="py-3 rounded-xl font-bold bg-blue-600 hover:bg-blue-500">GCash</button><button type="button" onclick="pay('Maya')" class="py-3 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-500">Maya</button></div>
+</form></dialog>
+
+<dialog id="dlgQR"><form method="dialog" class="p-6 space-y-3 relative text-center">
+  <button class="x" aria-label="Close">&times;</button>
+  <h2 class="font-bold text-lg" id="qrTitle"></h2><p class="text-xs text-muted" id="qrSub"></p>
+  <div class="bg-white rounded-xl p-3 inline-block"><img id="qrImg" width="200" height="200" alt="QR code"></div>
+  <p class="text-[11px] text-muted">Demo QR.</p>
+</form></dialog>
+
+<dialog id="dlgDrawer" class="drawer"><div class="p-6 h-full overflow-y-auto relative" id="drawerBody"></div></dialog>
+
+<div id="toast" class="toast hide" role="status" aria-live="polite"></div>
+
+<script src="app.js" defer></script>
+<script src="admin.js" defer></script>
+</body>
+</html>

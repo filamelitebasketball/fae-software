@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    { "source": "/img/brand.svg", "destination": "https://playhouse-pickle-assets.vercel.app/img/brand.svg" },
+    { "source": "/img/p-mark.svg", "destination": "https://playhouse-pickle-mark.vercel.app/img/p-mark.svg" },
+    { "source": "/admin.js", "destination": "https://playhouse-pickle-console.vercel.app/admin.js" },
+    { "source": "/app.js", "destination": "https://playhouse-pickle-app.vercel.app/app.js" },
+    { "source": "/app.css", "destination": "https://playhouse-pickle-app.vercel.app/app.css" }
+  ]
+}

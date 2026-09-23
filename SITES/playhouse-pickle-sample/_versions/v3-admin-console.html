@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playhouse Pickle — Your Pickleball Playground in Bacoor</title>
+<meta name="description" content="Playhouse Pickle — premier indoor pickleball courts in Bacoor, Cavite. Book a court, record every match, and keep your highlights.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  colors: { lime1:'#84CC16', lime2:'#A3E635', gold:'#FACC15', ink:'#0a0a0c', panel:'#121218', panel2:'#16161d', card:'#16161d', navy:'#0a0a0c', navy2:'#121218' },
+  fontFamily: { sans:['Outfit','system-ui','-apple-system','sans-serif'] }
+}}}
+</script>
+<style>
+  html{scroll-behavior:smooth}
+  body{
+    color:#F4F5F7; font-family:'Outfit',system-ui,-apple-system,sans-serif; -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1200px 620px at 12% -12%, rgba(132,204,22,.12), transparent 60%),
+      radial-gradient(1000px 560px at 108% 6%, rgba(250,204,21,.07), transparent 55%),
+      linear-gradient(180deg,#000 0%,#08080b 42%,#0b0b11 100%);
+    background-attachment:fixed;
+  }
+  h1,h2,h3{letter-spacing:-.025em}
+  .glow{box-shadow:0 0 26px rgba(132,204,22,.28)}
+  .hide{display:none!important}
+  .num{font-variant-numeric:tabular-nums}
+  *{-webkit-tap-highlight-color:transparent}
+  button{transition:transform .15s ease,background-color .2s ease,box-shadow .2s ease,border-color .2s ease,color .2s ease}
+  button:active{transform:scale(.97)}
+  button:focus-visible,a:focus-visible{outline:2px solid #A3E635;outline-offset:2px}
+  .lift{transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
+  .lift:hover{transform:translateY(-5px);border-color:rgba(132,204,22,.4);box-shadow:0 16px 40px -16px rgba(132,204,22,.28)}
+  .glass{background:rgba(18,18,24,.6);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.06)}
+  .noise{position:fixed;inset:0;z-index:30;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:#2a2a33;border-radius:8px}
+</style>
+</head>
+<body class="min-h-screen flex flex-col overflow-x-hidden">
+<div class="noise" aria-hidden="true"></div>
+
+<!-- Demo ribbon -->
+<div class="relative z-40 bg-gold text-ink text-center text-[11px] font-bold py-1.5 px-4">
+  DEMO PREVIEW — built by F.A.E. for Playhouse Pickle · all payments &amp; data are simulated
+</div>
+
+<!-- Header -->
+<header class="sticky top-0 z-40 glass border-b border-white/5 px-5 py-3">
+  <div class="max-w-7xl mx-auto flex justify-between items-center gap-4">
+    <button onclick="go('home')" aria-label="Playhouse Pickle — home" class="shrink-0">
+      <img src="brand.png" alt="Playhouse Pickle" class="h-9 w-auto object-contain">
+    </button>
+    <nav class="hidden md:flex gap-7 font-semibold text-sm text-slate-300">
+      <a onclick="go('home');scroll2('courts')" class="cursor-pointer hover:text-lime1">Book court</a>
+      <a onclick="go('home');scroll2('recording')" class="cursor-pointer hover:text-lime1">Game replays</a>
+      <a onclick="go('wifi')" class="cursor-pointer hover:text-lime1">WiFi</a>
+      <a onclick="go('home');scroll2('founders')" class="cursor-pointer hover:text-lime1">Team Payaman</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      <button onclick="openAdmin()" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-gold px-2"><i class="fa-solid fa-lock text-[10px]"></i>Admin</button>
+      <button id="loginBtn" onclick="openAuth()" class="text-sm font-semibold px-4 py-2 rounded-xl border border-white/10 hover:border-lime1 transition">Log in</button>
+      <button id="portalBtn" onclick="go('portal')" class="hide text-sm font-bold px-4 py-2 rounded-xl bg-lime1 text-ink glow">My Portal</button>
+    </div>
+  </div>
+</header>
+
+<main class="flex-1 w-full max-w-full">
+
+<!-- ================= HOME ================= -->
+<section id="screen-home">
+  <!-- Hero -->
+  <div class="relative overflow-hidden">
+    <div class="absolute inset-0 -z-10 bg-cover bg-center" style="background-image:linear-gradient(180deg,rgba(4,4,7,.86),rgba(6,6,10,.98)),url('https://picsum.photos/seed/arena-dark/1920/1080');filter:grayscale(.6) saturate(.7)"></div>
+    <div class="absolute inset-0 -z-10" style="background:radial-gradient(65% 55% at 50% -5%,rgba(132,204,22,.18),transparent 70%)"></div>
+    <div class="absolute inset-0 -z-10" style="background:radial-gradient(40% 40% at 85% 80%,rgba(250,204,21,.08),transparent 70%)"></div>
+    <div class="max-w-6xl mx-auto px-6 py-28 md:py-40 text-center">
+      <p class="hero-in text-lime1 font-semibold text-sm tracking-wide mb-6 flex items-center justify-center gap-3"><span class="h-px w-8 bg-lime1/50"></span>Powered by Team Payaman · Bacoor, Cavite<span class="h-px w-8 bg-lime1/50"></span></p>
+      <h1 class="hero-in font-black tracking-tight leading-[0.95] mx-auto max-w-5xl" style="font-size:clamp(2.75rem,7vw,5.5rem)">Serve, smash and <span class="text-lime1">hang out</span> at Playhouse Pickle</h1>
+      <p class="hero-in text-lg text-slate-300 max-w-2xl mx-auto mt-7">Premier covered indoor courts, automated match recording, and instant highlight reels in Cavite.</p>
+      <div class="hero-in flex flex-wrap justify-center gap-4 mt-10">
+        <button onclick="scroll2('courts')" class="bg-lime1 text-ink font-extrabold px-8 py-4 rounded-2xl text-lg hover:bg-lime2 glow"><i class="fa-solid fa-calendar-check mr-2"></i>Book a court</button>
+        <button onclick="scroll2('recording')" class="glass text-white font-bold px-8 py-4 rounded-2xl text-lg hover:border-lime1/50"><i class="fa-solid fa-circle-play mr-2"></i>See match replays</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Courts -->
+  <div id="courts" class="py-24 px-6 max-w-7xl mx-auto w-full">
+    <div class="mb-12 reveal">
+      <h2 class="text-3xl md:text-4xl font-black">Reserve your court</h2>
+      <p class="text-slate-400 mt-2">Three covered indoor courts. Pick a one-hour slot, 6:00 AM to 11:00 PM.</p>
+    </div>
+    <div id="courtGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+  </div>
+
+  <!-- PickleCam / Replays -->
+  <div id="recording" class="py-24 px-6 border-y border-white/5 bg-black/30">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12 reveal">
+        <span class="text-lime1 font-semibold text-sm">The PickleCam system</span>
+        <h2 class="text-3xl md:text-4xl font-black mt-2">Every match, automatically recorded</h2>
+        <p class="text-slate-400 mt-3 max-w-2xl mx-auto">Walk up, tap start on the courtside tablet, play, tap stop. Your match hits the cloud — trimmed, watermarked, and ready to share.</p>
+      </div>
+      <div class="reveal grid grid-cols-2 md:grid-cols-6 gap-3 text-center text-xs">
+        <div class="lift bg-panel rounded-2xl p-4 border border-white/5"><i class="fa-solid fa-location-dot text-lime1 text-xl"></i><p class="mt-2 font-semibold">1 · Arrive</p><p class="text-slate-500">No login</p></div>
+        <div class="lift bg-panel rounded-2xl p-4 border border-white/5"><i class="fa-solid fa-hand-pointer text-lime1 text-xl"></i><p class="mt-2 font-semibold">2 · Tap start</p><p class="text-slate-500">On the iPad</p></div>
+        <div class="lift bg-panel rounded-2xl p-4 border border-white/5"><i class="fa-solid fa-table-tennis-paddle-ball text-lime1 text-xl"></i><p class="mt-2 font-semibold">3 · Play</p><p class="text-slate-500">Up to 120 min</p></div>
+        <div class="lift bg-panel rounded-2xl p-4 border border-white/5"><i class="fa-solid fa-stop text-lime1 text-xl"></i><p class="mt-2 font-semibold">4 · Tap stop</p><p class="text-slate-500">Ends session</p></div>
+        <div class="lift bg-panel rounded-2xl p-4 border border-white/5"><i class="fa-solid fa-envelope text-lime1 text-xl"></i><p class="mt-2 font-semibold">5 · Enter email</p><p class="text-slate-500">Instant</p></div>
+        <div class="lift bg-panel rounded-2xl p-4 border border-white/5"><i class="fa-solid fa-circle-play text-lime1 text-xl"></i><p class="mt-2 font-semibold">6 · Get video</p><p class="text-slate-500">30-day link</p></div>
+      </div>
+      <div class="reveal mt-8 grid md:grid-cols-2 gap-4">
+        <div class="lift bg-gradient-to-br from-lime1/12 to-transparent border border-lime1/25 rounded-3xl p-7">
+          <h3 class="font-bold text-lg">Guest quick-export <span class="text-xs font-normal text-slate-400">— the easy option</span></h3>
+          <p class="text-sm text-slate-300 mt-1.5">Type your email at the court and get your clip. No account required.</p>
+          <button onclick="openGuest()" class="mt-5 glass px-5 py-2.5 rounded-xl text-sm font-bold hover:border-lime1/50"><i class="fa-solid fa-download mr-2"></i>Try guest export</button>
+        </div>
+        <div class="lift bg-gradient-to-br from-gold/12 to-transparent border border-gold/25 rounded-3xl p-7">
+          <h3 class="font-bold text-lg">Create a free player account <span class="text-xs font-normal text-gold">— recommended</span></h3>
+          <p class="text-sm text-slate-300 mt-1.5">Keep every match forever, skip re-typing your email, and unlock member rates.</p>
+          <button onclick="openAuth()" class="mt-5 bg-lime1 text-ink px-5 py-2.5 rounded-xl text-sm font-black glow"><i class="fa-solid fa-user-plus mr-2"></i>Sign up free</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Founders -->
+  <div id="founders" class="py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-12 reveal"><h2 class="text-3xl md:text-4xl font-black">Meet the founders</h2><p class="text-slate-400 mt-2">Team Payaman, bringing pickleball culture to Cavite.</p></div>
+      <div class="reveal grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="lift bg-panel p-6 rounded-3xl border border-white/5 text-center space-y-2"><div class="w-20 h-20 bg-lime1/15 rounded-2xl mx-auto flex items-center justify-center text-3xl text-lime1 font-black">BK</div><h3 class="text-lg font-extrabold">Boss Keng</h3><p class="text-xs text-lime1 font-semibold">Exekiel Christian Gaspar</p><p class="text-xs text-slate-400">Co-founder and Team Payaman creator.</p></div>
+        <div class="lift bg-panel p-6 rounded-3xl border border-white/5 text-center space-y-2"><div class="w-20 h-20 bg-lime1/15 rounded-2xl mx-auto flex items-center justify-center text-3xl text-lime1 font-black">PV</div><h3 class="text-lg font-extrabold">Pat Gaspar</h3><p class="text-xs text-lime1 font-semibold">Pat Velasquez-Gaspar</p><p class="text-xs text-slate-400">Co-founder and community builder.</p></div>
+        <div class="lift bg-panel p-6 rounded-3xl border border-white/5 text-center space-y-2"><div class="w-20 h-20 bg-lime1/15 rounded-2xl mx-auto flex items-center justify-center text-3xl text-lime1 font-black">JB</div><h3 class="text-lg font-extrabold">Junnie Boy</h3><p class="text-xs text-lime1 font-semibold">Team Payaman</p><p class="text-xs text-slate-400">Co-founder expanding sport facilities.</p></div>
+        <div class="lift bg-panel p-6 rounded-3xl border border-white/5 text-center space-y-2"><div class="w-20 h-20 bg-lime1/15 rounded-2xl mx-auto flex items-center justify-center text-3xl text-lime1 font-black">DL</div><h3 class="text-lg font-extrabold">Dudut Lang</h3><p class="text-xs text-lime1 font-semibold">Team Payaman</p><p class="text-xs text-slate-400">Co-founder driving events and tournaments.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Owner CTA -->
+  <div class="py-24 px-6">
+    <div class="reveal max-w-5xl mx-auto glass rounded-3xl p-10 md:p-14 text-center border border-lime1/15">
+      <h2 class="text-3xl md:text-4xl font-black">Own your players, not just your courts</h2>
+      <p class="text-slate-300 mt-3 max-w-2xl mx-auto">Every guest who taps the kiosk becomes a saved lead in your own database — ready for member offers, open-play nights, and repeat bookings. Peek at the owner console.</p>
+      <button onclick="openAdmin()" class="mt-7 bg-gold text-ink font-extrabold px-8 py-4 rounded-2xl text-lg"><i class="fa-solid fa-chart-line mr-2"></i>Open owner console</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PORTAL (login-gated) ================= -->
+<section id="screen-portal" class="hide max-w-6xl mx-auto w-full px-5 py-10">
+  <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+    <div>
+      <p class="text-slate-400 text-sm">Welcome back,</p>
+      <h1 class="text-3xl font-black" id="portalName">Player</h1>
+    </div>
+    <span class="bg-gold/15 text-gold border border-gold/40 px-4 py-1.5 rounded-full text-sm font-bold"><i class="fa-solid fa-crown mr-1"></i>Premium Member</span>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <div class="lift bg-panel rounded-2xl p-5 border border-white/5"><p class="text-3xl font-black text-lime1 num">28</p><p class="text-xs text-slate-400 mt-1">Games played</p></div>
+    <div class="lift bg-panel rounded-2xl p-5 border border-white/5"><p class="text-3xl font-black text-lime1 num">41h</p><p class="text-xs text-slate-400 mt-1">Court hours</p></div>
+    <div class="lift bg-panel rounded-2xl p-5 border border-white/5"><p class="text-3xl font-black text-lime1 num">12</p><p class="text-xs text-slate-400 mt-1">Saved replays</p></div>
+    <div class="lift bg-panel rounded-2xl p-5 border border-white/5"><p class="text-3xl font-black text-gold num">3</p><p class="text-xs text-slate-400 mt-1">Expiring soon</p></div>
+  </div>
+
+  <div class="flex gap-2 mb-6 border-b border-white/5 overflow-x-auto">
+    <button data-tab="footage" onclick="tab('footage')" class="tabBtn px-4 py-3 font-semibold text-sm border-b-2 border-lime1 text-lime1">My Footage</button>
+    <button data-tab="bookings" onclick="tab('bookings')" class="tabBtn px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400">My Bookings</button>
+    <button data-tab="wifi" onclick="tab('wifi')" class="tabBtn px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400">WiFi Passes</button>
+    <button data-tab="profile" onclick="tab('profile')" class="tabBtn px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400">Profile</button>
+  </div>
+
+  <div id="tab-footage">
+    <div class="bg-gold/10 border border-gold/25 rounded-xl p-4 mb-5 text-sm flex items-start gap-3">
+      <i class="fa-solid fa-clock text-gold mt-0.5"></i>
+      <p><span class="font-bold text-gold">Grace period:</span> matches stay in the cloud for 30 days. Unlock &amp; keep the ones you love forever — pay now or anytime before they expire.</p>
+    </div>
+    <div id="footageList" class="grid md:grid-cols-2 gap-4"></div>
+  </div>
+
+  <div id="tab-bookings" class="hide">
+    <div id="bookingList" class="space-y-3"></div>
+    <button onclick="go('home');scroll2('courts')" class="mt-5 bg-lime1 text-ink font-bold px-5 py-3 rounded-xl glow"><i class="fa-solid fa-plus mr-2"></i>Book another court</button>
+  </div>
+
+  <div id="tab-wifi" class="hide">
+    <p class="text-slate-400 text-sm mb-4">Buy a WiFi pass — the voucher QR appears instantly and connects you at the venue.</p>
+    <div class="grid md:grid-cols-3 gap-4" id="wifiPlans"></div>
+  </div>
+
+  <div id="tab-profile" class="hide">
+    <div class="max-w-2xl rounded-3xl overflow-hidden border border-white/5 bg-panel">
+      <div class="h-28 relative bg-gradient-to-r from-lime1/25 via-transparent to-gold/20">
+        <div class="absolute inset-0" style="background-image:radial-gradient(circle at 18% 20%,rgba(132,204,22,.28),transparent 45%),radial-gradient(circle at 85% 80%,rgba(250,204,21,.16),transparent 50%)"></div>
+      </div>
+      <div class="px-6 pb-6 -mt-11">
+        <div class="flex items-end justify-between gap-4 flex-wrap">
+          <div class="flex items-end gap-4">
+            <div class="w-20 h-20 rounded-2xl bg-panel2 ring-4 ring-panel text-lime1 flex items-center justify-center text-3xl font-black shadow-lg shadow-lime1/10" id="avatarInit">P</div>
+            <div class="pb-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <p class="font-extrabold text-xl leading-none" id="profileName">Player</p>
+                <span class="bg-gold/15 text-gold border border-gold/40 text-[11px] font-bold px-2 py-0.5 rounded-md"><i class="fa-solid fa-crown mr-1"></i>Premium</span>
+              </div>
+              <p class="text-sm text-slate-400 mt-1" id="profileEmail">player@email.com</p>
+            </div>
+          </div>
+          <button class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl border border-white/10 hover:border-lime1 hover:text-lime1"><i class="fa-solid fa-pen text-xs"></i>Edit profile</button>
+        </div>
+
+        <div class="mt-6 rounded-2xl bg-gradient-to-br from-gold/10 to-transparent border border-gold/25 p-5">
+          <div class="flex justify-between items-start mb-3 gap-4">
+            <div>
+              <p class="text-[11px] uppercase tracking-wider text-gold/80 font-semibold">Membership</p>
+              <p class="font-bold text-lg leading-tight">Premium Player</p>
+            </div>
+            <p class="text-right text-xs text-slate-400 leading-snug">Renews<br><span class="text-slate-100 font-semibold num">Jan 14, 2027</span></p>
+          </div>
+          <div class="h-2 rounded-full bg-white/10 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-lime1 to-gold" style="width:68%"></div></div>
+          <p class="text-xs text-slate-400 mt-2 num">248 of 365 member-days used</p>
+        </div>
+
+        <div class="mt-4 grid grid-cols-3 gap-3 text-center">
+          <div class="rounded-xl bg-panel2/60 border border-white/5 p-3"><p class="text-[11px] text-slate-500">Member since</p><p class="font-bold text-sm mt-1">Jan 2026</p></div>
+          <div class="rounded-xl bg-panel2/60 border border-white/5 p-3"><p class="text-[11px] text-slate-500">Player ID</p><p class="font-bold text-sm mt-1 num">PH-0142</p></div>
+          <div class="rounded-xl bg-panel2/60 border border-white/5 p-3"><p class="text-[11px] text-slate-500">Home court</p><p class="font-bold text-sm mt-1">Court 1</p></div>
+        </div>
+
+        <div class="mt-4 flex items-center justify-between gap-4 rounded-xl bg-panel2/60 border border-white/5 p-4">
+          <div><p class="font-semibold text-sm">Match updates &amp; offers</p><p class="text-xs text-slate-400 mt-0.5">New footage, open-play nights, and member deals by email.</p></div>
+          <button id="mktToggle" onclick="toggleMkt()" role="switch" aria-checked="true" aria-label="Marketing emails" class="relative w-12 h-7 rounded-full bg-lime1 shrink-0"><span class="absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200" style="transform:translateX(20px)"></span></button>
+        </div>
+
+        <div class="mt-6 flex items-center justify-between">
+          <button onclick="logout()" class="text-sm font-semibold text-slate-400 hover:text-red-400"><i class="fa-solid fa-arrow-right-from-bracket mr-1.5"></i>Log out</button>
+          <span class="text-xs text-slate-600">Playhouse Pickle · Member Portal</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WIFI ================= -->
+<section id="screen-wifi" class="hide max-w-4xl mx-auto w-full px-5 py-14">
+  <div class="text-center mb-8"><h1 class="text-3xl md:text-4xl font-black">WiFi passes</h1><p class="text-slate-400 mt-2">Fast venue WiFi — pay by GCash or Maya, get an instant QR voucher.</p></div>
+  <div class="grid md:grid-cols-3 gap-4" id="wifiPlansPublic"></div>
+</section>
+
+<!-- ================= ADMIN (owner console) ================= -->
+<section id="screen-admin" class="hide max-w-7xl mx-auto w-full px-5 py-8">
+  <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-xl bg-gold/15 text-gold flex items-center justify-center text-lg"><i class="fa-solid fa-shield-halved"></i></div>
+      <div>
+        <h1 class="text-2xl font-black leading-none">Owner Console</h1>
+        <p class="text-xs text-slate-400 mt-1">Playhouse Pickle · signed in as <span class="text-gold font-semibold" id="adminWho">filamelitebasketball</span></p>
+      </div>
+    </div>
+    <button onclick="exitAdmin()" class="text-sm font-semibold px-4 py-2 rounded-xl border border-white/10 hover:border-gold hover:text-gold"><i class="fa-solid fa-arrow-right-from-bracket mr-1.5"></i>Exit admin</button>
+  </div>
+
+  <!-- KPIs -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="lift bg-panel rounded-2xl p-5 border border-white/5"><div class="flex justify-between items-start"><p class="text-3xl font-black num">1,284</p><i class="fa-solid fa-users text-lime1"></i></div><p class="text-xs text-slate-400 mt-1">Members &amp; leads</p><p class="text-[11px] text-lime1 mt-1 num">+142 this month</p></div>
+    <div class="lift bg-panel rounded-2xl p-5 border border-white/5"><div class="flex justify-between items-start"><p class="text-3xl font-black num">₱182,400</p><i class="fa-solid fa-peso-sign text-lime1"></i></div><p class="text-xs text-slate-400 mt-1">Revenue this month</p><p class="text-[11px] text-lime1 mt-1 num">+8.4% vs Aug</p></div>
+    <div class="lift bg-panel rounded-2xl p-5 border border-white/5"><div class="flex justify-between items-start"><p class="text-3xl font-black num">23</p><i class="fa-solid fa-calendar-day text-lime1"></i></div><p class="text-xs text-slate-400 mt-1">Bookings today</p><p class="text-[11px] text-slate-500 mt-1">4 courts active</p></div>
+    <div class="lift bg-panel rounded-2xl p-5 border border-white/5"><div class="flex justify-between items-start"><p class="text-3xl font-black text-gold num">38.6%</p><i class="fa-solid fa-clapperboard text-gold"></i></div><p class="text-xs text-slate-400 mt-1">Footage unlock rate</p><p class="text-[11px] text-slate-500 mt-1">grace-period conversions</p></div>
+  </div>
+
+  <div class="grid lg:grid-cols-3 gap-6">
+    <!-- Customer database -->
+    <div class="lg:col-span-2 bg-panel rounded-3xl border border-white/5 p-5">
+      <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+        <div>
+          <h2 class="font-bold text-lg">Customer database</h2>
+          <p class="text-xs text-slate-400">Every kiosk email lands here — your owned marketing list.</p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="emailBlast()" class="text-xs font-semibold px-3 py-2 rounded-lg border border-white/10 hover:border-lime1 hover:text-lime1"><i class="fa-solid fa-paper-plane mr-1.5"></i>Email blast</button>
+          <button onclick="exportCSV()" class="text-xs font-bold px-3 py-2 rounded-lg bg-lime1 text-ink"><i class="fa-solid fa-file-arrow-down mr-1.5"></i>Export CSV</button>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm min-w-[520px]">
+          <thead><tr class="text-left text-xs text-slate-500 border-b border-white/5">
+            <th class="py-2 font-medium">Name</th><th class="py-2 font-medium">Contact</th><th class="py-2 font-medium">Type</th><th class="py-2 font-medium">Last visit</th><th class="py-2 font-medium text-right">Spend</th>
+          </tr></thead>
+          <tbody id="memberRows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right column -->
+    <div class="space-y-6">
+      <div class="bg-panel rounded-3xl border border-white/5 p-5">
+        <h2 class="font-bold text-lg mb-3">Today's bookings</h2>
+        <div id="adminBookings" class="space-y-2"></div>
+      </div>
+      <div class="bg-panel rounded-3xl border border-white/5 p-5">
+        <h2 class="font-bold text-lg mb-3">PickleCam queue</h2>
+        <div id="camQueue" class="space-y-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revenue chart -->
+  <div class="mt-6 bg-panel rounded-3xl border border-white/5 p-6">
+    <div class="flex justify-between items-center mb-5">
+      <h2 class="font-bold text-lg">Revenue · last 6 months</h2>
+      <span class="text-xs text-slate-500">in ₱ thousands</span>
+    </div>
+    <div id="revChart" class="flex items-end gap-3 h-40"></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="mt-auto border-t border-white/5 py-10 px-6 text-center">
+  <img src="brand.png" alt="Playhouse Pickle" class="h-7 w-auto object-contain mx-auto opacity-80 mb-3">
+  <p class="text-xs text-slate-500">Bacoor, Cavite, Philippines · &copy; 2026 Playhouse Pickle. All rights reserved.</p>
+  <p class="text-xs text-slate-600 mt-2">Portal &amp; PickleCam system by <span class="text-slate-400">F.A.E.</span> · <button onclick="openAdmin()" class="hover:text-gold">Owner login</button></p>
+</footer>
+
+<!-- ============ MODALS ============ -->
+<!-- Auth -->
+<div id="authModal" class="hide fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-panel border border-white/10 w-full max-w-sm rounded-3xl p-6 space-y-4 relative">
+    <button onclick="closeAll()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">&times;</button>
+    <div class="text-center"><img src="brand.png" class="h-8 w-auto object-contain mx-auto"><h3 class="text-xl font-black mt-4">Welcome to Playhouse Pickle</h3><p class="text-xs text-slate-400">Save your matches. Unlock member rates.</p></div>
+    <button onclick="login('Google')" class="w-full bg-white text-slate-800 font-bold py-3 rounded-xl flex items-center justify-center gap-2 text-sm hover:bg-slate-100"><i class="fa-brands fa-google text-lime1"></i>Continue with Google</button>
+    <div class="flex items-center gap-3 text-xs text-slate-500"><div class="flex-1 h-px bg-white/10"></div>or<div class="flex-1 h-px bg-white/10"></div></div>
+    <input id="authName" type="text" placeholder="Your name" class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-sm focus:border-lime1 outline-none">
+    <input id="authEmail" type="email" placeholder="you@email.com" class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-sm focus:border-lime1 outline-none">
+    <button onclick="login('email')" class="w-full bg-lime1 text-ink font-black py-3 rounded-xl glow">Create account / Log in</button>
+    <p class="text-[11px] text-slate-500 text-center">Demo only — no real account is created.</p>
+  </div>
+</div>
+
+<!-- Admin login -->
+<div id="adminModal" class="hide fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-panel border border-gold/25 w-full max-w-sm rounded-3xl p-6 space-y-4 relative">
+    <button onclick="closeAll()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">&times;</button>
+    <div class="text-center"><div class="w-12 h-12 rounded-2xl bg-gold/15 text-gold flex items-center justify-center text-xl mx-auto"><i class="fa-solid fa-shield-halved"></i></div><h3 class="text-xl font-black mt-3">Owner login</h3><p class="text-xs text-slate-400">Admin access to the Playhouse Pickle console.</p></div>
+    <input id="adminUser" type="text" value="filamelitebasketball" onkeydown="if(event.key==='Enter')adminLogin()" class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-sm focus:border-gold outline-none" placeholder="admin username">
+    <input id="adminPass" type="password" placeholder="password" onkeydown="if(event.key==='Enter')adminLogin()" class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-sm focus:border-gold outline-none">
+    <button onclick="adminLogin()" class="w-full bg-gold text-ink font-black py-3 rounded-xl">Enter console</button>
+    <p id="adminErr" class="hide text-[12px] text-red-400 text-center">That account is not an admin. Use the default owner account.</p>
+    <p class="text-[11px] text-slate-500 text-center">Demo access — default owner is <span class="text-gold">filamelitebasketball</span>, any password.</p>
+  </div>
+</div>
+
+<!-- Booking -->
+<div id="bookModal" class="hide fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-panel border border-white/10 w-full max-w-md rounded-3xl p-6 space-y-4 relative">
+    <button onclick="closeAll()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">&times;</button>
+    <h3 class="text-2xl font-black text-lime1">Confirm booking</h3>
+    <div class="bg-black/40 p-4 rounded-xl text-sm space-y-1">
+      <p><strong>Court:</strong> <span id="mCourt"></span></p>
+      <p><strong>Time:</strong> <span id="mSlot"></span></p>
+      <p><strong>Amount:</strong> <span class="text-lime1 font-bold">₱300.00</span></p>
+    </div>
+    <div class="space-y-3">
+      <input type="text" placeholder="Player name" class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-sm focus:border-lime1 outline-none">
+      <input type="email" placeholder="Email (for your video highlights)" class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-sm focus:border-lime1 outline-none">
+    </div>
+    <div>
+      <p class="text-xs text-slate-400 mb-2">Pay with</p>
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="pay('GCash')" class="bg-blue-600 hover:bg-blue-500 py-3 rounded-xl text-sm font-bold">GCash</button>
+        <button onclick="pay('Maya')" class="bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl text-sm font-bold">Maya / QR</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Guest export -->
+<div id="guestModal" class="hide fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-panel border border-white/10 w-full max-w-md rounded-3xl p-6 space-y-4 relative">
+    <button onclick="closeAll()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">&times;</button>
+    <h3 class="text-xl font-black">Get your match video</h3>
+    <p class="text-sm text-slate-400">Enter the email you used at the court. We'll send your secure link (valid 30 days).</p>
+    <input id="guestEmail" type="email" placeholder="you@email.com" class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-sm focus:border-lime1 outline-none">
+    <button onclick="guestSend()" class="w-full bg-lime1 text-ink font-black py-3 rounded-xl glow">Send my video link</button>
+    <div class="bg-gold/10 border border-gold/25 rounded-xl p-3 text-xs text-slate-300"><span class="text-gold font-bold">Tip:</span> create a free account instead and your matches save automatically — no re-typing, no 30-day expiry surprises.</div>
+  </div>
+</div>
+
+<!-- QR / voucher -->
+<div id="qrModal" class="hide fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-panel border border-white/10 w-full max-w-xs rounded-3xl p-6 space-y-3 relative text-center">
+    <button onclick="closeAll()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">&times;</button>
+    <h3 id="qrTitle" class="text-lg font-black"></h3>
+    <p id="qrSub" class="text-xs text-slate-400"></p>
+    <div class="bg-white rounded-xl p-3 inline-block"><img id="qrImg" width="200" height="200" alt="QR code"></div>
+    <p class="text-[11px] text-slate-500">Scan to open / share. Demo QR.</p>
+  </div>
+</div>
+
+<!-- Unlock -->
+<div id="unlockModal" class="hide fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-panel border border-white/10 w-full max-w-sm rounded-3xl p-6 space-y-4 relative">
+    <button onclick="closeAll()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">&times;</button>
+    <h3 class="text-xl font-black">Unlock &amp; keep forever</h3>
+    <p id="unlockDesc" class="text-sm text-slate-400"></p>
+    <div class="bg-black/40 rounded-xl p-4 text-sm flex justify-between items-center"><span>Unlock price</span><span class="text-lime1 font-black text-lg">₱99.00</span></div>
+    <div class="grid grid-cols-2 gap-3">
+      <button onclick="pay('GCash')" class="bg-blue-600 hover:bg-blue-500 py-3 rounded-xl text-sm font-bold">GCash</button>
+      <button onclick="pay('Maya')" class="bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl text-sm font-bold">Maya / QR</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="hide fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] bg-lime1 text-ink font-bold px-5 py-3 rounded-xl glow text-sm"></div>
+
+<script>
+// ---------- state + mock data ----------
+var state = { user:null, admin:false, activeUnlock:null, payCtx:null, wifiName:null };
+var courts = [
+  { name:'Court 1 (Main Stage)', tag:'1080p Cam', slots:[['08:00 AM - 09:00 AM',1],['09:00 AM - 10:00 AM',1],['10:00 AM - 11:00 AM',0],['04:00 PM - 05:00 PM',1]] },
+  { name:'Court 2', tag:'1080p Cam', slots:[['08:00 AM - 09:00 AM',1],['10:00 AM - 11:00 AM',1],['02:00 PM - 03:00 PM',1]] },
+  { name:'Court 3', tag:'Open Play', slots:[['06:00 PM - 07:00 PM',1],['07:00 PM - 08:00 PM',1]] }
+];
+var footage = [
+  { id:'PC-1041', title:'Doubles vs. Team Payaman', court:'Court 1', date:'Sep 20', locked:false, expDays:26 },
+  { id:'PC-1039', title:'Open Play — evening rally', court:'Court 3', date:'Sep 18', locked:true, expDays:2 },
+  { id:'PC-1036', title:'Rematch: 3rd game', court:'Court 2', date:'Sep 15', locked:true, expDays:5 },
+  { id:'PC-1030', title:'Weekend tournament R1', court:'Court 1', date:'Sep 12', locked:true, expDays:1 }
+];
+var bookings = [
+  { court:'Court 1 (Main Stage)', slot:'Sep 24 · 08:00–09:00 AM', status:'Upcoming' },
+  { court:'Court 2', slot:'Sep 20 · 06:00–07:00 PM', status:'Completed' }
+];
+var wifi = [
+  { name:'1 Hour', price:49, note:'Quick session' },
+  { name:'1 Day', price:99, note:'All-day access' },
+  { name:'1 Week', price:299, note:'Best value' }
+];
+// admin data
+var members = [
+  { n:'Patricia Villanueva', c:'patvilla@gmail.com', t:'Player', last:'Sep 22', spend:4820 },
+  { n:'Marco Rivera', c:'+63 917 442 1908', t:'Member', last:'Sep 21', spend:2650 },
+  { n:'Denise Ocampo', c:'denise.ocampo@gmail.com', t:'Lead', last:'Sep 20', spend:0 },
+  { n:'JR Bautista', c:'+63 928 771 3345', t:'Player', last:'Sep 20', spend:6110 },
+  { n:'Kyla Mendoza', c:'kyla.m@gmail.com', t:'Lead', last:'Sep 19', spend:300 },
+  { n:'Aaron Salcedo', c:'+63 906 220 4471', t:'Member', last:'Sep 18', spend:1980 },
+  { n:'Bianca Torres', c:'bianca.torres@gmail.com', t:'Lead', last:'Sep 18', spend:0 },
+  { n:'Miguel Ramos', c:'+63 915 883 2210', t:'Player', last:'Sep 17', spend:5230 }
+];
+var adminBookings = [
+  { t:'08:00', court:'Court 1', who:'Patricia V.', st:'Paid' },
+  { t:'09:00', court:'Court 2', who:'Walk-in', st:'Pending' },
+  { t:'10:00', court:'Court 1', who:'JR Bautista', st:'Checked-in' },
+  { t:'18:00', court:'Court 3', who:'Open Play · 8 players', st:'Paid' }
+];
+var camQueue = [
+  { id:'PC-1052', who:'kyla.m@gmail.com', st:'Delivered' },
+  { id:'PC-1051', who:'+63 917 442 1908', st:'Processing' },
+  { id:'PC-1050', who:'bianca.torres@gmail.com', st:'Delivered' }
+];
+var revenue = [ {m:'Apr',v:98},{m:'May',v:120},{m:'Jun',v:142},{m:'Jul',v:131},{m:'Aug',v:168},{m:'Sep',v:182} ];
+
+// ---------- helpers ----------
+function $(id){return document.getElementById(id)}
+function scroll2(id){var e=$(id); if(e) e.scrollIntoView({behavior:'smooth'})}
+function toast(msg){var t=$('toast'); t.textContent=msg; t.classList.remove('hide'); setTimeout(function(){t.classList.add('hide')},2800)}
+function closeAll(){['authModal','adminModal','bookModal','guestModal','qrModal','unlockModal'].forEach(function(m){$(m).classList.add('hide')})}
+function qr(data){return 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(data)}
+
+function go(screen){
+  ['home','portal','wifi','admin'].forEach(function(s){$('screen-'+s).classList.add('hide')});
+  if(screen==='portal' && !state.user){ openAuth(); return; }
+  if(screen==='admin' && !state.admin){ openAdmin(); return; }
+  $('screen-'+screen).classList.remove('hide');
+  window.scrollTo(0,0);
+}
+
+// ---------- auth ----------
+function openAuth(){ closeAll(); $('authModal').classList.remove('hide') }
+function login(method){
+  var name = method==='Google' ? 'Boss Keng' : ($('authName').value.trim() || 'Player');
+  var email = method==='Google' ? 'keng@playhousepickle.ph' : ($('authEmail').value.trim() || 'player@email.com');
+  state.user = { name:name, email:email };
+  $('loginBtn').classList.add('hide'); $('portalBtn').classList.remove('hide');
+  $('portalName').textContent = name; $('profileName').textContent = name;
+  $('profileEmail').textContent = email; $('avatarInit').textContent = name[0].toUpperCase();
+  closeAll(); toast('Signed in — welcome, '+name+'!'); go('portal');
+}
+function logout(){ state.user=null; $('loginBtn').classList.remove('hide'); $('portalBtn').classList.add('hide'); go('home'); toast('Logged out') }
+function toggleMkt(){
+  var b=$('mktToggle'), on=b.getAttribute('aria-checked')==='true', knob=b.querySelector('span');
+  b.setAttribute('aria-checked', String(!on));
+  b.className='relative w-12 h-7 rounded-full shrink-0 '+(!on?'bg-lime1':'bg-white/15');
+  knob.style.transform = !on ? 'translateX(20px)' : 'translateX(0)';
+}
+
+// ---------- admin ----------
+function openAdmin(){ closeAll(); $('adminErr').classList.add('hide'); $('adminModal').classList.remove('hide') }
+function adminLogin(){
+  var u = ($('adminUser').value||'').trim().toLowerCase().replace('@gmail.com','');
+  if(u==='filamelitebasketball'){
+    state.admin = true; $('adminWho').textContent = 'filamelitebasketball';
+    renderAdmin(); closeAll(); toast('Admin access granted'); go('admin');
+  } else { $('adminErr').classList.remove('hide'); }
+}
+function exitAdmin(){ state.admin=false; go('home'); toast('Signed out of admin') }
+function exportCSV(){
+  var rows = [['Name','Contact','Type','Last visit','Spend (PHP)']].concat(members.map(function(m){return [m.n,m.c,m.t,m.last,m.spend]}));
+  var csv = rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(',')}).join('\n');
+  var a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download = 'playhouse-pickle-customers.csv'; a.click();
+  toast('Exported '+members.length+' contacts to CSV');
+}
+function emailBlast(){ toast('Draft campaign created for 1,284 contacts'); }
+
+// ---------- portal tabs ----------
+function tab(name){
+  ['footage','bookings','wifi','profile'].forEach(function(t){$('tab-'+t).classList.add('hide')});
+  $('tab-'+name).classList.remove('hide');
+  document.querySelectorAll('.tabBtn').forEach(function(b){
+    var on = b.getAttribute('data-tab')===name;
+    b.className = 'tabBtn px-4 py-3 font-semibold text-sm border-b-2 '+(on?'border-lime1 text-lime1':'border-transparent text-slate-400');
+  });
+}
+
+// ---------- booking ----------
+function selectSlot(court,slot){ state.payCtx='book'; $('mCourt').textContent=court; $('mSlot').textContent=slot; closeAll(); $('bookModal').classList.remove('hide') }
+function openGuest(){ closeAll(); $('guestModal').classList.remove('hide') }
+function guestSend(){ var e=$('guestEmail').value.trim(); closeAll(); toast(e?('Video link sent to '+e):'Enter an email first'); }
+
+// ---------- payments (simulated) ----------
+function pay(method){
+  var ctx = state.payCtx; closeAll();
+  if(ctx==='book'){ toast('Booking confirmed via '+method+' — recording link will follow'); }
+  else if(ctx==='wifi'){ showQR('WiFi voucher active', state.wifiName+' pass · connect at the venue', qr('PLAYHOUSE-WIFI-'+state.wifiName+'-'+Date.now())); }
+  else if(ctx==='unlock'){ var f=state.activeUnlock; if(f){ f.locked=false; renderFootage(); } toast('Unlocked via '+method+' — saved forever'); }
+}
+function showQRpay(name,price){
+  state.payCtx='wifi'; state.wifiName=name;
+  $('unlockDesc').textContent = name+' WiFi pass — instant voucher after payment.';
+  document.querySelector('#unlockModal h3').textContent = 'Buy '+name+' WiFi';
+  document.querySelector('#unlockModal .text-lg').textContent = '₱'+price+'.00';
+  closeAll(); $('unlockModal').classList.remove('hide');
+}
+
+// ---------- footage ----------
+function watch(id){ showQR('Match '+id,'Scan to open on your phone', qr('https://media.picklecam.ph/watch?v='+id)) }
+function exportQR(id){ showQR('Export '+id,'Scan to download / share', qr('https://media.picklecam.ph/export?v='+id+'&t=demo')) }
+function showQR(title,sub,src){ closeAll(); $('qrTitle').textContent=title; $('qrSub').textContent=sub; $('qrImg').src=src; $('qrModal').classList.remove('hide') }
+function unlock(id){
+  var f = footage.filter(function(x){return x.id===id})[0]; state.activeUnlock=f; state.payCtx='unlock';
+  $('unlockDesc').textContent = f.title+' ('+f.court+', '+f.date+') expires in '+f.expDays+' day'+(f.expDays>1?'s':'')+'. Keep it forever.';
+  document.querySelector('#unlockModal h3').textContent='Unlock & keep forever';
+  document.querySelector('#unlockModal .text-lg').textContent='₱99.00';
+  closeAll(); $('unlockModal').classList.remove('hide');
+}
+
+// ---------- render ----------
+function renderCourts(){
+  $('courtGrid').innerHTML = courts.map(function(c){
+    var slots = c.slots.map(function(s){
+      return s[1]
+        ? '<button onclick="selectSlot(\''+c.name+'\',\''+s[0]+'\')" class="w-full text-left bg-white/5 hover:bg-lime1/15 hover:border-lime1 border border-white/10 p-3 rounded-lg flex justify-between items-center text-sm transition"><span>'+s[0]+'</span><span class="text-lime1 font-bold num">₱300 · Available</span></button>'
+        : '<div class="w-full bg-black/40 text-slate-600 border border-white/5 p-3 rounded-lg flex justify-between items-center text-sm"><span>'+s[0]+'</span><span class="text-red-400 font-semibold">Booked</span></div>';
+    }).join('');
+    return '<div class="lift bg-panel border border-white/5 rounded-3xl p-6"><div class="flex justify-between items-start mb-3"><h3 class="text-xl font-bold">'+c.name+'</h3><span class="bg-lime1/15 text-lime1 text-xs font-bold px-2.5 py-1 rounded-full border border-lime1/30">'+c.tag+'</span></div><p class="text-sm text-slate-400 mb-4">Indoor covered · pro surface · auto camera</p><div class="space-y-2">'+slots+'</div></div>';
+  }).join('');
+}
+function renderFootage(){
+  $('footageList').innerHTML = footage.map(function(f){
+    var badge = f.locked
+      ? '<span class="bg-gold/20 text-gold border border-gold/40 text-xs font-bold px-2.5 py-1 rounded-full"><i class="fa-solid fa-clock mr-1"></i>Expires in '+f.expDays+'d</span>'
+      : '<span class="bg-lime1/20 text-lime1 border border-lime1/40 text-xs font-bold px-2.5 py-1 rounded-full"><i class="fa-solid fa-check mr-1"></i>Saved</span>';
+    var actions = f.locked
+      ? '<button onclick="unlock(\''+f.id+'\')" class="flex-1 bg-gold text-ink font-bold py-2 rounded-lg text-sm">Unlock ₱99</button>'
+      : '<button onclick="watch(\''+f.id+'\')" class="flex-1 bg-lime1 text-ink font-bold py-2 rounded-lg text-sm">Watch</button><button onclick="exportQR(\''+f.id+'\')" class="flex-1 bg-white/5 border border-white/10 py-2 rounded-lg text-sm font-semibold"><i class="fa-solid fa-qrcode mr-1"></i>Export QR</button>';
+    return '<div class="lift bg-panel border border-white/5 rounded-2xl overflow-hidden"><div class="relative h-36 bg-gradient-to-br from-black to-panel2 flex items-center justify-center"><i class="fa-solid fa-circle-play text-4xl text-slate-700"></i><span class="absolute top-3 right-3">'+badge+'</span></div><div class="p-4"><h4 class="font-bold">'+f.title+'</h4><p class="text-xs text-slate-400 mb-3 num">'+f.court+' · '+f.date+' · #'+f.id+'</p><div class="flex gap-2">'+actions+'</div></div></div>';
+  }).join('');
+}
+function renderBookings(){
+  $('bookingList').innerHTML = bookings.map(function(b){
+    var col = b.status==='Upcoming'?'text-lime1':'text-slate-400';
+    return '<div class="bg-panel border border-white/5 rounded-xl p-4 flex justify-between items-center"><div><p class="font-bold">'+b.court+'</p><p class="text-xs text-slate-400">'+b.slot+'</p></div><span class="text-sm font-semibold '+col+'">'+b.status+'</span></div>';
+  }).join('');
+}
+function renderWifi(id){
+  $(id).innerHTML = wifi.map(function(w){
+    var best = w.name==='1 Week' ? '<span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gold text-ink text-[10px] font-black px-3 py-0.5 rounded-full">BEST VALUE</span>' : '';
+    return '<div class="relative lift bg-panel border border-white/5 rounded-3xl p-6 text-center">'+best+'<p class="text-lg font-bold">'+w.name+'</p><p class="text-3xl font-black text-lime1 my-2 num">₱'+w.price+'</p><p class="text-xs text-slate-400 mb-4">'+w.note+'</p><button onclick="showQRpay(\''+w.name+'\','+w.price+')" class="w-full bg-lime1 text-ink font-bold py-2.5 rounded-xl glow">Buy pass</button></div>';
+  }).join('');
+}
+function renderAdmin(){
+  var tone = { Player:'bg-lime1/15 text-lime1 border-lime1/30', Member:'bg-gold/15 text-gold border-gold/30', Lead:'bg-white/10 text-slate-300 border-white/15' };
+  $('memberRows').innerHTML = members.map(function(m){
+    return '<tr class="border-b border-white/5 hover:bg-white/5"><td class="py-3 font-semibold">'+m.n+'</td><td class="py-3 text-slate-400 num">'+m.c+'</td><td class="py-3"><span class="text-[11px] font-bold px-2 py-0.5 rounded-md border '+tone[m.t]+'">'+m.t+'</span></td><td class="py-3 text-slate-400 num">'+m.last+'</td><td class="py-3 text-right font-semibold num">₱'+m.spend.toLocaleString()+'</td></tr>';
+  }).join('');
+  $('adminBookings').innerHTML = adminBookings.map(function(b){
+    var st = b.st==='Paid'?'text-lime1':(b.st==='Pending'?'text-gold':'text-sky-400');
+    return '<div class="flex items-center justify-between text-sm border border-white/5 rounded-lg px-3 py-2"><div><span class="font-bold num">'+b.t+'</span> <span class="text-slate-400">· '+b.court+'</span><p class="text-xs text-slate-500">'+b.who+'</p></div><span class="text-xs font-semibold '+st+'">'+b.st+'</span></div>';
+  }).join('');
+  $('camQueue').innerHTML = camQueue.map(function(q){
+    var st = q.st==='Delivered'?'text-lime1':'text-gold';
+    return '<div class="flex items-center justify-between text-sm border border-white/5 rounded-lg px-3 py-2"><div><span class="font-bold num">#'+q.id+'</span><p class="text-xs text-slate-500 num">'+q.who+'</p></div><span class="text-xs font-semibold '+st+'">'+q.st+'</span></div>';
+  }).join('');
+  var max = Math.max.apply(null, revenue.map(function(r){return r.v}));
+  $('revChart').innerHTML = revenue.map(function(r,i){
+    var h = Math.round(r.v/max*100);
+    var col = i===revenue.length-1 ? 'from-lime1 to-gold' : 'from-lime1/70 to-lime1/30';
+    return '<div class="flex-1 flex flex-col items-center justify-end h-full gap-2"><div class="w-full rounded-t-lg bg-gradient-to-t '+col+'" style="height:'+h+'%"></div><span class="text-[11px] text-slate-500">'+r.m+'</span></div>';
+  }).join('');
+}
+
+// ---------- motion ----------
+function initMotion(){
+  if(!window.gsap || !window.ScrollTrigger) return;
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.from('.hero-in',{opacity:0,y:26,duration:.8,stagger:.12,ease:'power3.out',delay:.05});
+  gsap.utils.toArray('.reveal').forEach(function(el){
+    gsap.from(el,{opacity:0,y:34,duration:.7,ease:'power2.out',scrollTrigger:{trigger:el,start:'top 88%'}});
+  });
+}
+
+// init
+renderCourts(); renderFootage(); renderBookings(); renderWifi('wifiPlans'); renderWifi('wifiPlansPublic'); initMotion();
+</script>
+</body>
+</html>
