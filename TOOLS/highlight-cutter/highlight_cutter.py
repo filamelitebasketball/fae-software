@@ -1,4 +1,4 @@
-"""PickleCam Highlight Cutter: Playhouse Pickle desktop tool, built by F.A.E.
+"""Your Brand Highlight Cutter: Playhouse Pickle desktop tool, built by F.A.E.
 
 Finds the rallies in a pickleball match video (paddle "pop" sounds + on-court motion), then
 exports a highlight reel, one clip per rally and/or the full game, and shares them by QR code
@@ -193,7 +193,7 @@ def write_share_page(out, files):
 <title>Playhouse Pickle highlights</title><style>body{{margin:0;background:#0b0b0d;color:#f3f4ee;font:17px system-ui,sans-serif;padding:24px}}
 h1{{color:#dde01d;font-size:24px}}a{{display:flex;justify-content:space-between;gap:12px;padding:16px;margin:10px 0;border-radius:14px;
 background:#17171b;color:#f3f4ee;text-decoration:none;border:1px solid #2a2a2e}}span{{color:#9a9b93}}</style>
-<h1>Your match highlights</h1><p>Tap a file to save it to your phone.</p>{rows}<p style="color:#9a9b93">Playhouse Pickle · PickleCam</p>""", encoding="utf-8")
+<h1>Your match highlights</h1><p>Tap a file to save it to your phone.</p>{rows}<p style="color:#9a9b93">Playhouse Pickle · Your Brand</p>""", encoding="utf-8")
 
 
 # ---------------------------------------------------------------- sharing by QR over the venue WiFi
@@ -244,7 +244,7 @@ def run_app():
 
     BG, PANEL, INK, MUTED, LIME = "#0b0b0d", "#16161a", "#f3f4ee", "#9a9b93", "#dde01d"
     root = tk.Tk()
-    root.title("PickleCam Highlight Cutter · Playhouse Pickle")
+    root.title("Your Brand Highlight Cutter · Playhouse Pickle")
     root.configure(bg=BG)
     root.minsize(900, 640)
     icon = Path(getattr(sys, "_MEIPASS", Path(__file__).parent)) / "icon.ico"
@@ -276,7 +276,7 @@ def run_app():
     v = {k: (tk.BooleanVar(value=d) if isinstance(d, bool) else tk.DoubleVar(value=d) if isinstance(d, float)
              else tk.IntVar(value=d) if isinstance(d, int) else tk.StringVar(value=d)) for k, d in DEFAULTS.items()}
     v["input"] = tk.StringVar()
-    v["out"] = tk.StringVar(value=str(Path.home() / "Videos" / "PickleCam Highlights"))
+    v["out"] = tk.StringVar(value=str(Path.home() / "Videos" / "Your Brand Highlights"))
     v["deliver_files"], v["deliver_qr"] = tk.BooleanVar(value=True), tk.BooleanVar(value=True)
     v["qr_mode"], v["qr_link"] = tk.StringVar(value="wifi"), tk.StringVar()
     v["watch"], v["watch_dir"] = tk.BooleanVar(value=False), tk.StringVar()
@@ -287,7 +287,7 @@ def run_app():
     left, right = ttk.Frame(main), ttk.Frame(main)
     left.pack(side="left", fill="both", expand=True)
     right.pack(side="right", fill="y", padx=(16, 0))
-    tk.Label(left, text="PickleCam Highlight Cutter", bg=BG, fg=LIME, font=("Segoe UI Black", 18)).pack(anchor="w")
+    tk.Label(left, text="Your Brand Highlight Cutter", bg=BG, fg=LIME, font=("Segoe UI Black", 18)).pack(anchor="w")
     ttk.Label(left, text="Instant highlights and full game exports for Playhouse Pickle", style="Muted.TLabel").pack(anchor="w", pady=(0, 10))
 
     def row(parent, label, var, browse=None, width=46):
@@ -465,10 +465,10 @@ def selftest():
     print("selftest ok")
 
 def main():
-    ap = argparse.ArgumentParser(description="PickleCam Highlight Cutter")
+    ap = argparse.ArgumentParser(description="Your Brand Highlight Cutter")
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--cli", metavar="VIDEO", help="process one video without the window")
-    ap.add_argument("--out", default=str(Path.home() / "Videos" / "PickleCam Highlights"))
+    ap.add_argument("--out", default=str(Path.home() / "Videos" / "Your Brand Highlights"))
     ap.add_argument("--res", default="720p", choices=list(RES))
     ap.add_argument("--quality", default="Standard", choices=list(CRF))
     ap.add_argument("--landscape", action="store_true", help="reel in 16:9 instead of vertical 9:16")

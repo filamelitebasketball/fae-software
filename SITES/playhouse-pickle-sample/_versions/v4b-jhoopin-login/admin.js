@@ -1,4 +1,4 @@
-// Owner console: shortcut panel + main operations panel. Demo data, in-memory; Excel workbook = soft-copy backend.
+// Owner console: shortcut panel + main operations panel. Demo data, in-memory; workflow ticks persist per browser.
 const DB = {
   customers: [
     { n: 'Patricia Villanueva', c: 'patvilla@gmail.com', t: 'Player', last: 'Sep 22', spend: 4820, src: 'Booking' },
@@ -30,8 +30,15 @@ const DB = {
   prices: { court: 300, open: 250, unlock: 99, w1: 49, w2: 99, w3: 299 },
   staff: [{ n: 'jhoopin3@gmail.com', role: 'Owner (admin)' }, { n: 'filamelitebasketball', role: 'Owner (admin)' }, { n: 'Front desk 1', role: 'Staff' }, { n: 'Court marshal', role: 'Staff' }]
 };
-const SECTIONS = [['overview', 'Overview', 'fa-gauge-high'], ['schedule', 'Schedule', 'fa-calendar-days'], ['customers', 'Customers', 'fa-users'], ['picklecam', 'Your Brand', 'fa-video'], ['payments', 'Payments', 'fa-peso-sign'], ['wifi', 'WiFi', 'fa-wifi'], ['data', 'Data & platform', 'fa-database'], ['marketing', 'Marketing', 'fa-paper-plane'], ['settings', 'Settings', 'fa-sliders']];
-const SHORTCUTS = [['New booking', 'fa-calendar-plus', 'scBooking()'], ['Check in', 'fa-user-check', 'scCheckin()'], ['Start Your Brand', 'fa-circle-dot', 'scCam()'], ['Sell WiFi', 'fa-wifi', 'scWifi()'], ['Verify payments', 'fa-circle-check', 'scPayments()'], ['Send campaign', 'fa-paper-plane', 'scCampaign()'], ['Open play roster', 'fa-people-group', 'scRoster()'], ['Export to Excel', 'fa-file-excel', 'exportXLSX()']];
+const TASKS = [
+  ['Opening', 'daily', ['Lights on, doors unlocked by 5:45 AM', 'Dry-mop all 3 courts, check nets for height and tension', 'Power on PickleCam cameras and kiosk iPads, run a 10-second test clip per court', 'Confirm today’s bookings and the open play roster', 'Restock rental paddles, balls, and drinking water', 'Check WiFi router and print voucher stock']],
+  ['During operations', 'daily', ['Check in every player on arrival and capture email or mobile', 'Verify GCash and Maya payments within 15 minutes', 'Rotate the open play queue every game', 'Watch the PickleCam queue: no session stuck in Processing', 'Offer the free account at the kiosk to every guest']],
+  ['Closing', 'daily', ['Stop all recording sessions', 'Confirm every video is Delivered', 'Reconcile cash, GCash and Maya against bookings', 'Charge kiosk iPads, lights off, lock up']],
+  ['Weekly', 'weekly', ['Send the expiring-highlights reminder (grace period)', 'Post the top 3 highlights on FB, IG and TikTok with #playhousepickleballco', 'Email the next week’s open play schedule', 'Review new leads and invite them to membership', 'Wipe camera lenses, inspect nets and court lines', 'Follow up on 2027 tournament sponsors']],
+  ['Monthly', 'monthly', ['Revenue and PickleCam report to the owners', 'Membership renewals and win-back list', 'Price and schedule review']]
+];
+const SECTIONS = [['overview', 'Overview', 'fa-gauge-high'], ['schedule', 'Schedule', 'fa-calendar-days'], ['customers', 'Customers', 'fa-users'], ['picklecam', 'PickleCam', 'fa-video'], ['payments', 'Payments', 'fa-peso-sign'], ['wifi', 'WiFi', 'fa-wifi'], ['workflow', 'Workflow', 'fa-list-check'], ['marketing', 'Marketing', 'fa-paper-plane'], ['settings', 'Settings', 'fa-sliders']];
+const SHORTCUTS = [['New booking', 'fa-calendar-plus', 'scBooking()'], ['Check in', 'fa-user-check', 'scCheckin()'], ['Start PickleCam', 'fa-circle-dot', 'scCam()'], ['Sell WiFi', 'fa-wifi', 'scWifi()'], ['Verify payments', 'fa-circle-check', 'scPayments()'], ['Send campaign', 'fa-paper-plane', 'scCampaign()'], ['Open play roster', 'fa-people-group', 'scRoster()'], ['Export customers', 'fa-file-arrow-down', 'exportCSV()']];
 let SEC = 'overview';
 const OWNER_LOGINS = ['jhoopin3', 'filamelitebasketball']; // demo gate: client-side only, real auth comes with Supabase
 function custRows() {
@@ -73,23 +80,29 @@ function renderAdmin() {
 // ---------- main panel views ----------
 const kpi = (v, l, sub, cls = '') => `<div class="card p-5"><p class="display text-3xl num ${cls}">${v}</p><p class="text-xs text-muted mt-2">${l}</p>${sub ? `<p class="text-[11px] text-lime mt-1">${sub}</p>` : ''}</div>`;
 const panel = (title, body, action = '') => `<section class="card p-5 md:p-6"><div class="flex flex-wrap items-center justify-between gap-3 mb-4"><h2 class="font-bold text-lg">${title}</h2>${action}</div>${body}</section>`;
+function taskState() { try { return JSON.parse(localStorage.getItem('pp-tasks') || '{}'); } catch (e) { return {}; } }
+function periodKey(f) { const d = new Date(); return f === 'daily' ? d.toDateString() : f === 'weekly' ? d.getFullYear() + '-w' + Math.ceil((d - new Date(d.getFullYear(), 0, 1)) / 6048e5) : d.getFullYear() + '-' + d.getMonth(); }
+function isDone(g, i) { const st = taskState(), f = TASKS[g][1]; return st[g + '.' + i] === periodKey(f); }
+function tick(g, i, on) { const st = taskState(); if (on) st[g + '.' + i] = periodKey(TASKS[g][1]); else delete st[g + '.' + i]; try { localStorage.setItem('pp-tasks', JSON.stringify(st)); } catch (e) {} renderAdmin(); }
 
 const VIEWS = {
   overview() {
     const pend = DB.payments.filter(p => p.st === 'Pending').length, proc = DB.sessions.filter(s => s.st !== 'Delivered' && s.st !== 'Unlocked').length;
     const booked = Object.keys(DB.schedule).length, leads = DB.customers.filter(c => c.t === 'Lead').length;
+    const dailyDone = TASKS.flatMap((g, gi) => g[1] === 'daily' ? g[2].map((_, i) => isDone(gi, i)) : []);
+    const pct = Math.round(dailyDone.filter(Boolean).length / dailyDone.length * 100);
     const rev = [98, 120, 142, 131, 168, 182], max = Math.max(...rev);
     return `<div class="grid gap-5">
       <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">${kpi((1274 + DB.customers.length).toLocaleString(), 'Customers in your database', '+142 this month')}${kpi(peso(182400), 'Revenue this month', '+8.4% vs August')}${kpi(booked + 17, 'Bookings today', '3 courts, 6AM to 11PM')}${kpi('38.6%', 'Footage keep rate', 'grace-period conversions', 'text-gold')}</div>
       ${panel('Needs attention', `<ul class="space-y-2 text-sm">
         <li class="flex flex-wrap justify-between gap-3 items-center card p-3"><span><b class="text-gold">4 highlight packs</b> expire within 48 hours.</span><button class="btn btn-lime !py-1.5 !px-3 text-xs" onclick="sendCampaign(0)">Send reminder</button></li>
         <li class="flex flex-wrap justify-between gap-3 items-center card p-3"><span><b class="text-gold">${pend} payments</b> waiting for verification.</span><button class="btn btn-ghost !py-1.5 !px-3 text-xs" onclick="scPayments()">Verify</button></li>
-        <li class="flex flex-wrap justify-between gap-3 items-center card p-3"><span><b>${proc} Your Brand sessions</b> still recording or processing.</span><button class="btn btn-ghost !py-1.5 !px-3 text-xs" onclick="SEC='picklecam';renderAdmin()">Open queue</button></li>
+        <li class="flex flex-wrap justify-between gap-3 items-center card p-3"><span><b>${proc} PickleCam sessions</b> still recording or processing.</span><button class="btn btn-ghost !py-1.5 !px-3 text-xs" onclick="SEC='picklecam';renderAdmin()">Open queue</button></li>
         <li class="flex flex-wrap justify-between gap-3 items-center card p-3"><span><b>${leads} new leads</b> have not been invited to membership.</span><button class="btn btn-ghost !py-1.5 !px-3 text-xs" onclick="sendCampaign(2)">Invite</button></li>
       </ul>`)}
       <div class="grid xl:grid-cols-2 gap-5">
         ${panel('Revenue · last 6 months', `<div class="flex items-end gap-3 h-40">${rev.map((v, i) => `<div class="flex-1 flex flex-col items-center justify-end h-full gap-2"><div class="w-full rounded-t-lg ${i === 5 ? 'bg-lime' : 'bg-lime/40'}" style="height:${Math.round(v / max * 100)}%"></div><span class="text-[11px] text-muted">${['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'][i]}</span></div>`).join('')}</div><p class="text-[11px] text-muted mt-3">₱ thousands · demo figures</p>`)}
-        ${panel('Soft copy backend', `<p class="text-sm">Every table exports to one Excel workbook: <b class="num">${Object.keys(tables()).length}</b> sheets, ready for backup or for their current platform.</p><div class="flex flex-wrap gap-2 mt-4"><button class="btn btn-lime !py-2 text-sm" onclick="exportXLSX()"><i class="fa-solid fa-file-excel"></i>Export Excel</button><button class="btn btn-ghost !py-2 text-sm" onclick="SEC='data';renderAdmin()">Data & platform</button></div>`)}
+        ${panel('Today’s workflow', `<div class="bar"><span style="width:${pct}%"></span></div><p class="text-sm mt-3"><b class="num">${pct}%</b> of daily tasks done.</p><button class="btn btn-ghost !py-2 text-sm mt-4" onclick="SEC='workflow';renderAdmin()">Open checklist</button>`)}
       </div></div>`;
   },
   schedule() {
@@ -107,7 +120,7 @@ const VIEWS = {
     const count = t => DB.customers.filter(c => c.t === t).length;
     return `<div class="grid gap-5"><div class="grid grid-cols-3 gap-4">${kpi(count('Lead'), 'Leads', 'kiosk and sign-ups')}${kpi(count('Member'), 'Members', 'account holders', 'text-gold')}${kpi(count('Player'), 'Players', 'regulars')}</div>
     ${panel('Customer database', `<div class="flex flex-wrap gap-2 mb-4"><input style="max-width:260px" placeholder="Search name, email, mobile" aria-label="Search customers" value="${VIEWS.q || ''}" oninput="VIEWS.q=this.value;$('#custRows').innerHTML=custRows()">${['All', 'Lead', 'Member', 'Player'].map(t => `<button class="chip text-sm" aria-pressed="${t === f}" onclick="VIEWS.f='${t}';renderAdmin()">${t}</button>`).join('')}</div>
-      <div class="overflow-x-auto"><table class="min-w-[640px]"><thead><tr><th>Name</th><th>Contact</th><th>Stage</th><th>Source</th><th>Last visit</th><th class="text-right">Spend</th><th></th></tr></thead><tbody id="custRows">${custRows()}</tbody></table></div>`, `<div class="flex gap-2"><button class="btn btn-ghost !py-2 text-sm" onclick="scCampaign()"><i class="fa-solid fa-paper-plane"></i>Email</button><button class="btn btn-lime !py-2 text-sm" onclick="exportXLSX()"><i class="fa-solid fa-file-excel"></i>Export Excel</button></div>`)}</div>`;
+      <div class="overflow-x-auto"><table class="min-w-[640px]"><thead><tr><th>Name</th><th>Contact</th><th>Stage</th><th>Source</th><th>Last visit</th><th class="text-right">Spend</th><th></th></tr></thead><tbody id="custRows">${custRows()}</tbody></table></div>`, `<div class="flex gap-2"><button class="btn btn-ghost !py-2 text-sm" onclick="scCampaign()"><i class="fa-solid fa-paper-plane"></i>Email</button><button class="btn btn-lime !py-2 text-sm" onclick="exportCSV()"><i class="fa-solid fa-file-arrow-down"></i>Export CSV</button></div>`)}</div>`;
   },
   picklecam() {
     const clips = DB.sessions.reduce((a, s) => a + s.clips, 0);
@@ -127,16 +140,11 @@ const VIEWS = {
     return `<div class="grid gap-5">${panel('Sell a voucher', `<div class="grid sm:grid-cols-3 gap-3">${[['1 Hour', DB.prices.w1], ['1 Day', DB.prices.w2], ['1 Week', DB.prices.w3]].map(w => `<button class="card p-4 text-left hover:border-lime" onclick="issueVoucher('${w[0]}')"><p class="font-bold">${w[0]}</p><p class="display text-2xl text-lime num mt-1">${peso(w[1])}</p></button>`).join('')}</div>`)}
     ${panel('Issued vouchers', `<table><thead><tr><th>Code</th><th>Plan</th><th>For</th><th>Status</th></tr></thead><tbody>${DB.vouchers.map(v => `<tr><td class="num font-semibold">${v.code}</td><td>${v.plan}</td><td>${v.who}</td><td>${badge(v.st)}</td></tr>`).join('')}</tbody></table>`)}</div>`;
   },
-  data() {
-    const t = tables(), cfg = PLATFORM.cfg;
-    return `<div class="grid gap-5">
-    ${panel('Excel soft copy', `<p class="text-sm text-muted mb-4">Every table in one workbook, one sheet each. Open it in Excel or Google Sheets, edit, and import it back. It is also the hand-off file for any other system.</p>
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">${Object.entries(t).map(([n, r]) => `<div class="card p-3"><p class="font-semibold text-sm">${n}</p><p class="text-xs text-muted num">${r.length} rows</p></div>`).join('')}</div>`,
-      `<div class="flex gap-2"><label class="btn btn-ghost !py-2 text-sm cursor-pointer" style="margin:0;color:inherit;font-size:14px"><i class="fa-solid fa-file-import"></i>Import<input type="file" accept=".xlsx,.xls" class="hide" onchange="importXLSX(this.files[0])"></label><button class="btn btn-lime !py-2 text-sm" onclick="exportXLSX()"><i class="fa-solid fa-file-excel"></i>Export Excel</button></div>`)}
-    ${panel('Connect their platform', `<p class="text-sm text-muted mb-4">Already on a membership or booking system? Paste its API link and the console syncs with it, using the same sheets as the Excel file. No API? Use Excel export and import.</p>
-      <div class="grid sm:grid-cols-2 gap-4"><div><label for="plName">Platform</label><input id="plName" placeholder="e.g. their gym membership app" value="${cfg.name || ''}"></div><div><label for="plUrl">API link (https)</label><input id="plUrl" type="url" placeholder="https://..." value="${cfg.url || ''}"></div></div>
-      <p class="text-xs text-muted mt-3">Status: ${cfg.url ? `linked to <b class="text-lime">${cfg.name || cfg.url}</b>` : 'not linked · the Excel soft copy is the backend'}</p>`,
-      `<div class="flex gap-2"><button class="btn btn-ghost !py-2 text-sm" onclick="syncPlatform('pull')"><i class="fa-solid fa-cloud-arrow-down"></i>Pull</button><button class="btn btn-lime !py-2 text-sm" onclick="syncPlatform('push')"><i class="fa-solid fa-cloud-arrow-up"></i>Push</button></div>`)}</div>`;
+  workflow() {
+    return `<div class="grid gap-5">${TASKS.map((g, gi) => {
+      const done = g[2].filter((_, i) => isDone(gi, i)).length;
+      return panel(`${g[0]} <span class="text-xs font-normal text-muted">(${g[1]})</span>`, `<div class="bar mb-3"><span style="width:${done / g[2].length * 100}%"></span></div>${g[2].map((t, i) => `<label class="task ${isDone(gi, i) ? 'done' : ''}" style="font-size:14px;color:inherit;margin:0"><input type="checkbox" ${isDone(gi, i) ? 'checked' : ''} onchange="tick(${gi},${i},this.checked)"><span class="t">${t}</span></label>`).join('')}`, `<span class="text-xs text-muted num">${done}/${g[2].length}</span>`);
+    }).join('')}</div>`;
   },
   marketing() {
     return `<div class="grid gap-5">${panel('Campaigns', `<div class="grid md:grid-cols-2 gap-3">${CAMPAIGNS.map((c, i) => `<div class="card p-4"><p class="font-bold">${c.n}</p><p class="text-xs text-muted mt-1">${c.d}</p><div class="flex justify-between items-center mt-4"><span class="text-xs num">${c.aud()} recipients</span><button class="btn btn-lime !py-1.5 !px-3 text-xs" onclick="sendCampaign(${i})">Send</button></div></div>`).join('')}</div>`)}
@@ -184,7 +192,7 @@ function scCheckin() {
   drawer(`<h2 class="font-bold text-xl mb-5">Check in</h2>${due.length ? due.map(([k, b]) => { const [c, h] = k.split('-').map(Number); return `<div class="card p-4 mb-3 flex justify-between items-center"><div><p class="font-semibold">${b.who}</p><p class="text-xs text-muted">Court ${c + 1} · ${hourLabel(h)} · ${b.st}</p></div><button class="btn btn-lime !py-1.5 !px-3 text-xs" onclick="DB.schedule['${k}'].st='Checked-in';toast('${b.who} checked in');scCheckin();renderAdmin()">Check in</button></div>`; }).join('') : '<p class="text-muted">Everyone is checked in.</p>'}`);
 }
 function scCam() {
-  drawer(`<h2 class="font-bold text-xl mb-5">Start a Your Brand session</h2><div class="space-y-4">
+  drawer(`<h2 class="font-bold text-xl mb-5">Start a PickleCam session</h2><div class="space-y-4">
     <div><label for="cCt">Court</label><select id="cCt"><option>Court 1</option><option>Court 2</option><option>Court 3</option></select></div>
     <div><label for="cE">Deliver to (email)</label><input id="cE" type="email" placeholder="player@gmail.com"></div>
     <p id="cErr" class="hide text-sm text-red-300">Enter a valid email so the video can be delivered.</p>
@@ -215,63 +223,11 @@ function scRoster() {
   <div class="flex gap-2"><input id="rN" placeholder="Add walk-in name"><button class="btn btn-lime" onclick="const v=$('#rN').value.trim();if(v&&DB.roster.length<16){DB.roster.push(v);scRoster()}">Add</button></div>`);
 }
 function promote(contact) { const c = DB.customers.find(x => x.c === contact); c.t = c.t === 'Lead' ? 'Member' : 'Player'; toast(c.n + ' is now a ' + c.t); renderAdmin(); }
-// ---------- data: Excel soft copy + their platform ----------
-// Sheet name: [DB table, {column header: field}]. Same shape for Excel, import and the platform API.
-const COLS = {
-  Customers: ['customers', { Name: 'n', Contact: 'c', Stage: 't', Source: 'src', 'Last visit': 'last', 'Spend (PHP)': 'spend' }],
-  Recordings: ['sessions', { Session: 'id', Court: 'court', 'Delivered to': 'who', Start: 'start', Minutes: 'mins', Highlights: 'clips', Status: 'st' }],
-  Payments: ['payments', { Ref: 'ref', For: 'what', Method: 'method', 'Amount (PHP)': 'amt', Status: 'st' }],
-  'WiFi vouchers': ['vouchers', { Code: 'code', Plan: 'plan', For: 'who', Status: 'st' }],
-  Campaigns: ['sent', { Campaign: 'name', Recipients: 'aud', Sent: 'when' }],
-  Staff: ['staff', { Account: 'n', Role: 'role' }]
-};
-const EXTRA = ['Bookings', 'Open play', 'Prices'];
-function tables() {
-  const t = {};
-  t.Bookings = Object.entries(DB.schedule).map(([k, b]) => { const [c, h] = k.split('-').map(Number); return { Court: c + 1, 'Hour (24h)': h, Player: b.who, Status: b.st }; });
-  for (const [sheet, [key, cols]] of Object.entries(COLS)) t[sheet] = DB[key].map(r => Object.fromEntries(Object.entries(cols).map(([h, f]) => [h, r[f]])));
-  t['Open play'] = DB.roster.map(n => ({ Player: n }));
-  t.Prices = Object.entries(DB.prices).map(([k, v]) => ({ Setting: k, PHP: v }));
-  return t;
-}
-function loadTables(t) { // inverse of tables(); sheets that are missing stay as they are
-  for (const [sheet, [key, cols]] of Object.entries(COLS)) if (t[sheet]) DB[key] = t[sheet].map(r => Object.fromEntries(Object.entries(cols).map(([h, f]) => [f, r[h] ?? ''])));
-  if (t.Bookings) DB.schedule = Object.fromEntries(t.Bookings.map(r => [(r.Court - 1) + '-' + r['Hour (24h)'], { who: r.Player, st: r.Status }]));
-  if (t['Open play']) DB.roster = t['Open play'].map(r => r.Player);
-  if (t.Prices) t.Prices.forEach(r => { DB.prices[r.Setting] = +r.PHP; });
-  return Object.keys(t).filter(n => n in COLS || EXTRA.includes(n)).length;
-}
-const xlsx = () => window.XLSX ? Promise.resolve(window.XLSX) : new Promise((ok, bad) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload = () => ok(window.XLSX); s.onerror = bad; document.head.append(s); });
-async function exportXLSX() {
-  try {
-    const X = await xlsx(), wb = X.utils.book_new();
-    for (const [name, rows] of Object.entries(tables())) X.utils.book_append_sheet(wb, X.utils.json_to_sheet(rows), name);
-    X.writeFile(wb, 'playhouse-pickle-data-' + new Date().toISOString().slice(0, 10) + '.xlsx');
-    toast('Exported ' + wb.SheetNames.length + ' sheets to Excel');
-  } catch (e) { toast('Excel export needs an internet connection'); }
-}
-async function importXLSX(file) {
-  if (!file) return;
-  try {
-    const X = await xlsx(), wb = X.read(await file.arrayBuffer());
-    const n = loadTables(Object.fromEntries(wb.SheetNames.map(s => [s, X.utils.sheet_to_json(wb.Sheets[s])])));
-    toast(n ? `Imported ${n} sheets from ${file.name}` : 'No matching sheets. Start from an exported file.'); renderAdmin();
-  } catch (e) { toast('Could not read that file'); }
-}
-// Their platform plugs in here: GET returns the same sheets as the Excel export, POST receives them.
-// ponytail: link saved per browser; moves to the database (behind auth) when the real backend goes in.
-const PLATFORM = {
-  get cfg() { try { return JSON.parse(localStorage.getItem('pp-platform') || '{}'); } catch (e) { return {}; } },
-  async pull(url) { const r = await fetch(url); if (!r.ok) throw Error(r.status); return loadTables(await r.json()); },
-  async push(url) { const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(tables()) }); if (!r.ok) throw Error(r.status); }
-};
-async function syncPlatform(dir) {
-  const name = $('#plName').value.trim(), url = $('#plUrl').value.trim();
-  if (!url.startsWith('https://')) return toast('Paste the platform’s https API link first');
-  try { localStorage.setItem('pp-platform', JSON.stringify({ name, url })); } catch (e) {}
-  try { dir === 'pull' ? await PLATFORM.pull(url) : await PLATFORM.push(url); toast((dir === 'pull' ? 'Pulled from ' : 'Pushed to ') + (name || 'the platform')); }
-  catch (e) { toast('The platform did not answer (' + (e.message || 'network') + ')'); }
-  renderAdmin();
+function exportCSV() {
+  const rows = [['Name', 'Contact', 'Stage', 'Source', 'Last visit', 'Spend (PHP)']].concat(DB.customers.map(c => [c.n, c.c, c.t, c.src || '', c.last, c.spend]));
+  const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join(String.fromCharCode(10));
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'playhouse-pickle-customers.csv'; a.click(); URL.revokeObjectURL(a.href);
+  toast('Exported ' + DB.customers.length + ' customers');
 }
 
 // Shortcut keys 1-8 while the console is open (ignored while typing or when a dialog is up)

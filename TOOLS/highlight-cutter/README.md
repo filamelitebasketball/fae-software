@@ -1,4 +1,4 @@
-# PickleCam Highlight Cutter
+# Your Brand Highlight Cutter
 
 Desktop app for **Team Payaman Pickleball / Playhouse Pickle**. Drop in a match video and it finds
 every rally on its own, then exports a highlight reel, one clip per rally and the full game, and
@@ -23,7 +23,7 @@ shows a QR code players scan to download them.
 Each export folder also gets `rallies.json` (rally times) and `share-qr.png`.
 
 ## Run
-- Windows app: `dist\PickleCamHighlightCutter.exe` (build with `build_exe.ps1`). No installs needed; ffmpeg is bundled.
+- Windows app: `dist\YourBrandHighlightCutter.exe` (build with `build_exe.ps1`). No installs needed; ffmpeg is bundled.
   The first time you share by WiFi, Windows Firewall asks to allow it: tick **Private networks**.
 - From source: `pip install -r requirements.txt`, then `python highlight_cutter.py`
 - Command line: `python highlight_cutter.py --cli match.mp4 --res 720p --full --qr`

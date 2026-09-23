@@ -91,7 +91,7 @@ function renderBooker() {
 function startBooking() {
   if (S.sel.hour == null) return;
   S.pay = { kind: 'book', amt: RATE, label: `Court ${S.sel.court + 1} · ${hourLabel(S.sel.hour)}` };
-  $('#payTitle').textContent = 'Confirm booking'; $('#payDesc').textContent = S.pay.label + '. Includes a Your Brand recording.';
+  $('#payTitle').textContent = 'Confirm booking'; $('#payDesc').textContent = S.pay.label + '. Includes a PickleCam recording.';
   $('#payAmt').textContent = peso(RATE); openDlg('dlgPay');
 }
 
@@ -121,10 +121,10 @@ function renderMatches() {
         <h3 class="font-bold">${m.t}</h3>
         <p class="text-xs text-muted mt-1 num">${m.court} · ${m.date} · #${m.id} · <span class="text-lime">${m.clips} AI highlight clips</span></p>
         <div class="flex flex-wrap gap-2 mt-4">
-          <button class="btn btn-ghost !py-2 !px-3 text-sm" onclick="showQR('Full game ${m.id}','Scan to watch on your phone','${location.origin}/?watch=game/${m.id}')"><i class="fa-solid fa-film"></i>Full game</button>
-          <button class="btn btn-ghost !py-2 !px-3 text-sm" onclick="showQR('Highlights ${m.id}','${m.clips} clips, ready to post','${location.origin}/?watch=reel/${m.id}')"><i class="fa-solid fa-wand-magic-sparkles"></i>Highlights</button>
+          <button class="btn btn-ghost !py-2 !px-3 text-sm" onclick="showQR('Full game ${m.id}','Scan to watch on your phone','https://media.picklecam.ph/game/${m.id}')"><i class="fa-solid fa-film"></i>Full game</button>
+          <button class="btn btn-ghost !py-2 !px-3 text-sm" onclick="showQR('Highlights ${m.id}','${m.clips} clips, ready to post','https://media.picklecam.ph/reel/${m.id}')"><i class="fa-solid fa-wand-magic-sparkles"></i>Highlights</button>
           ${m.locked ? `<button class="btn btn-lime !py-2 !px-3 text-sm ml-auto" onclick="unlock('${m.id}')">Keep forever ${peso(UNLOCK)}</button>`
-                     : `<button class="btn btn-lime !py-2 !px-3 text-sm ml-auto" onclick="showQR('Download ${m.id}','HD download link','${location.origin}/?watch=dl/${m.id}')"><i class="fa-solid fa-download"></i>Download</button>`}
+                     : `<button class="btn btn-lime !py-2 !px-3 text-sm ml-auto" onclick="showQR('Download ${m.id}','HD download link','https://media.picklecam.ph/dl/${m.id}')"><i class="fa-solid fa-download"></i>Download</button>`}
         </div>
       </div>
     </article>`).join('');
