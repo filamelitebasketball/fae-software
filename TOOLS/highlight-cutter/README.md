@@ -1,37 +1,36 @@
-# Highlight Studio (Your Brand Highlight Cutter)
+# Highlight Studio IO v3.0
 
-Desktop app for **Team Payaman Pickleball / Playhouse Pickle**. Drop in a match video and it finds
-every rally on its own, then exports a highlight reel, one clip per rally and the full game, and
-shows a QR code players scan to download them.
+© 2026 LINKMEIO. All rights reserved. Licensed to Playhouse Pickle (Team Payaman Pickleball).
 
-## How it finds rallies
-1. **Sound:** listens for the paddle "pop" (sharp 1 to 4 kHz spikes).
-2. **Motion:** checks that players are actually moving on this court, so pops from the next court
-   or music are ignored.
-3. **Rallies:** pops closer than 2.5 s chain into a rally (3+ hits), padded 1.8 s before and
-   1.2 s after. The reel uses the longest rallies.
+Desktop app that turns a pickleball match video into what players take home:
+- **Highlights video**: every rally in one video (or only the best N), vertical 9:16 or 16:9, Playhouse watermark.
+- **Longest rally**: the single longest exchange on its own.
+- **Full game**: the whole match.
+- **Clip per rally**: optional, off by default.
 
-## Options
-| Section | Choices |
-|---|---|
-| Input | One video, or a **watch folder** (the beacon): every new recording that lands there is processed automatically once the camera finishes writing it |
-| Video output | Format: H.264 (plays everywhere), H.265 (about half the size) or Camera copy (instant, no re-encode) · Frame rate: Original, 30 or 60 · Resolution: Original, 1080p, 720p, 480p · Quality: High / Standard / Small file |
-| Exports | Highlight reel (vertical 9:16 for Reels/TikTok or 16:9), top N rallies, per-rally clips, full game, watermark: Playhouse Pickle logo (bundled, default), custom PNG or none |
-| Delivery | Regular files in the output folder, and/or a QR code: **venue WiFi** (the app serves the files to phones on the same network) or a **custom link** (e.g. the portal page) |
-| Detection (popup) | Sensitivity, min hits, max gap, pre/post roll, require court motion, ignore edges % |
-
-Settings are saved automatically in `%APPDATA%\YourBrandHighlightCutter\settings.json` and come back on the next launch (Reset settings restores defaults).
-
-Each export folder also gets `rallies.json` (rally times) and `share-qr.png`.
+It finds rallies from paddle "pop" sounds (1 to 4 kHz onsets) plus movement on the court, chains hits into rallies and cuts out the dead time.
 
 ## Run
-- Windows app: the **Highlight Studio** shortcut on the Desktop, or `dist\YourBrandHighlightCutter.exe` (build with `build_exe.ps1`). No installs needed; ffmpeg is bundled.
-  The first time you share by WiFi, Windows Firewall asks to allow it: tick **Private networks**.
-- From source: `pip install -r requirements.txt`, then `python highlight_cutter.py`
-- Command line: `python highlight_cutter.py --cli match.mp4 --format h265 --fps 30 --res 720p --brand --full --qr`
-- Logic check: `python highlight_cutter.py --selftest`
+- Desktop shortcut **Highlight Studio IO**, or `dist\HighlightStudioIO.exe` (one file, ffmpeg bundled; build with `build_exe.ps1`).
+- From source: `pip install -r requirements.txt`, then `python highlight_cutter.py`.
+- Command line: `python highlight_cutter.py --cli match.mp4 --longest --full --brand` (see `--help`).
+- Logic check: `python highlight_cutter.py --selftest`.
+
+## Settings (Recommended preset = the defaults)
+| Setting | Recommended | Options |
+|---|---|---|
+| Preset | Recommended | Social highlights (best 5 + longest, High) · Full game only (camera copy) · Custom |
+| Format | MP4 · iPhone + Android (H.264 High, yuv420p, AAC-LC 48 kHz stereo 160k, faststart) | HEVC · smaller (hvc1) · Camera copy (no re-encode) |
+| Resolution | 1080p (never upscales) | Original · 720p · 480p |
+| Frame rate | 30 | Original · 60 |
+| Quality | Standard | High · Small file |
+| Watermark | Playhouse logo | Custom PNG · None |
+| Detection | sensitivity 6, min hits 3, max gap 2.5 s, pre 1.8 s, post 1.2 s, court motion on, ignore edges 5% | popup |
+
+Input: one file or a watch folder (auto-processes each new recording once the camera stops writing).
+Delivery: files in the output folder plus a QR code (venue WiFi download page, or a custom link).
+Settings save to `%APPDATA%\HighlightStudioIO\settings.json`. First WiFi share: allow the app on Private networks in Windows Firewall.
 
 ## Status
-Tested on a synthetic match (3 rallies + 2 stray pops): all 30 rally hits found to 0.1 s, strays
-rejected, all exports and the QR download verified. Thresholds still need tuning on real Court 1
-footage (the pilot in the Instant Highlights report).
+Tested on a synthetic match (all rally hits found, durations exact, outputs checked as H.264 High / AAC / faststart).
+Not yet tested on real court footage: detection thresholds get tuned in the Court 1 pilot.
