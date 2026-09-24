@@ -252,9 +252,6 @@ def full_game(src, dst, vs, dur, prog=None):
 
 # ---------------------------------------------------------------- the whole job
 def process(src, out_dir, opt, log=print, step=lambda frac, text: None):
-    if trial_left() == 0:
-        opt = dict(opt, **TRIAL_LIMITS)
-        log("Trial ended. " + TRIAL_NOTE)
     src = Path(src)
     out = Path(out_dir) / f"{src.stem}-highlights"
     out.mkdir(parents=True, exist_ok=True)
@@ -380,47 +377,6 @@ BASE = Path(getattr(sys, "_MEIPASS", Path(__file__).parent))
 BRAND_PNG = BASE / "assets" / "playhouse-logo.png"
 OWNER_PNG = BASE / "assets" / "linkmeio-logo.png"
 QR_MODES = ("Venue WiFi", "Custom link")
-
-# ---------------------------------------------------------------- trial edition
-# A trial build bundles trial.txt (build_trial.ps1). The clock starts at first launch. When it runs out the app
-# keeps working as a free tier. Both states are shown in the app: a countdown chip, then a "trial ended" notice.
-TRIAL_HOURS, TRIAL_FLAG = 24, BASE / "trial.txt"
-TRIAL_LIMITS = dict(reel=True, longest=False, full=False, clips=False, res="720p", logo=str(OWNER_PNG))
-TRIAL_NOTE = "Free tier: highlights video only, up to 720p, with the LINKMEIO watermark."
-TRIAL_KEY, TRIAL_FILE = r"Software\LINKMEIO\HighlightStudioIO", SETTINGS.parent / "license.json"
-
-def hours_left(t0, now, total=TRIAL_HOURS):
-    used = (now - t0) / 3600
-    return 0.0 if used < -1 else max(0.0, total - used)       # clock turned back by over an hour counts as ended
-
-def trial_left():
-    """Hours left on a trial build, or None for a full licence. The start is kept in two places; the earliest wins."""
-    if not TRIAL_FLAG.exists():
-        return None
-    now, marks = time.time(), []
-    try:
-        import winreg
-        with winreg.CreateKey(winreg.HKEY_CURRENT_USER, TRIAL_KEY) as k:
-            marks.append(float(winreg.QueryValueEx(k, "Installed")[0]))
-    except (ImportError, OSError, ValueError):
-        pass
-    try:
-        marks.append(float(json.loads(TRIAL_FILE.read_text())["t0"]))
-    except (OSError, ValueError, KeyError):
-        pass
-    t0 = min(marks + [now])
-    try:
-        import winreg
-        with winreg.CreateKey(winreg.HKEY_CURRENT_USER, TRIAL_KEY) as k:
-            winreg.SetValueEx(k, "Installed", 0, winreg.REG_SZ, repr(t0))
-    except (ImportError, OSError):
-        pass
-    try:
-        TRIAL_FILE.parent.mkdir(parents=True, exist_ok=True)
-        TRIAL_FILE.write_text(json.dumps({"t0": t0}))
-    except OSError:
-        pass
-    return hours_left(t0, now)
 
 def run_app():
     import tkinter as tk
@@ -607,32 +563,17 @@ def run_app():
                  height=28).pack(side="left", padx=(8, 0))
     ctk.CTkLabel(row1, text=f"  v{VERSION} · PREMIUM  ", font=F(10, True), text_color=CYAN, fg_color=FIELD, corner_radius=8,
                  height=22).pack(side="left", padx=10)
-    trial_chip = ctk.CTkLabel(row1, text="", font=F(10, True), corner_radius=8, height=22) if TRIAL_FLAG.exists() else None
-    if trial_chip:
-        trial_chip.pack(side="left")
     ctk.CTkLabel(brand, text="Automatic rally highlights and full game exports", font=SMALL, text_color=MUTED, height=16).pack(anchor="w")
     status = ctk.CTkLabel(top, text="●  Ready", font=H2, text_color=CYAN, fg_color=FIELD, corner_radius=14, height=32, width=120)
     status.pack(side="right")
     if BRAND_PNG.exists():
         lic = ctk.CTkFrame(top, fg_color="transparent")
         lic.pack(side="right", padx=22)
-        ctk.CTkLabel(lic, text="PREPARED FOR" if trial_chip else "LICENSED TO", font=F(9, True), text_color=MUTED, height=12).pack(anchor="e")
+        ctk.CTkLabel(lic, text="LICENSED TO", font=F(9, True), text_color=MUTED, height=12).pack(anchor="e")
         ctk.CTkLabel(lic, text="", image=img(BRAND_PNG, 30)).pack(anchor="e")
     rule = tk.Canvas(root, height=2, bg=BG, highlightthickness=0)
     rule.pack(fill="x", padx=28)
     rule.bind("<Configure>", lambda e: (rule.delete("all"), gradient(rule, 0, e.width, 0, 2)))
-    ended = ctk.CTkLabel(root, text=f"Your {TRIAL_HOURS}-hour trial has ended.  {TRIAL_NOTE}  Contact {OWNER} to unlock the full version.",
-                         font=H2, text_color="#ffffff", fg_color=RED, corner_radius=12, height=36)
-    def trial_tick():
-        left = trial_left()
-        if left:
-            trial_chip.configure(text=f"  TRIAL · {max(1, round(left))} H LEFT  ", text_color=BG, fg_color=CYAN)
-        else:
-            trial_chip.configure(text="  TRIAL ENDED · FREE TIER  ", text_color="#ffffff", fg_color=RED)
-            if not ended.winfo_ismapped():
-                ended.pack(fill="x", padx=28, pady=(12, 0), after=rule)
-            v["watch"].set(False)
-        root.after(60000, trial_tick)
 
     # ---- footer: ownership mark, bottom right
     foot = ctk.CTkFrame(root, fg_color="transparent")
@@ -774,8 +715,7 @@ def run_app():
             top_n = 0
         reel = f" ({'all rallies' if v['reel_mode'].get() == 'All rallies' else f'best {top_n}'})" if v["reel"].get() else ""
         summary.configure(text=f"{v['fmt'].get()} · {v['res'].get()} · {v['fps'].get()} fps · {v['quality'].get()}\n"
-                               f"{', '.join(outs).capitalize() or 'Nothing selected'}{reel}"
-                               + ("\nTrial ended: highlights video only, 720p" if trial_left() == 0 else ""))
+                               f"{', '.join(outs).capitalize() or 'Nothing selected'}{reel}")
     for k in ("fmt", "res", "fps", "quality", "reel", "longest", "full", "clips", "top", "reel_mode"):
         v[k].trace_add("write", summarize)
     summarize()
@@ -895,10 +835,7 @@ def run_app():
         root.after(120, pump)
 
     def toggle_watch():
-        if v["watch"].get() and trial_left() == 0:
-            v["watch"].set(False)
-            messagebox.showinfo("Full version", f"Watch-folder automation is part of the full version. Contact {OWNER} to unlock it.")
-        elif v["watch"].get() and not Path(v["watch_dir"].get()).is_dir():
+        if v["watch"].get() and not Path(v["watch_dir"].get()).is_dir():
             v["watch"].set(False)
             messagebox.showwarning("Watch folder", "Choose a folder to watch first.")
         elif v["watch"].get():
@@ -932,10 +869,6 @@ def run_app():
         root.after(10000, lambda: watch_tick(sizes))
 
     root.protocol("WM_DELETE_WINDOW", lambda: (remember(), share.stop(), root.destroy()))
-    if trial_chip:
-        trial_tick()
-        if trial_left():
-            log(f"Trial edition: every feature is on for {round(trial_left())} more hours.")
     pump()
     root.mainloop()
 
@@ -955,8 +888,6 @@ def selftest():
     assert find_rallies([5, 6, 7], 7.5, pre=1.8, post=1.2) == [(3.2, 7.5, 3)]   # clamped to video length
     assert longest_rally(segs) == (48.2, 57.2, 5) and best_rallies(segs, 1) == [(48.2, 57.2, 5)]
     assert all(k in DEFAULTS and (k not in CHOICES or val in CHOICES[k]) for p in PRESETS.values() for k, val in p.items())
-    assert hours_left(0, 3600) == 23 and hours_left(0, 25 * 3600) == 0 and hours_left(10000, 0) == 0   # set-back clock
-    assert trial_left() is None or TRIAL_FLAG.exists()                  # source runs are the full version
     print("selftest ok")
 
 def main():
