@@ -1,4 +1,4 @@
-"""Highlight Studio IO v3.2 · © 2026 LINKMEIO. All rights reserved.
+"""Highlight Studio IO v3.0 · © 2026 LINKMEIO. All rights reserved.
 
 Automatic pickleball highlights, licensed to Playhouse Pickle. Finds the rallies in a match video
 (paddle "pop" sounds + on-court motion), then exports one highlights video with every rally, the
@@ -13,9 +13,8 @@ from pathlib import Path
 
 import numpy as np
 import imageio_ffmpeg
-from PIL import Image, ImageDraw, ImageFont
 
-APP, VERSION, OWNER = "Highlight Studio IO", "3.2", "LINKMEIO"
+APP, VERSION, OWNER = "Highlight Studio IO", "3.0", "LINKMEIO"
 FFMPEG = imageio_ffmpeg.get_ffmpeg_exe()          # bundled ffmpeg, nothing to install
 NOWIN = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
 VIDEO_EXT = {".mp4", ".mov", ".mkv", ".avi", ".m4v"}
@@ -25,16 +24,10 @@ FPS = {"Original": None, "30": 30, "60": 60}
 CRF = {"High": 18, "Standard": 23, "Small file": 28}
 REEL_MODES = ("All rallies", "Best rallies")
 WATERMARKS = ("Playhouse logo", "Custom PNG", "None")
-SCORING = ("Side-out doubles", "Side-out singles", "Rally scoring")
-SB_STYLES = ("Broadcast", "Compact", "Score call")
-GAME_TO, SIDES = ("11", "15", "21"), ("Team A", "Team B")
-CHOICES = {"fmt": FMT, "res": RES, "fps": FPS, "quality": CRF, "reel_mode": REEL_MODES, "wm": WATERMARKS,
-           "sb_style": SB_STYLES, "sb_fmt": SCORING, "sb_to": GAME_TO, "sb_first": SIDES}
+CHOICES = {"fmt": FMT, "res": RES, "fps": FPS, "quality": CRF, "reel_mode": REEL_MODES, "wm": WATERMARKS}
 DEFAULTS = dict(fmt="MP4 · iPhone + Android", res="1080p", fps="30", quality="Standard",       # = the Recommended preset
                 reel=True, reel_mode="All rallies", top=8, longest=True, full=True, clips=False, vertical=True,
-                wm="Playhouse logo", logo="", sensitivity=6, min_hits=3, gap=2.5, pre=1.8, post=1.2, motion=True, inset=5,
-                sb=False, sb_style="Broadcast", sb_fmt="Side-out doubles", sb_to="11", sb_first="Team A",
-                team_a="Team A", team_b="Team B", sb_server=True, sb_games=True)
+                wm="Playhouse logo", logo="", sensitivity=6, min_hits=3, gap=2.5, pre=1.8, post=1.2, motion=True, inset=5)
 PRESETS = {
     "Recommended": {k: DEFAULTS[k] for k in ("fmt", "res", "fps", "quality", "reel", "reel_mode", "longest", "full", "clips", "vertical", "wm")},
     "Social highlights": dict(reel=True, reel_mode="Best rallies", top=5, longest=True, full=False, clips=False, vertical=True,
@@ -110,20 +103,11 @@ def duration_of(path):
     m = re.search(r"Duration: (\d+):(\d+):([\d.]+)", err)
     return int(m[1]) * 3600 + int(m[2]) * 60 + float(m[3]) if m else 0.0
 
-def video_size(path):
+def video_height(path):
     err = subprocess.run([FFMPEG, "-hide_banner", "-i", str(path)], capture_output=True, text=True,
                          creationflags=NOWIN).stderr
     m = re.search(r"Video:.*?(\d{2,5})x(\d{2,5})", err)
-    return (int(m[1]), int(m[2])) if m else (1920, 1080)
-
-CROP_9_16 = "crop=min(iw\\,trunc(ih*9/16/2)*2):min(ih\\,trunc(iw*16/9/2)*2)"
-
-def out_size(src_wh, vs, vertical):
-    """Frame size after the 9:16 crop (when vertical) and the never-upscaling scale."""
-    sw, sh = src_wh
-    cw, ch = (min(sw, int(sh * 9 / 16 / 2) * 2), min(sh, int(sw * 16 / 9 / 2) * 2)) if vertical else (sw, sh)
-    h = min(vs["res"] or ch, ch)
-    return round(cw * h / ch / 2) * 2, h
+    return int(m[2]) if m else 1080
 
 SETTINGS = Path(os.environ.get("APPDATA") or Path.home()) / "HighlightStudioIO" / "settings.json"
 
@@ -199,20 +183,20 @@ def make_active(curve, fps, floor_pct=20):
     thr, k = np.percentile(curve, floor_pct), int(fps)
     return lambda t: curve[max(0, int(t * fps) - k):int(t * fps) + k + 1].max(initial=0) > thr
 
-def point_chains(hits, gap=2.5, active=None):
-    """Every burst of hits closer than `gap` s, even a single one (a missed serve still decides a point): [(first, last, hits)]."""
-    out = []
-    for t in sorted(t for t in hits if active is None or active(t)):
-        if out and t - out[-1][1] <= gap:
-            out[-1] = (out[-1][0], t, out[-1][2] + 1)
-        else:
-            out.append((t, t, 1))
-    return out
-
 def find_rallies(hits, duration, gap=2.5, min_hits=3, pre=1.8, post=1.2, active=None):
-    """Bursts of >= min_hits hits, padded, overlaps merged -> [(start, end, hits)]."""
+    """Chain hits closer than `gap` s into rallies of >= min_hits, pad them, merge overlaps -> [(start, end, hits)]."""
+    hits = sorted(t for t in hits if active is None or active(t))
+    chains, start, last, n = [], None, None, 0
+    for t in hits:
+        if start is None or t - last > gap:
+            if start is not None and n >= min_hits:
+                chains.append((start, last, n))
+            start, n = t, 0
+        last, n = t, n + 1
+    if start is not None and n >= min_hits:
+        chains.append((start, last, n))
     segs = []
-    for a, b, n in (c for c in point_chains(hits, gap, active) if c[2] >= min_hits):
+    for a, b, n in chains:
         a, b = max(0.0, a - pre), (min(duration, b + post) if duration else b + post)
         if segs and a <= segs[-1][1]:
             segs[-1][1], segs[-1][2] = max(segs[-1][1], b), segs[-1][2] + n
@@ -228,202 +212,6 @@ def longest_rally(segs):
     return max(segs, key=lambda s: (s[1] - s[0], s[2]))
 
 
-# ---------------------------------------------------------------- scoring + scoreboard
-SB_RGB = dict(bg=(9, 9, 11, 248), line=(36, 36, 43, 255), field=(24, 24, 29, 255), ink=(244, 246, 246, 255),
-              dim=(186, 189, 193, 255), muted=(142, 145, 150, 255), red=(232, 20, 20, 255), cyan=(95, 224, 224, 255))  # LINKMEIO
-
-def score_states(winners, fmt=SCORING[0], to=11, first=0):
-    """USA Pickleball scoring. winners: 0 (team A), 1 (team B) or None (not a point) per rally, in order.
-    Returns (before, after) per rally; a state is dict(p=points, g=games, sv=serving team, sn=server number or 0, won=team|None).
-    Side-out doubles starts 0-0-2 and only the serving team scores; a game is to `to`, win by 2;
-    the team that received first serves first in the next game."""
-    dbl = fmt == SCORING[0]
-    p, g, sv, sn, opener = [0, 0], [0, 0], first, (2 if dbl else 0), first
-    snap = lambda won=None: dict(p=p[:], g=g[:], sv=sv, sn=sn, won=won)
-    out = []
-    for w in winners:
-        before = snap()
-        if w is not None:
-            if fmt == SCORING[2] or w == sv:      # rally scoring: every rally scores; side-out: only the serving team
-                p[w] += 1
-                sv = w
-            elif dbl and sn == 1:
-                sn = 2
-            else:
-                sv, sn = w, (1 if dbl else 0)
-        if w is not None and p[w] >= to and p[w] - p[1 - w] >= 2:
-            g[w] += 1
-            after = snap(won=w)
-            opener = 1 - opener
-            p, sv, sn = [0, 0], opener, (2 if dbl else 0)
-        else:
-            after = snap()
-        out.append((before, after))
-    return out
-
-def score_call(st):
-    """What the server says before serving: server score, receiver score, server number (doubles side-out)."""
-    return f"{st['p'][st['sv']]}-{st['p'][1 - st['sv']]}" + (f"-{st['sn']}" if st["sn"] else "")
-
-def score_timeline(chains, states, a, b):
-    """[(t0, t1, state)] for the video span a..b, relative to a: a rally shows the score it is played at
-    (from 1 s before its first hit), then the new score from its last hit on."""
-    if not states:
-        return []
-    marks = [m for (s, e, _), (before, after) in zip(chains, states) for m in ((s - 1.0, before), (e, after))]
-    cur = states[0][0]
-    for t, st in marks:
-        if t <= a:
-            cur = st
-    out, t0 = [], a
-    for t, st in marks:
-        if a < t < b and st != cur:
-            out.append((t0 - a, t - a, cur))
-            t0, cur = t, st
-    return out + [(t0 - a, b - a, cur)]
-
-@functools.lru_cache(maxsize=None)
-def sb_font(size, bold=False):
-    for name, var in (("bahnschrift.ttf", "Bold" if bold else "Regular"), ("segoeuib.ttf" if bold else "segoeui.ttf", None),
-                      ("arialbd.ttf" if bold else "arial.ttf", None)):
-        try:
-            f = ImageFont.truetype(name, size)
-            if var:
-                f.set_variation_by_name(var)
-            return f
-        except OSError:
-            continue
-    return ImageFont.load_default(size)
-
-def scoreboard_png(st, sb, W, H):
-    """One score, drawn on a transparent canvas for a W x H video. The canvas size depends only on the settings,
-    never on the score, so every frame of the scoreboard lines up."""
-    C, u = SB_RGB, max(10, round(min(H / 50, W / 32)))
-    names, style = sb["names"], sb["style"]
-    sn = st["sn"] if sb["server"] else 0
-    fn, fb, fs, fbig = sb_font(round(u * 0.9)), sb_font(round(u * 1.15), True), sb_font(round(u * 0.6), True), sb_font(round(u * 1.9), True)
-    L = lambda f, t: f.getlength(t)
-    pad, r = round(u * 0.6), round(u * 0.4)
-    won, sv = st["won"], st["sv"]
-
-    if style == "Broadcast":
-        rh, bar, sw = round(u * 1.9), max(3, round(u * 0.26)), round(u * 2.2)
-        dot, gw = round(u * 0.9), (round(u * 1.4) if sb["games"] else 0)
-        nw = max(L(fn, n) for n in names)
-        w = int(bar + pad + nw + pad + dot + gw + sw)
-        chips = [f"{k} SERVER · GAME TO {sb['to']}" for k in ("1ST", "2ND")] + [f"GAME TO {sb['to']}"] + [f"GAME · {n.upper()}" for n in names]
-        cw = int(max(L(fs, c) for c in chips) + 2 * pad)
-        ch = round(u * 1.2)
-        im = Image.new("RGBA", (max(w, cw), 2 * rh + round(u * 0.3) + ch), (0, 0, 0, 0))
-        panel = Image.new("RGBA", (w, 2 * rh), C["bg"])
-        d = ImageDraw.Draw(panel)
-        for i in (0, 1):
-            y = i * rh
-            if i:
-                d.line([(0, y), (w, y)], fill=C["line"], width=1)
-            if sv == i and won is None:
-                d.rectangle([0, y, bar - 1, y + rh], fill=C["red"])
-                cx = bar + pad + nw + pad + dot / 2
-                d.ellipse([cx - u * 0.22, y + rh / 2 - u * 0.22, cx + u * 0.22, y + rh / 2 + u * 0.22], fill=C["cyan"])
-            d.text((bar + pad, y + rh / 2), names[i], font=fn, fill=C["ink"] if sv == i else C["dim"], anchor="lm")
-            if gw:
-                d.text((w - sw - gw / 2, y + rh / 2), str(st["g"][i]), font=fn, fill=C["muted"], anchor="mm")
-            d.rectangle([w - sw, y + (1 if i else 0), w, y + rh], fill=C["red"] if won == i else C["field"])
-            d.text((w - sw / 2, y + rh / 2), str(st["p"][i]), font=fb, fill=C["ink"], anchor="mm")
-        mask = Image.new("L", panel.size, 0)
-        ImageDraw.Draw(mask).rounded_rectangle([0, 0, w - 1, 2 * rh - 1], r, fill=255)
-        im.paste(panel, (0, 0), mask)
-        ImageDraw.Draw(im).rounded_rectangle([0, 0, w - 1, 2 * rh - 1], r, outline=C["line"])
-        chip = (f"GAME · {names[won].upper()}" if won is not None else
-                f"{'1ST' if sn == 1 else '2ND'} SERVER · GAME TO {sb['to']}" if sn else f"GAME TO {sb['to']}")
-        y0 = 2 * rh + round(u * 0.3)
-        d = ImageDraw.Draw(im)
-        d.rounded_rectangle([0, y0, L(fs, chip) + 2 * pad, y0 + ch], round(r * 0.8), fill=C["red"] if won is not None else C["bg"],
-                            outline=C["line"])
-        d.text((pad, y0 + ch / 2), chip, font=fs, fill=C["ink"] if won is not None else C["cyan"], anchor="lm")
-        return im
-
-    if style == "Compact":
-        h, bw, gap = round(u * 1.7), round(u * 1.6), round(u * 0.45)
-        extra = [f"S{sn}" if sn else "", f"G {st['g'][0]}-{st['g'][1]}" if sb["games"] else ""]
-        ew = [max(L(fs, "S2"), 0) if sb["server"] and sb.get("fmt", SCORING[0]) == SCORING[0] else 0, L(fs, "G 8-8") if sb["games"] else 0]
-        w = int(pad + L(fn, names[0]) + gap + bw + gap + L(fn, "–") + gap + bw + gap + L(fn, names[1]) + sum(e + gap for e in ew if e) + pad)
-        im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-        d = ImageDraw.Draw(im)
-        d.rounded_rectangle([0, 0, w - 1, h - 1], r, fill=C["bg"], outline=C["line"])
-        x, cy = pad, h / 2
-        def box(i):
-            nonlocal x
-            on = (won == i) or (won is None and sv == i)
-            d.rounded_rectangle([x, cy - u * 0.62, x + bw, cy + u * 0.62], round(r * 0.6), fill=C["red"] if on else C["field"])
-            d.text((x + bw / 2, cy), str(st["p"][i]), font=fb, fill=C["ink"], anchor="mm")
-            x += bw + gap
-        d.text((x, cy), names[0], font=fn, fill=C["ink"] if sv == 0 else C["dim"], anchor="lm"); x += L(fn, names[0]) + gap
-        box(0)
-        d.text((x, cy), "–", font=fn, fill=C["muted"], anchor="lm"); x += L(fn, "–") + gap
-        box(1)
-        d.text((x, cy), names[1], font=fn, fill=C["ink"] if sv == 1 else C["dim"], anchor="lm"); x += L(fn, names[1]) + gap
-        for t, e, col in zip(extra, ew, (C["cyan"], C["muted"])):
-            if e:
-                d.text((x, cy), t, font=fs, fill=col, anchor="lm"); x += e + gap
-        return im
-
-    # Score call: the spoken call, big
-    tag = f"GAME · {names[won].upper()}" if won is not None else "SCORE"
-    call = f"{st['p'][won]}-{st['p'][1 - won]}" if won is not None else score_call(dict(st, sn=sn))
-    sub_ = lambda n: f"{n} serving" + (f" · games {st['g'][0]}-{st['g'][1]}" if sb["games"] else "")
-    w = int(2 * pad + max(L(fbig, "88-88-8"), L(fs, f"GAME · {max(names, key=len).upper()}"),
-                          u * 0.7 + max(L(fn, sub_(n)) for n in names)))
-    th, bh, sh_ = round(u * 0.95), round(u * 2.2), round(u * 1.2)
-    im = Image.new("RGBA", (w, pad + th + bh + sh_ + round(pad * 0.7)), (0, 0, 0, 0))
-    d = ImageDraw.Draw(im)
-    d.rounded_rectangle([0, 0, w - 1, im.height - 1], r, fill=C["bg"], outline=C["line"])
-    d.text((pad, pad + th / 2), tag, font=fs, fill=C["red"] if won is not None else C["muted"], anchor="lm")
-    d.text((pad, pad + th + bh / 2), call, font=fbig, fill=C["ink"], anchor="lm")
-    y = pad + th + bh + sh_ / 2
-    d.ellipse([pad, y - u * 0.2, pad + u * 0.4, y + u * 0.2], fill=C["red"])
-    d.text((pad + u * 0.7, y), sub_(names[sv] if won is None else names[won]).replace("serving", "serving" if won is None else "won"),
-           font=fn, fill=C["cyan"], anchor="lm")
-    return im
-
-def board_input(tmp, tag, timeline, sb, W, H):
-    """The scoreboard for one stretch of video as a still-image track: ffmpeg input args for a concat list."""
-    files, lines = {}, []
-    for t0, t1, st in timeline:
-        key = json.dumps(st, sort_keys=True)
-        if key not in files:
-            files[key] = Path(tmp) / f"{tag}-sb{len(files):03d}.png"
-            scoreboard_png(st, sb, W, H).save(files[key])
-        lines.append(f"file '{files[key].as_posix()}'\nduration {max(t1 - t0, 0.04):.3f}\n")
-    lines.append(f"file '{files[key].as_posix()}'\n")        # concat keeps the last duration only if the file repeats
-    lst = Path(tmp) / f"{tag}-sb.txt"
-    lst.write_text("".join(lines))
-    return ["-f", "concat", "-safe", "0", "-i", str(lst)]
-
-def overlays(tmp, tag, vf, W, H, vertical, logo=None, sb=None, timeline=None):
-    """ffmpeg inputs and filters: the video, the logo small at the bottom right, the scoreboard at the bottom left."""
-    if not logo and not timeline:
-        return ["-vf", vf, "-map", "0:v:0", "-map", "0:a?"]
-    m, ins, graph, last, idx = round(H * 0.03), [], [f"[0:v]{vf}[v0]"], "v0", 1
-    if logo:
-        ins += ["-i", str(logo)]
-        graph.append(f"[{idx}:v]scale={round(W * (0.2 if vertical else 0.1))}:-1[lg];[{last}][lg]overlay=W-w-{m}:H-h-{m}[v1]")
-        last, idx = "v1", idx + 1
-    if timeline:
-        ins += board_input(tmp, tag, timeline, sb, W, H)
-        graph.append(f"[{last}][{idx}:v]overlay={m}:H-h-{m}:eof_action=repeat[v2]")
-        last = "v2"
-    return ins + ["-filter_complex", ";".join(graph), "-map", f"[{last}]", "-map", "0:a?"]
-
-def sb_settings(opt):
-    return dict(style=opt["sb_style"], fmt=opt["sb_fmt"], to=int(opt["sb_to"]), server=opt["sb_server"], games=opt["sb_games"],
-                names=((opt["team_a"] or "Team A").strip()[:18], (opt["team_b"] or "Team B").strip()[:18]))
-
-def final_line(states, sb):
-    st = states[-1][1]
-    return f"{sb['names'][0]} {st['p'][0]} - {st['p'][1]} {sb['names'][1]}, games {st['g'][0]}-{st['g'][1]}"
-
-
 # ---------------------------------------------------------------- export
 def cut_clip(src, a, b, dst, vs, prog=None):
     if vs["fmt"] == "copy":     # stream copy: seconds, not minutes (exact when the camera writes 1 s keyframes)
@@ -432,39 +220,38 @@ def cut_clip(src, a, b, dst, vs, prog=None):
     else:
         ff(["-ss", f"{a:.2f}", "-i", str(src), "-t", f"{b - a:.2f}", "-vf", vfilter(vs), *encoder(vs), str(dst)], b - a, prog)
 
-def build_reel(src, segs, dst, vs, vertical, logo, prog=None, board=None):
-    """Join rallies into one video (crop to 9:16 when vertical): logo bottom right, optional scoreboard bottom left.
-    board: (scoreboard settings, point chains, score_states) or None."""
-    sw, sh = video_size(src)
-    W, H = out_size((sw, sh), vs, vertical)
-    vf = vfilter(vs, min(vs["res"] or sh, sh), CROP_9_16 if vertical else "") + ",setsar=1"
+def build_reel(src, segs, dst, vs, vertical, logo, prog=None):
+    """Join rallies into one video (crop to 9:16 when vertical, watermark top-right)."""
+    sh = video_height(src)
+    H = min(vs["res"] or sh, sh)                    # real output height: never upscaled
+    crop = "crop=min(iw\\,trunc(ih*9/16/2)*2):min(ih\\,trunc(iw*16/9/2)*2)"
+    vf = vfilter(vs, H, crop if vertical else "") + ",setsar=1"
     total, done = sum(b - a for a, b, _ in segs) or 1, 0.0
     with tempfile.TemporaryDirectory() as tmp:
         parts = []
         for k, (a, b, _) in enumerate(segs):
             part, args = Path(tmp) / f"r{k:03d}.mp4", ["-ss", f"{a:.2f}", "-t", f"{b - a:.2f}", "-i", str(src)]   # -t before -i: limits the video, not the logo
-            args += overlays(tmp, f"r{k:03d}", vf, W, H, vertical, logo, board and board[0],
-                             board and score_timeline(board[1], board[2], a, b))
+            if logo:
+                lw, m = int((H * 9 / 16 * 0.34) if vertical else (H * 16 / 9 * 0.16)), int(H * 0.03)
+                args += ["-i", str(logo), "-filter_complex", f"[0:v]{vf}[v];[1:v]scale={lw}:-1[l];[v][l]overlay=W-w-{m}:{m}[out]",
+                         "-map", "[out]", "-map", "0:a?"]
+            else:
+                args += ["-vf", vf, "-map", "0:v:0", "-map", "0:a?"]
             ff(args + encoder(vs) + [str(part)], b - a, prog and (lambda f, d=done, s=b - a: prog((d + f * s) / total)))
             done += b - a
             parts.append(part)
         (Path(tmp) / "list.txt").write_text("".join(f"file '{p.as_posix()}'\n" for p in parts))
         ff(["-f", "concat", "-safe", "0", "-i", str(Path(tmp) / "list.txt"), "-c", "copy", "-movflags", "+faststart", str(dst)])
 
-def full_game(src, dst, vs, dur, prog=None, logo=None, board=None):
-    if vs["fmt"] == "copy":                         # a stream copy can't carry graphics
+def full_game(src, dst, vs, dur, prog=None):
+    if vs["fmt"] == "copy":
         ff(["-i", str(src), "-c", "copy", "-movflags", "+faststart", str(dst)])
-        return
-    W, H = out_size(video_size(src), vs, False)
-    with tempfile.TemporaryDirectory() as tmp:
-        args = ["-i", str(src)] + overlays(tmp, "full", vfilter(vs), W, H, False, logo, board and board[0],
-                                            board and score_timeline(board[1], board[2], 0, dur))
-        ff(args + encoder(vs) + [str(dst)], dur, prog)
+    else:
+        ff(["-i", str(src), "-vf", vfilter(vs), *encoder(vs), str(dst)], dur, prog)
 
 
 # ---------------------------------------------------------------- the whole job
-def process(src, out_dir, opt, log=print, step=lambda frac, text: None, scorer=None):
-    """scorer(chains, segs) -> a winner per chain (0, 1 or None), or None to skip the scoreboard."""
+def process(src, out_dir, opt, log=print, step=lambda frac, text: None):
     if trial_left() == 0:
         opt = dict(opt, **TRIAL_LIMITS)
         log("Trial ended. " + TRIAL_NOTE)
@@ -491,18 +278,6 @@ def process(src, out_dir, opt, log=print, step=lambda frac, text: None, scorer=N
         raise RuntimeError('No rallies found. Raise the sensitivity or turn off "Require court motion".')
     vs = {"res": RES[opt["res"]], "crf": CRF[opt["quality"]], "fmt": FMT[opt["fmt"]], "fps": FPS[opt["fps"]]}
     copy_ext = src.suffix if vs["fmt"] == "copy" else ".mp4"
-    board, chains, winners = None, point_chains(hits, opt["gap"], active), None
-    if opt.get("sb") and scorer:
-        step(0.35, "Waiting for the score")
-        winners = scorer(chains, segs)
-        if winners and any(w is not None for w in winners):
-            sb = sb_settings(opt)
-            board = (sb, chains, score_states(winners, opt["sb_fmt"], int(opt["sb_to"]), SIDES.index(opt["sb_first"])))
-            log(f"Scoreboard on. Final: {final_line(board[2], sb)}.")
-            if vs["fmt"] == "copy" and opt["full"]:
-                log("Camera copy can't carry a scoreboard, so the full game is saved without one.")
-        else:
-            log("No points scored, so the videos are saved without a scoreboard.")
 
     # work list weighted by seconds of video to write, so the % bar moves at an even pace
     reel = (segs if opt["reel_mode"] == "All rallies" else best_rallies(segs, opt["top"])) if opt["reel"] and segs else []
@@ -520,11 +295,11 @@ def process(src, out_dir, opt, log=print, step=lambda frac, text: None, scorer=N
         if job == "reel":
             log(f"Joining {len(reel)} rallies into one highlights video ...")
             build_reel(src, reel, out / "highlights.mp4", vs, opt["vertical"], opt["logo"] or None,
-                       span(w, f"Highlights video · {len(reel)} rallies"), board)
+                       span(w, f"Highlights video · {len(reel)} rallies"))
             files.append(out / "highlights.mp4")
         elif job == "longest":
             log(f"Longest rally: {top1[1] - top1[0]:.0f} s, {top1[2]} hits.")
-            build_reel(src, [top1], out / "longest-rally.mp4", vs, opt["vertical"], opt["logo"] or None, span(w, "Longest rally"), board)
+            build_reel(src, [top1], out / "longest-rally.mp4", vs, opt["vertical"], opt["logo"] or None, span(w, "Longest rally"))
             files.append(out / "longest-rally.mp4")
         elif job == "clips":
             sub = span(w, "Rally clips")
@@ -536,13 +311,11 @@ def process(src, out_dir, opt, log=print, step=lambda frac, text: None, scorer=N
         else:
             log("Saving the full game ...")
             dst = out / f"full-game{copy_ext}"
-            full_game(src, dst, vs, dur, span(w, "Full game"), board and (opt["logo"] or None), board)
+            full_game(src, dst, vs, dur, span(w, "Full game"))
             files.append(dst)
         done += w
     (out / "rallies.json").write_text(json.dumps({"source": src.name, "duration_s": round(dur, 1),
-        "rallies": [{"start_s": a, "end_s": b, "hits": n} for a, b, n in segs],
-        **({"points": [{"first_hit_s": round(a, 2), "last_hit_s": round(b, 2), "hits": n, "won_by": board[0]["names"][w] if w is not None else None,
-                        "score_after": score_call(st[1])} for (a, b, n), w, st in zip(chains, winners, board[2])]} if board else {})}, indent=2))
+        "rallies": [{"start_s": a, "end_s": b, "hits": n} for a, b, n in segs]}, indent=2))
     write_share_page(out, files)
     step(1.0, f"Done · {len(files)} file{'s' if len(files) != 1 else ''}")
     log(f"Done. Files are in {out}")
@@ -612,7 +385,7 @@ QR_MODES = ("Venue WiFi", "Custom link")
 # A trial build bundles trial.txt (build_trial.ps1). The clock starts at first launch. When it runs out the app
 # keeps working as a free tier. Both states are shown in the app: a countdown chip, then a "trial ended" notice.
 TRIAL_HOURS, TRIAL_FLAG = 24, BASE / "trial.txt"
-TRIAL_LIMITS = dict(reel=True, longest=False, full=False, clips=False, res="720p", logo=str(OWNER_PNG), sb=False)
+TRIAL_LIMITS = dict(reel=True, longest=False, full=False, clips=False, res="720p", logo=str(OWNER_PNG))
 TRIAL_NOTE = "Free tier: highlights video only, up to 720p, with the LINKMEIO watermark."
 TRIAL_KEY, TRIAL_FILE = r"Software\LINKMEIO\HighlightStudioIO", SETTINGS.parent / "license.json"
 
@@ -689,7 +462,7 @@ def run_app():
         save_settings({k: var.get() for k, var in v.items() if k not in ("input", "watch")})
 
     msgs, share = queue.Queue(), Share()
-    state = {"out": None, "busy": False, "seen": set(), "url": "", "applying": False, "t0": 0.0, "src": ""}
+    state = {"out": None, "busy": False, "seen": set(), "url": "", "applying": False, "t0": 0.0}
 
     # ---- building blocks
     def button(parent, text, cmd, primary=False, **kw):
@@ -908,31 +681,7 @@ def run_app():
     seg(c, "Watermark", v["wm"], list(WATERMARKS))
     path_row(c, "Custom PNG", v["logo"], lambda: v["logo"].set(filedialog.askopenfilename(filetypes=[("PNG image", "*.png")]) or v["logo"].get()))
 
-    # ---- 3 scoreboard (optional)
-    c = card("Scoreboard", "optional · you tap who won each rally, the app keeps the score")
-    r = line(c, "Scoreboard")
-    switch(r, "Add a scoreboard to the videos", v["sb"])
-    seg(c, "Style", v["sb_style"], list(SB_STYLES), {"Broadcast": "Two rows, like US pro streams",
-                                                    "Compact": "One slim line, best for Reels",
-                                                    "Score call": "The spoken call, big: 7-4-2"})
-    seg(c, "Scoring", v["sb_fmt"], list(SCORING), {SCORING[0]: "Only the serving team scores. Starts 0-0-2",
-                                                  SCORING[1]: "Only the server scores. No server number",
-                                                  SCORING[2]: "Every rally scores, like MLP"}, below=True)
-    seg(c, "Game to", v["sb_to"], list(GAME_TO), {"11": "Win by 2", "15": "Win by 2", "21": "Win by 2"})
-    r = line(c, "Team names")
-    for k in ("team_a", "team_b"):
-        ctk.CTkEntry(r, textvariable=v[k], width=170, fg_color=FIELD, border_color=LINE, text_color=INK, height=36,
-                     corner_radius=12, font=TXT).pack(side="left", padx=(0, 8))
-    seg(c, "First serve", v["sb_first"], list(SIDES))
-    r = line(c, "Show")
-    switch(r, "Server number", v["sb_server"])
-    switch(r, "Games won", v["sb_games"])
-    r = line(c, "")
-    button(r, "Preview on this video", lambda: preview_board(), height=34).pack(side="left")
-    ctk.CTkLabel(c, text="Bottom left, with your logo small at the bottom right. Watch-folder runs skip it, since each rally needs a tap.",
-                 font=SMALL, text_color=CYAN, wraplength=600, justify="left").pack(anchor="w", padx=(124, 0), pady=(4, 0))
-
-    # ---- 4 video output
+    # ---- 3 video output
     c = card("Video output", "format, size and smoothness")
     seg(c, "Format", v["fmt"], list(FMT), {"MP4 · iPhone + Android": "One file for iPhone, Android, PC, Facebook and TikTok",
                                            "HEVC · smaller": "Half the size; older Android and Windows may not play it",
@@ -941,7 +690,7 @@ def run_app():
     seg(c, "Frame rate", v["fps"], list(FPS), {"30": "Standard for social video", "60": "Smoother, bigger files"})
     seg(c, "Quality", v["quality"], list(CRF))
 
-    # ---- 5 delivery
+    # ---- 4 delivery
     c = card("Delivery", "files in a folder, plus a QR code to scan")
     path_row(c, "Output folder", v["out"], lambda: v["out"].set(filedialog.askdirectory() or v["out"].get()))
     r = line(c, "QR code")
@@ -1012,141 +761,6 @@ def run_app():
         button(rr, "Done", lambda: (remember(), w.destroy()), primary=True, height=40, width=110).pack(side="right")
         w.after(100, w.grab_set)
 
-    # ---- scoreboard preview: the real renderer on a real frame of the chosen video
-    def preview_board():
-        o, src = opts(), v["input"].get()
-        vs = {"res": RES[o["res"]], "fps": None}
-        wh = video_size(src) if Path(src).is_file() else (1920, 1080)
-        W, H = out_size(wh, vs, o["vertical"])
-        frame = None
-        if Path(src).is_file():
-            vf = (CROP_9_16 + "," if o["vertical"] else "") + f"scale={W}:{H}"
-            raw = subprocess.run([FFMPEG, "-hide_banner", "-loglevel", "error", "-ss", f"{duration_of(src) * 0.3:.1f}", "-i", src,
-                                  "-frames:v", "1", "-vf", vf, "-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
-                                 capture_output=True, creationflags=NOWIN).stdout
-            frame = Image.frombytes("RGB", (W, H), raw) if len(raw) == W * H * 3 else None
-        frame = (frame or Image.new("RGB", (W, H), "#1d4f86")).convert("RGBA")
-        m, sb = round(H * 0.03), sb_settings(o)
-        board = scoreboard_png(dict(p=[7, 4], g=[1, 0], sv=0, sn=2 if o["sb_fmt"] == SCORING[0] else 0, won=None), sb, W, H)
-        frame.alpha_composite(board, (m, H - m - board.height))
-        if o["logo"] and Path(o["logo"]).is_file():
-            lg = Image.open(o["logo"]).convert("RGBA")
-            lw = round(W * (0.2 if o["vertical"] else 0.1))
-            lg = lg.resize((lw, max(1, round(lg.height * lw / lg.width))))
-            frame.alpha_composite(lg, (W - m - lw, H - m - lg.height))
-        w = ctk.CTkToplevel(root, fg_color=BG)
-        w.title(f"Scoreboard preview · {APP}")
-        w.transient(root)
-        k = min(1.0, 900 / W, 640 / H)
-        ctk.CTkLabel(w, text="", image=ctk.CTkImage(frame, frame, size=(round(W * k), round(H * k)))).pack(padx=18, pady=(18, 8))
-        ctk.CTkLabel(w, text=f"Sample score 7-4, {'second server, ' if o['sb_fmt'] == SCORING[0] else ''}games 1-0 · "
-                     f"{W}x{H}, exactly as it is burned into the video.", font=SMALL, text_color=MUTED,
-                     wraplength=max(260, round(W * k)), justify="center").pack(padx=18, pady=(0, 16))
-
-    # ---- scoring: one tap per rally; the engine keeps the score
-    def score_window(chains, segs, reply, done):
-        from tkinter import ttk
-        o = opts()
-        sb = sb_settings(o)
-        win = [None] * len(chains)
-        first = SIDES.index(o["sb_first"])
-        star = lambda c: any(a <= c[0] and c[1] <= b for a, b, _ in segs)
-        w = ctk.CTkToplevel(root, fg_color=BG)
-        w.title(f"Score the match · {APP}")
-        w.transient(root)
-        w.geometry("860x660")
-        ctk.CTkLabel(w, text="SCORE THE MATCH", font=H2, text_color=INK).pack(anchor="w", padx=22, pady=(18, 0))
-        ctk.CTkLabel(w, text=f"Each row is a burst of paddle hits. Press 1 if {sb['names'][0]} won the point, 2 if {sb['names'][1]} won it. "
-                     "Leave warm-ups and stray sounds empty. Space plays the rally. ★ = in the highlights.",
-                     font=SMALL, text_color=MUTED, wraplength=800, justify="left").pack(anchor="w", padx=22, pady=(2, 8))
-        total = ctk.CTkLabel(w, text="", font=H2, text_color=CYAN)
-        total.pack(anchor="w", padx=22, pady=(0, 8))
-        st = ttk.Style(w)
-        st.theme_use("clam")
-        st.configure("SB.Treeview", background=FIELD, fieldbackground=FIELD, foreground=INK, rowheight=28, borderwidth=0,
-                     font=("Segoe UI", 11))
-        st.configure("SB.Treeview.Heading", background=CARD, foreground=MUTED, relief="flat", font=("Segoe UI", 10, "bold"))
-        st.map("SB.Treeview", background=[("selected", LINE)], foreground=[("selected", "#ffffff")])
-        st.map("SB.Treeview.Heading", background=[("active", CARD)])
-        box = ctk.CTkFrame(w, fg_color=FIELD, corner_radius=14)
-        box.pack(fill="both", expand=True, padx=22)
-        cols = ("n", "time", "hits", "hl", "won", "score")
-        tree = ttk.Treeview(box, columns=cols, show="headings", style="SB.Treeview", selectmode="browse")
-        for c_, t_, wd in zip(cols, ("#", "Time", "Hits", "Highlight", "Point to", "Score after"), (50, 90, 60, 90, 200, 160)):
-            tree.heading(c_, text=t_)
-            tree.column(c_, width=wd, anchor="center" if c_ != "won" else "w")
-        sc = ttk.Scrollbar(box, orient="vertical", command=tree.yview)
-        tree.configure(yscrollcommand=sc.set)
-        tree.pack(side="left", fill="both", expand=True, padx=(8, 0), pady=8)
-        sc.pack(side="right", fill="y", pady=8)
-        tree.tag_configure("A", foreground=RED2)
-        tree.tag_configure("B", foreground=CYAN)
-        tree.tag_configure("none", foreground=MUTED)
-        for i, (a, b, n) in enumerate(chains):
-            tree.insert("", "end", iid=str(i), values=(i + 1, f"{int(a // 60)}:{a % 60:04.1f}", n, "★" if star((a, b)) else "", "", ""))
-        def refresh():
-            states = score_states(win, o["sb_fmt"], int(o["sb_to"]), first)
-            for i, (wn, (_, after)) in enumerate(zip(win, states)):
-                tree.set(str(i), "won", sb["names"][wn] if wn is not None else "—")
-                tree.set(str(i), "score", (score_call(after) + ("  GAME" if after["won"] is not None else "")) if wn is not None else "")
-                tree.item(str(i), tags=("A" if wn == 0 else "B" if wn == 1 else "none",))
-            total.configure(text=f"Final: {final_line(states, sb)}  ·  {sum(x is not None for x in win)} points scored" if states else "")
-        def mark(wn):
-            sel = tree.selection()
-            if not sel:
-                return
-            i = int(sel[0])
-            win[i] = wn
-            refresh()
-            if i + 1 < len(chains):
-                tree.selection_set(str(i + 1))
-                tree.see(str(i + 1))
-        def play(*_):
-            sel = tree.selection()
-            if not sel:
-                return
-            a, b, _ = chains[int(sel[0])]
-            def cut():
-                dst = Path(tempfile.mkdtemp()) / f"rally-{int(sel[0]) + 1}.mp4"
-                try:
-                    ff(["-ss", f"{max(0, a - 2.5):.2f}", "-t", f"{b - a + 4:.2f}", "-i", src_path, "-vf", "scale=-2:480",
-                        "-c:v", "libx264", "-preset", "ultrafast", "-c:a", "aac", str(dst)])
-                    os.startfile(dst)
-                except (RuntimeError, OSError) as e:
-                    log(f"Could not play the rally: {e}")
-            threading.Thread(target=cut, daemon=True).start()
-        def close(winners):
-            set_status("Working", RED2)
-            reply["winners"] = winners
-            done.set()
-            w.destroy()
-        for key, wn in (("<KeyPress-1>", 0), ("<KeyPress-2>", 1), ("<KeyPress-0>", None), ("<Delete>", None), ("<BackSpace>", None)):
-            tree.bind(key, lambda e, wn=wn: (mark(wn), "break")[1])
-        tree.bind("<space>", lambda e: (play(), "break")[1])
-        tree.bind("<Double-1>", play)
-        row = ctk.CTkFrame(w, fg_color="transparent")
-        row.pack(fill="x", padx=22, pady=(10, 0))
-        button(row, f"1 · {sb['names'][0]}", lambda: mark(0), height=38).pack(side="left")
-        button(row, f"2 · {sb['names'][1]}", lambda: mark(1), height=38).pack(side="left", padx=8)
-        button(row, "0 · Not a point", lambda: mark(None), height=38).pack(side="left")
-        button(row, "Play rally (Space)", play, height=38).pack(side="left", padx=8)
-        row = ctk.CTkFrame(w, fg_color="transparent")
-        row.pack(fill="x", padx=22, pady=(10, 18))
-        button(row, "Export with scoreboard", lambda: close(win[:]), primary=True, height=42, width=220).pack(side="right")
-        button(row, "Skip the scoreboard", lambda: close(None), height=42).pack(side="right", padx=8)
-        w.protocol("WM_DELETE_WINDOW", lambda: close(None))
-        src_path = state["src"]
-        refresh()
-        if chains:
-            tree.selection_set("0")
-        w.after(100, lambda: (w.grab_set(), tree.focus_set()))
-
-    def gui_scorer(chains, segs):                  # runs on the worker thread; the window runs on the UI thread
-        reply, done = {}, threading.Event()
-        msgs.put(("score", (chains, segs, reply, done)))
-        done.wait()
-        return reply.get("winners")
-
     # ---- right: export panel
     ctk.CTkLabel(right, text="EXPORT", font=H2, text_color=INK).pack(anchor="w", padx=22, pady=(20, 2))
     summary = ctk.CTkLabel(right, text="", font=SMALL, text_color=MUTED, justify="left", wraplength=310, anchor="w")
@@ -1161,9 +775,8 @@ def run_app():
         reel = f" ({'all rallies' if v['reel_mode'].get() == 'All rallies' else f'best {top_n}'})" if v["reel"].get() else ""
         summary.configure(text=f"{v['fmt'].get()} · {v['res'].get()} · {v['fps'].get()} fps · {v['quality'].get()}\n"
                                f"{', '.join(outs).capitalize() or 'Nothing selected'}{reel}"
-                               + (f" · scoreboard ({v['sb_style'].get().lower()})" if v["sb"].get() else "")
                                + ("\nTrial ended: highlights video only, 720p" if trial_left() == 0 else ""))
-    for k in ("fmt", "res", "fps", "quality", "reel", "longest", "full", "clips", "top", "reel_mode", "sb", "sb_style"):
+    for k in ("fmt", "res", "fps", "quality", "reel", "longest", "full", "clips", "top", "reel_mode"):
         v[k].trace_add("write", summarize)
     summarize()
     go = ctk.CTkButton(right, text="Make highlights", height=56, corner_radius=14, font=F(19, True, "Bahnschrift"),
@@ -1217,7 +830,7 @@ def run_app():
         o["logo"] = str(BRAND_PNG) if o["wm"] == "Playhouse logo" and BRAND_PNG.exists() else o["logo"] if o["wm"] == "Custom PNG" else ""
         return o
 
-    def start(path, auto=False):
+    def start(path):
         if state["busy"]:
             return
         if not path or not Path(path).is_file():
@@ -1232,13 +845,9 @@ def run_app():
         set_status("Working", RED2)
         bar.set(0)
         o, out_dir = opts(), v["out"].get()
-        state["src"] = path
-        if auto and o["sb"]:
-            log("Watch-folder run: the scoreboard is skipped, since each rally needs a tap.")
         def work():
             try:
-                out, files, segs = process(path, out_dir, o, log, lambda f, t: msgs.put(("step", (f, t))),
-                                           None if auto else gui_scorer)
+                out, files, segs = process(path, out_dir, o, log, lambda f, t: msgs.put(("step", (f, t))))
                 msgs.put(("done", out))
             except Exception as e:                  # surface ffmpeg or detection errors
                 msgs.put(("error", str(e)))
@@ -1264,14 +873,6 @@ def run_app():
             elif kind == "step":
                 bar.set(data[0])
                 stage.configure(text=data[1])
-            elif kind == "score":
-                set_status("Scoring", CYAN)
-                try:
-                    score_window(*data)
-                except Exception as e:           # never leave the worker waiting
-                    logbox.insert("end", f"Scoring window failed: {e}\n")
-                    data[2]["winners"] = None
-                    data[3].set()
             else:
                 state["busy"] = False
                 go.configure(state="normal", text="Make highlights")
@@ -1324,7 +925,7 @@ def run_app():
                         state["seen"].add(p)
                         v["input"].set(str(p))
                         log(f"New recording: {p.name}")
-                        start(str(p), auto=True)
+                        start(str(p))
                     sizes[p] = size
         except OSError as e:                        # file renamed/removed mid-scan: try again next tick
             log(f"Watch folder: {e}")
@@ -1354,24 +955,6 @@ def selftest():
     assert find_rallies([5, 6, 7], 7.5, pre=1.8, post=1.2) == [(3.2, 7.5, 3)]   # clamped to video length
     assert longest_rally(segs) == (48.2, 57.2, 5) and best_rallies(segs, 1) == [(48.2, 57.2, 5)]
     assert all(k in DEFAULTS and (k not in CHOICES or val in CHOICES[k]) for p in PRESETS.values() for k, val in p.items())
-    # scoring: USA Pickleball side-out doubles starts 0-0-2; a lost rally by server 2 is a side-out
-    call = lambda ws, fmt=SCORING[0], to=11: score_call(score_states(ws, fmt, to)[-1][1])
-    assert call([1]) == "0-0-1"                                     # 0-0-2 loses: side out, B's first server
-    assert call([1, 1]) == "1-0-1" and call([1, 1, 0]) == "1-0-2"   # B scores; then B's server 1 loses
-    assert call([1, 1, 0, 0]) == "0-1-1"                            # B's server 2 loses: side out to A
-    assert call([0, 0, None, 1], SCORING[1]) == "0-2"               # singles: stray sound ignored, loss = side out
-    assert call([1, 0, 0], SCORING[2]) == "2-1"                     # rally scoring: every rally scores, winner serves
-    rs = score_states([0] * 10 + [1] * 10 + [0, 0], SCORING[2], 11)
-    assert rs[20][1]["won"] is None and rs[21][1]["won"] == 0 and rs[21][1]["p"] == [12, 10]   # win by 2
-    assert rs[21][1]["g"] == [1, 0] and score_states([0] * 11 + [None], SCORING[2])[-1][0]["p"] == [0, 0]  # next game resets
-    assert point_chains([1, 2, 10, 30, 31], 2.5) == [(1, 2, 2), (10, 10, 1), (30, 31, 2)]
-    tl = score_timeline([(10, 12, 3), (20, 25, 4)], score_states([0, 1], SCORING[2]), 8, 30)
-    assert [round(t, 1) for t, _, _ in tl] == [0, 4, 17] and tl[-1][2]["p"] == [1, 1]
-    sbs = dict(style="Broadcast", fmt=SCORING[0], to=11, server=True, games=True, names=("Team A", "Team B"))
-    for style in SB_STYLES:
-        sizes = {scoreboard_png(st, dict(sbs, style=style), 1920, 1080).size for pair in score_states([0, 1, 1, 0] * 6) for st in pair}
-        assert len(sizes) == 1, (style, sizes)                      # every score draws on the same canvas
-    assert out_size((1920, 1080), {"res": 1080}, True) == (606, 1080) and out_size((1280, 720), {"res": 1080}, False) == (1280, 720)
     assert hours_left(0, 3600) == 23 and hours_left(0, 25 * 3600) == 0 and hours_left(10000, 0) == 0   # set-back clock
     assert trial_left() is None or TRIAL_FLAG.exists()                  # source runs are the full version
     print("selftest ok")
@@ -1394,11 +977,6 @@ def main():
     ap.add_argument("--logo", default="", help="watermark PNG")
     ap.add_argument("--brand", action="store_true", help="watermark with the bundled Playhouse Pickle logo")
     ap.add_argument("--sensitivity", type=int, default=6)
-    ap.add_argument("--score", metavar="ABB0A", help="add a scoreboard: who won each point in order (A, B, or 0 = not a point)")
-    ap.add_argument("--sb-style", default="Broadcast", choices=list(SB_STYLES))
-    ap.add_argument("--scoring", default=SCORING[0], choices=list(SCORING))
-    ap.add_argument("--game-to", default="11", choices=list(GAME_TO))
-    ap.add_argument("--teams", default="Team A,Team B", help="two names, comma separated")
     a = ap.parse_args()
     if a.selftest:
         return selftest()
@@ -1407,16 +985,10 @@ def main():
     o = dict(DEFAULTS, fmt={"mp4": "MP4 · iPhone + Android", "hevc": "HEVC · smaller", "copy": "Camera copy"}[a.format],
              res=a.res, fps=a.fps, quality=a.quality, reel=a.highlights != "none",
              reel_mode="All rallies" if a.highlights == "all" else "Best rallies", top=a.top, longest=a.longest, full=a.full,
-             clips=a.clips, vertical=not a.landscape, logo=str(BRAND_PNG) if a.brand else a.logo, sensitivity=a.sensitivity,
-             sb=bool(a.score), sb_style=a.sb_style, sb_fmt=a.scoring, sb_to=a.game_to,
-             team_a=(a.teams.split(",") + ["Team B"])[0], team_b=(a.teams.split(",") + ["Team B"])[1])
-    def scorer(chains, segs):
-        ws = [{"A": 0, "B": 1}.get(ch) for ch in a.score.upper()]
-        print(f"Scoring {min(len(ws), len(chains))} of {len(chains)} rallies from --score.")
-        return (ws + [None] * len(chains))[:len(chains)]
+             clips=a.clips, vertical=not a.landscape, logo=str(BRAND_PNG) if a.brand else a.logo, sensitivity=a.sensitivity)
     if not (o["reel"] or o["longest"] or o["full"] or o["clips"]):
         ap.error("nothing to export: use --highlights, --longest, --full or --clips")
-    process(a.cli, a.out, o, step=lambda f, t: print(f"  {f * 100:5.1f}%  {t}", flush=True), scorer=scorer if a.score else None)
+    process(a.cli, a.out, o, step=lambda f, t: print(f"  {f * 100:5.1f}%  {t}", flush=True))
 
 if __name__ == "__main__":
     main()
