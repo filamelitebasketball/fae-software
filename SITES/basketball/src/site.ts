@@ -9,6 +9,14 @@
 
 type Icon = "whistle" | "trophy" | "user" | "bolt" | "court";
 type Link = { label: string; href: string };
+/** Badge and medal art, drawn with lucide icons in components/roster.tsx. */
+export type Art = "target" | "shield" | "zap" | "hand" | "share" | "brain" | "layers" | "rocket" | "trophy" | "medal" | "star" | "award";
+/** A public roster entry: only what a parent has cleared for the website. Birthdays,
+ *  guardian contacts and medical notes stay in the Command Center and never come here. */
+export type Player = {
+  name: string; number: string; position: string; height: string; batch: string; division: string;
+  photo?: string; gallery?: string[]; badges?: string[]; medals?: string[];
+};
 
 export type Site = {
   sport: string;
@@ -21,8 +29,11 @@ export type Site = {
   tagline: string;
   meta: string;
   place: string;
-  hero: { video: string; poster: string };
-  enroll: Link;
+  /** Words stepped through once in the hero line "Train to become a …". It rests on the last
+   *  word, so put the longest last or the line keeps a gap where the wider word was. */
+  rotate: string[];
+  /** form = the live Google Form. Its responses are the sheet the Command Center loads. */
+  enroll: Link & { form?: string };
   heroLink: Link & { lead: string };
   ticker: string[];
   stats: { value: string; label: string }[];
@@ -36,7 +47,14 @@ export type Site = {
   record: { title: string; series: string[]; images: { src: string; alt: string; caption: string }[] };
   kit: { src: string; alt: string }[];
   film: { src: string; poster: string; blurb: string };
-  review?: { quote: string; by: string; meta: string; summary: string; href: string };
+  roster: Player[];
+  /** Shown in place of the roster while it is empty: the card a new player earns. */
+  rosterSample: Player;
+  badges: { name: string; from: string; art: Art }[];
+  medals: { name: string; art: Art }[];
+  /** Real reviews only. Three or more scroll as a marquee. */
+  reviews: { quote: string; by: string; meta: string }[];
+  reviewSummary?: Link;
   facebook?: string;
   socials: Link[];
   contact: { phone: string; phoneLabel: string; email: string; address: string; mapUrl?: string; note?: string };
@@ -51,15 +69,16 @@ export const site: Site = {
   sport: "Basketball",
   name: "FilAmElite Basketball",
   url: "https://basketball.faeph.com",
-  logo: "/brand/logo.png",
-  slogan: "/brand/slogan.png",
+  logo: "/brand/logo.webp",
+  slogan: "/brand/slogan.webp",
   wordmark: "FILAMELITE",
   badge: "Batch 23 · Now enrolling",
   tagline: "Year-round training. Science-driven methodology.",
   meta: "Kids 5–11 · Teens 12–18 · 1:1, small & big group",
   place: "Lipa City, Batangas",
-  hero: { video: "/media/hero.mp4", poster: "/media/hero.jpg" },
-  enroll: { label: "Enroll now", href: MESSENGER },
+  rotate: ["Shooter", "Defender", "Leader", "Playmaker"],
+  // "FAE Batch 23 Registration Form Lipa City" in Drive.
+  enroll: { label: "Enroll now", href: MESSENGER, form: "https://docs.google.com/forms/d/e/1FAIpQLSfKcb7faevH_gFP3ALCVzwZdBxyT1CZD5D0g3HyvYXmpp91Zw/viewform" },
   heroLink: { lead: "Ready for league play?", label: "Join NXGEN Premier League", href: "https://nxgen.faeph.com" },
   ticker: ["Year-round training", "Science-driven methodology", "Kids 5–11", "Teens 12–18", "1:1 · Small · Big group", "Tournaments", "Earned Not Given"],
   stats: [
@@ -72,7 +91,7 @@ export const site: Site = {
     { title: "Skills Training", meta: ["10 SKILLS + 2 GAME SESSIONS", "KIDS 5–11 · TEENS 12–18"], fee: "₱5,500", per: "/ 12 sessions", href: "#training", icon: "whistle" },
     { title: "Tournaments", meta: ["FIVE SERIES · VOL. 1–3 EACH", "MEDALS · MVP · FB LIVE"], fee: "₱2,500", per: "tournament fee", href: "#tournaments", icon: "trophy" },
     { title: "1:1 & Small Group", meta: ["1:1 · SMALL · BIG GROUP", "LIPA CITY · MALOLOS"], fee: "Message us", href: MESSENGER, icon: "user" },
-    { title: "NXGEN League", meta: ["FOUR DIVISIONS · ALL AGES", "F.A.E. COURT · LIPA CITY"], fee: "Join the league", href: "https://nxgen.faeph.com", logo: "/sponsors/nxgen.png" },
+    { title: "NXGEN League", meta: ["FOUR DIVISIONS · ALL AGES", "F.A.E. COURT · LIPA CITY"], fee: "Join the league", href: "https://nxgen.faeph.com", logo: "/sponsors/nxgen.webp" },
   ],
   training: {
     price: "₱5,500",
@@ -115,13 +134,35 @@ export const site: Site = {
     { src: "/kit/coaches.webp", alt: "2026 coaches uniform" },
   ],
   film: { src: "/media/film.mp4", poster: "/media/film.jpg", blurb: "Batch 23 in under a minute: inclusions, schedule, coaches and every tournament." },
-  review: {
-    quote: "I am totally impressed kung paano i-train ni Coach Junior at iba pa na coaches ang mga participants. From the basic ball handling, passing, shooting etc, and even the discipline inside or outside the court.",
-    by: "Ysabelle C.",
-    meta: "Facebook review · Nov 2025",
-    summary: "100% recommend · 7 reviews",
-    href: `${FB}/reviews`,
-  },
+  // Empty until parents clear their player for the website.
+  roster: [],
+  rosterSample: { name: "Your name here", number: "00", position: "Guard · Wing · Big", height: "Your height", batch: "Batch 23", division: "Kids 5–11 · Teens 12–18" },
+  // One badge per clinic module in training.groups; medals mirror the tournament package.
+  badges: [
+    { name: "Foundations", from: "Basic fundamentals", art: "layers" },
+    { name: "Athlete", from: "Athleticism training", art: "zap" },
+    { name: "Shooting Specialist", from: "Shooting mechanics", art: "target" },
+    { name: "Ball Handler", from: "Ball handling", art: "hand" },
+    { name: "Elite Defender", from: "Defense & offense tactics", art: "shield" },
+    { name: "Playmaker", from: "Passing skills", art: "share" },
+  ],
+  medals: [
+    { name: "Champion", art: "trophy" },
+    { name: "1st Runner-up", art: "medal" },
+    { name: "2nd Runner-up", art: "medal" },
+    { name: "3rd Runner-up", art: "medal" },
+    { name: "Mythical 5", art: "star" },
+    { name: "Finals MVP", art: "award" },
+    { name: "Player of the Game", art: "star" },
+  ],
+  reviews: [
+    {
+      quote: "I am totally impressed kung paano i-train ni Coach Junior at iba pa na coaches ang mga participants. From the basic ball handling, passing, shooting etc, and even the discipline inside or outside the court.",
+      by: "Ysabelle C.",
+      meta: "Facebook review · Nov 2025",
+    },
+  ],
+  reviewSummary: { label: "100% recommend · 7 reviews", href: `${FB}/reviews` },
   facebook: FB,
   socials: [
     { label: "Facebook", href: FB },
@@ -137,17 +178,17 @@ export const site: Site = {
     note: "Branches: Lipa City, Batangas · Malolos, Bulacan",
   },
   sponsors: [
-    { name: "Picklemania", logo: "/sponsors/picklemania.png" },
-    { name: "Aguila Auto Glass", logo: "/sponsors/aguila.png" },
-    { name: "VA", logo: "/sponsors/va.png" },
-    { name: "FilAmElite Volleyball", logo: "/sponsors/volleyball.png" },
-    { name: "NXGEN Premier League", logo: "/sponsors/nxgen.png" },
+    { name: "Picklemania", logo: "/sponsors/picklemania.webp" },
+    { name: "Aguila Auto Glass", logo: "/sponsors/aguila.webp" },
+    { name: "VA", logo: "/sponsors/va.webp" },
+    { name: "FilAmElite Volleyball", logo: "/sponsors/volleyball.webp" },
+    { name: "NXGEN Premier League", logo: "/sponsors/nxgen.webp" },
   ],
   network: [
-    { name: "FAE Hub", caption: "FilAmElite Management", href: "https://faeph.com", logo: "/sponsors/fae.png" },
-    { name: "FilAmElite Volleyball", caption: "Training & tournaments", href: "https://volleyball.faeph.com", logo: "/sponsors/volleyball.png" },
-    { name: "NXGEN Premier League", caption: "League play · all ages", href: "https://nxgen.faeph.com", logo: "/sponsors/nxgen.png" },
-    { name: "F.A.E. Bookings", caption: "Court rental · WiFi café", href: "https://bookings.faeph.com", logo: "/sponsors/fae.png" },
-    { name: "LinkMePH", caption: "NFC cards · livestreams", href: "https://linkmeio.faeph.com", logo: "/sponsors/linkme.png" },
+    { name: "FAE Hub", caption: "FilAmElite Management", href: "https://faeph.com", logo: "/sponsors/fae.webp" },
+    { name: "FilAmElite Volleyball", caption: "Training & tournaments", href: "https://volleyball.faeph.com", logo: "/sponsors/volleyball.webp" },
+    { name: "NXGEN Premier League", caption: "League play · all ages", href: "https://nxgen.faeph.com", logo: "/sponsors/nxgen.webp" },
+    { name: "F.A.E. Bookings", caption: "Court rental · WiFi café", href: "https://bookings.faeph.com", logo: "/sponsors/fae.webp" },
+    { name: "LinkMePH", caption: "NFC cards · livestreams", href: "https://linkmeio.faeph.com", logo: "/sponsors/linkme.webp" },
   ],
 };

@@ -10,6 +10,14 @@
 
 type Icon = "whistle" | "trophy" | "user" | "bolt" | "court";
 type Link = { label: string; href: string };
+/** Badge and medal art, drawn with lucide icons in components/roster.tsx. */
+export type Art = "target" | "shield" | "zap" | "hand" | "share" | "brain" | "layers" | "rocket" | "trophy" | "medal" | "star" | "award";
+/** A public roster entry: only what a parent has cleared for the website. Birthdays,
+ *  guardian contacts and medical notes stay in the Command Center and never come here. */
+export type Player = {
+  name: string; number: string; position: string; height: string; batch: string; division: string;
+  photo?: string; gallery?: string[]; badges?: string[]; medals?: string[];
+};
 
 export type Site = {
   sport: string;
@@ -22,8 +30,11 @@ export type Site = {
   tagline: string;
   meta: string;
   place: string;
-  hero: { video: string; poster: string };
-  enroll: Link;
+  /** Words stepped through once in the hero line "Train to become a …". It rests on the last
+   *  word, so put the longest last or the line keeps a gap where the wider word was. */
+  rotate: string[];
+  /** form = the live Google Form. Its responses are the sheet the Command Center loads. */
+  enroll: Link & { form?: string };
   heroLink: Link & { lead: string };
   ticker: string[];
   stats: { value: string; label: string }[];
@@ -37,7 +48,14 @@ export type Site = {
   record: { title: string; series: string[]; images: { src: string; alt: string; caption: string }[] };
   kit: { src: string; alt: string }[];
   film: { src: string; poster: string; blurb: string };
-  review?: { quote: string; by: string; meta: string; summary: string; href: string };
+  roster: Player[];
+  /** Shown in place of the roster while it is empty: the card a new player earns. */
+  rosterSample: Player;
+  badges: { name: string; from: string; art: Art }[];
+  medals: { name: string; art: Art }[];
+  /** Real reviews only. Three or more scroll as a marquee. */
+  reviews: { quote: string; by: string; meta: string }[];
+  reviewSummary?: Link;
   facebook?: string;
   socials: Link[];
   contact: { phone: string; phoneLabel: string; email: string; address: string; mapUrl?: string; note?: string };
@@ -52,15 +70,16 @@ export const site: Site = {
   sport: "Volleyball",
   name: "FilAmElite Volleyball",
   url: "https://volleyball.faeph.com",
-  logo: "/brand/logo.png",
-  slogan: "/brand/slogan.png",
+  logo: "/brand/logo.webp",
+  slogan: "/brand/slogan.webp",
   wordmark: "FILAMELITE",
   badge: "Year-round training · Open for enrollment",
   tagline: "Skills, game IQ and vertical training. All year round.",
   meta: "12 training meetings per batch · Developmental tournaments",
   place: "Lipa City, Batangas",
-  hero: { video: "/media/hero.mp4", poster: "/media/hero.jpg" },
-  enroll: { label: "Enroll now", href: MESSENGER },
+  rotate: ["Setter", "Hitter", "Libero", "Leader"],
+  // "F.A.E VOLLEYBALL BATCH 10 BIG GROUP SESSIONS" in Drive, the newest volleyball form.
+  enroll: { label: "Enroll now", href: MESSENGER, form: "https://docs.google.com/forms/d/e/1FAIpQLScrHQBAj2DFwCUz32d91cWvHJv85byU6TjZsznmarECxm3nQA/viewform" },
   heroLink: { lead: "Need a court?", label: "Book F.A.E. Court", href: "https://bookings.faeph.com" },
   ticker: ["Year-round training", "Game IQ & development", "Vertical training with Coach Jr", "Developmental tournaments", "Open for enrollment", "Earned Not Given"],
   stats: [
@@ -73,7 +92,7 @@ export const site: Site = {
     { title: "Volleyball Training", meta: ["12 TRAINING MEETINGS", "SKILLS · GAME IQ · TACTICS"], fee: "₱4,500", per: "/ 12 meetings", href: "#training", icon: "whistle" },
     { title: "Developmental Tournaments", meta: ["SEASONS 1–5 PLAYED", "6 GAMES GUARANTEED"], fee: "₱1,500", per: "tournament fee", href: "#tournaments", icon: "trophy" },
     { title: "Vertical Training", meta: ["WITH COACH JR", "IN EVERY BATCH"], fee: "Included", href: "#training", icon: "bolt" },
-    { title: "Court Rental", meta: ["F.A.E. COURT · LIPA CITY", "BOOK BY THE HOUR"], fee: "Book a court", href: "https://bookings.faeph.com", logo: "/sponsors/fae.png" },
+    { title: "Court Rental", meta: ["F.A.E. COURT · LIPA CITY", "BOOK BY THE HOUR"], fee: "Book a court", href: "https://bookings.faeph.com", logo: "/sponsors/fae.webp" },
   ],
   training: {
     price: "₱4,500",
@@ -117,6 +136,27 @@ export const site: Site = {
     { src: "/kit/coaches.webp", alt: "2026 coaches uniform" },
   ],
   film: { src: "/media/film.mp4", poster: "/media/film.jpg", blurb: "Coaches, inclusions, schedule and five seasons of tournaments, in one film." },
+  // Empty until parents clear their player for the website.
+  roster: [],
+  rosterSample: { name: "Your name here", number: "00", position: "Setter · Hitter · Libero", height: "Your height", batch: "Next batch", division: "Boys · Girls" },
+  // One badge per training module in training.groups; medals mirror the tournament package.
+  badges: [
+    { name: "Foundations", from: "Basic volleyball skill fundamentals", art: "layers" },
+    { name: "Game IQ", from: "Game IQ & development", art: "brain" },
+    { name: "Tactician", from: "Offense & defense game tactics", art: "shield" },
+    { name: "Athlete", from: "Athletic training modules", art: "zap" },
+    { name: "Sky Walker", from: "Vertical training with Coach Jr", art: "rocket" },
+  ],
+  medals: [
+    { name: "Champion", art: "trophy" },
+    { name: "1st Runner-up", art: "medal" },
+    { name: "2nd Runner-up", art: "medal" },
+    { name: "3rd Runner-up", art: "medal" },
+    { name: "Mythical 6", art: "star" },
+    { name: "Finals MVP", art: "award" },
+    { name: "Player of the Game", art: "star" },
+  ],
+  reviews: [],
   socials: [
     { label: "Messenger", href: MESSENGER },
     { label: "FilAm Elite on Facebook", href: FAE_FB },
@@ -128,17 +168,17 @@ export const site: Site = {
     address: "Lipa City, Batangas",
   },
   sponsors: [
-    { name: "Picklemania", logo: "/sponsors/picklemania.png" },
-    { name: "Aguila Auto Glass", logo: "/sponsors/aguila.png" },
-    { name: "VA", logo: "/sponsors/va.png" },
-    { name: "FilAmElite Basketball", logo: "/sponsors/basketball.png" },
-    { name: "NXGEN Premier League", logo: "/sponsors/nxgen.png" },
+    { name: "Picklemania", logo: "/sponsors/picklemania.webp" },
+    { name: "Aguila Auto Glass", logo: "/sponsors/aguila.webp" },
+    { name: "VA", logo: "/sponsors/va.webp" },
+    { name: "FilAmElite Basketball", logo: "/sponsors/basketball.webp" },
+    { name: "NXGEN Premier League", logo: "/sponsors/nxgen.webp" },
   ],
   network: [
-    { name: "FAE Hub", caption: "FilAmElite Management", href: "https://faeph.com", logo: "/sponsors/fae.png" },
-    { name: "FilAmElite Basketball", caption: "Training & tournaments", href: "https://basketball.faeph.com", logo: "/sponsors/basketball.png" },
-    { name: "NXGEN Premier League", caption: "League play · all ages", href: "https://nxgen.faeph.com", logo: "/sponsors/nxgen.png" },
-    { name: "F.A.E. Bookings", caption: "Court rental · WiFi café", href: "https://bookings.faeph.com", logo: "/sponsors/fae.png" },
-    { name: "LinkMePH", caption: "NFC cards · livestreams", href: "https://linkmeio.faeph.com", logo: "/sponsors/linkme.png" },
+    { name: "FAE Hub", caption: "FilAmElite Management", href: "https://faeph.com", logo: "/sponsors/fae.webp" },
+    { name: "FilAmElite Basketball", caption: "Training & tournaments", href: "https://basketball.faeph.com", logo: "/sponsors/basketball.webp" },
+    { name: "NXGEN Premier League", caption: "League play · all ages", href: "https://nxgen.faeph.com", logo: "/sponsors/nxgen.webp" },
+    { name: "F.A.E. Bookings", caption: "Court rental · WiFi café", href: "https://bookings.faeph.com", logo: "/sponsors/fae.webp" },
+    { name: "LinkMePH", caption: "NFC cards · livestreams", href: "https://linkmeio.faeph.com", logo: "/sponsors/linkme.webp" },
   ],
 };

@@ -12,3 +12,28 @@
 }
 /* White label on blue: start the gradient darker so button text keeps its contrast. */
 .btn-gold{background:linear-gradient(135deg,var(--gold-d),var(--gold))}
+
+/* Backdrop tokens (used by site.css): deep ocean blue with glowing cyan/violet
+   gradients that drift, a micro-dot mesh, and a wood court in perspective under the
+   hero. */
+:root{
+  --bg-base:linear-gradient(180deg,rgba(2,10,28,.8),transparent 150px),
+    radial-gradient(ellipse 55% 50% at 14% 14%,rgba(0,200,255,.28),transparent 70%),
+    radial-gradient(ellipse 50% 45% at 86% 24%,rgba(76,111,255,.34),transparent 70%),
+    radial-gradient(ellipse 70% 40% at 50% 108%,rgba(214,150,80,.32),transparent 70%),
+    linear-gradient(180deg,#04163a 0%,#07306a 55%,#0a2448 100%);
+  --bg-pattern:radial-gradient(rgba(255,255,255,.2) 1px,transparent 1.6px);
+  --bg-pattern-size:22px 22px;
+  --bg-floor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 450' fill='none' stroke='rgba(255,255,255,.85)' stroke-width='4'><rect x='4' y='4' width='892' height='442'/><path d='M300 4V446M600 4V446'/><path d='M450 0V450' stroke-width='10'/></svg>"),
+    repeating-linear-gradient(90deg,#9a6534 0 30px,#8a592c 30px 62px,#a8703b 62px 92px,#93602f 92px 124px);
+  --floor-o:.45;
+  --site-bg-o:.6;
+  --sec-a:rgba(3,12,32,.92); --sec-b:rgba(6,20,46,.92);
+}
+/* Navy scrim instead of black, so the blue survives behind the headline. */
+.hero::before{background:radial-gradient(ellipse at center,rgba(2,12,34,.8) 0%,rgba(2,12,34,.55) 42%,rgba(2,12,34,0) 72%)}
+.hero-ambient{background:radial-gradient(circle at 32% 40%,rgba(0,210,255,.42),transparent 55%),radial-gradient(circle at 68% 60%,rgba(120,100,255,.38),transparent 55%);
+  animation:vbFlow 16s ease-in-out infinite}
+@keyframes vbFlow{0%,100%{transform:translate(-50%,-50%) rotate(0) scale(1)}50%{transform:translate(-50%,-50%) rotate(170deg) scale(1.15)}}
+/* Lighter label on the bright blue hero (AA at phone size). */
+.hero-sub{color:#C3CEFF}

@@ -7,10 +7,10 @@ import { site } from "@/site";
 // no auth. Same classes, so it looks and moves exactly like nxgen.faeph.com.
 const LINKS = [
   ["Programs", "#programs"],
-  ["Inclusions", "#training"],
   ["Schedule", "#schedule"],
+  ["Roster", "#roster"],
+  ["Hall of fame", "#tournaments"],
   ["Coaches", "#coaches"],
-  ["Tournaments", "#tournaments"],
   ["Contact", "#contact"],
 ] as const;
 
@@ -35,7 +35,7 @@ export function NxNav() {
       </div>
       <div className="nav-ctas">
         <a href="https://faeph.com" className="btn btn-ghost btn-sm nav-hub">FAE Hub</a>
-        <a href={site.enroll.href} target="_blank" rel="noopener noreferrer" className="btn btn-gold btn-sm">Enroll →</a>
+        <a href="#enroll" className="btn btn-gold btn-sm">Enroll →</a>
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             <button className="btn btn-ghost btn-sm lg:hidden" aria-label="Open menu"><Menu className="h-4 w-4" /></button>

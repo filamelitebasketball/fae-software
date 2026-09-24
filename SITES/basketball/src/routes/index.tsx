@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Check, Dumbbell, Mail, MapPin, MessageCircle, Phone, Quote, Trophy, Users, Warehouse, Zap } from "lucide-react";
+import { ArrowRight, Check, Dumbbell, ExternalLink, Mail, MapPin, MessageCircle, Phone, ShieldCheck, Star, ThumbsUp, Trophy, Users, Warehouse, Zap } from "lucide-react";
 import { NxNav, NxFooter } from "@/components/nx-shell";
+import { Roster } from "@/components/roster";
 import { ScrollBasketball } from "@/components/scroll-basketball";
 import { NxReveal } from "@/components/nx-reveal";
 import { Scroll3DSections } from "@/components/scroll-3d-sections";
@@ -52,20 +53,30 @@ const ext = (href: string) => (href.startsWith("http") ? { target: "_blank", rel
 
 const ICONS = { whistle: Dumbbell, trophy: Trophy, user: Users, bolt: Zap, court: Warehouse };
 
-/* Hero parallax + scroll progress — lifted from NXGEN's homepage. */
+/* Hero parallax + scroll progress — lifted from NXGEN's homepage. Each backdrop layer
+   moves at its own depth; transforms go straight onto the layers so scrolling never
+   restyles the hero subtree. The spotlight follows the pointer the same way. */
 function useHeroParallax() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const hero = document.querySelector<HTMLElement>(".hero");
+    const bg = document.querySelector<HTMLElement>(".hero-bg");
+    const floor = document.querySelector<HTMLElement>(".hero-floor");
+    const ambient = document.querySelector<HTMLElement>(".hero-ambient");
+    const spot = document.querySelector<HTMLElement>(".hero-spot");
     let raf = 0;
     const apply = () => {
       raf = 0;
       const y = window.scrollY;
       const vh = window.innerHeight || 1;
-      const video = document.querySelector<HTMLElement>(".hero-video");
       const content = document.querySelector<HTMLElement>(".hero-content");
       const cue = document.querySelector<HTMLElement>(".hero-cue");
       const bar = document.querySelector<HTMLElement>(".scroll-prog > i");
-      if (video) video.style.transform = `translate3d(0, ${y * 0.18}px, 0) scale(${1 + Math.min(y, 700) * 0.00012})`;
+      if (y < vh * 1.3) {
+        if (bg) bg.style.transform = `translate3d(0, ${y * 0.38}px, 0)`;
+        if (floor) floor.style.transform = `translate3d(0, ${y * 0.14}px, 0) perspective(900px) rotateX(62deg)`;
+        if (ambient) ambient.style.translate = `0 ${y * 0.22}px`;
+      }
       const p = Math.min(y / (vh * 0.75), 1);
       if (content) {
         content.style.transform = `translate3d(0, ${p * -70}px, 0)`;
@@ -78,12 +89,19 @@ function useHeroParallax() {
       }
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(apply); };
+    const onPointer = (e: PointerEvent) => {
+      if (!hero || !spot) return;
+      const r = hero.getBoundingClientRect();
+      spot.style.transform = `translate3d(${e.clientX - r.left - r.width * 0.5}px, ${e.clientY - r.top - r.height * 0.32}px, 0)`;
+    };
     apply();
     // If the reveal animation never runs (throttled tab, battery saver) the copy must still show.
     const shown = window.setTimeout(() => document.querySelector(".hero-content")?.classList.add("hero-shown"), 2600);
     window.addEventListener("scroll", onScroll, { passive: true });
+    hero?.addEventListener("pointermove", onPointer, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
+      hero?.removeEventListener("pointermove", onPointer);
       if (raf) cancelAnimationFrame(raf);
       window.clearTimeout(shown);
     };
@@ -100,12 +118,33 @@ function Head({ eyebrow, title, intro, center }: { eyebrow: string; title: strin
   );
 }
 
+/** Steps once through the hero's closing words and rests on the last, so the headline stops
+ *  moving within about 5 seconds. All words share one grid cell, so the line never reflows. */
+function Rotator({ words }: { words: string[] }) {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    if (words.length < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let n = 0;
+    const t = window.setInterval(() => {
+      setI(++n);
+      if (n >= words.length - 1) window.clearInterval(t);
+    }, 1500);
+    return () => window.clearInterval(t);
+  }, [words.length]);
+  return (
+    <span className="hero-rot" aria-hidden="true">
+      {words.map((w, n) => <span key={w} className={n === i ? "on" : undefined}>{w}</span>)}
+    </span>
+  );
+}
+
 function Hero() {
   const word = site.wordmark.split("");
   return (
     <section className="hero" id="top">
-      <video className="hero-video" src={site.hero.video} poster={site.hero.poster} autoPlay muted loop playsInline preload="metadata" aria-hidden="true" />
-      <div className="hero-video-veil" aria-hidden="true" />
+      <div className="hero-bg" aria-hidden="true" />
+      <div className="hero-floor" aria-hidden="true" />
+      <div className="hero-spot" aria-hidden="true" />
       <div className="hero-ambient" aria-hidden="true" />
       <div className="hero-content">
         <div className="hero-badge-wrap"><div className="hero-badge"><span className="dot" />{site.badge}</div></div>
@@ -116,12 +155,14 @@ function Hero() {
           ))}
         </p>
         <p className="hero-sub"><span className="ht-m"><span className="ht-c" style={{ animationDelay: "0.8s" }}>{site.sport}</span></span></p>
-        <p className="hero-copy hero-line" style={{ animationDelay: "0.95s" }}>{site.tagline}</p>
-        <p className="hero-meta hero-line" style={{ animationDelay: "1.02s" }}>{site.meta}</p>
+        <p className="hero-copy hero-line" style={{ animationDelay: "0.95s" }}>
+          Train to become a <Rotator words={site.rotate} /><span className="sr-only">{site.rotate.join(", ")}</span>
+        </p>
+        <p className="hero-meta hero-line" style={{ animationDelay: "1.02s" }}>{site.tagline}</p>
         <p className="hero-place hero-line" style={{ animationDelay: "1.08s" }}><span><MapPin aria-hidden="true" />{site.place}</span></p>
         <div className="hero-ctas hero-line" style={{ animationDelay: "1.16s" }}>
-          <a className="btn btn-gold" href={site.enroll.href} {...ext(site.enroll.href)}>{site.enroll.label} <ArrowRight aria-hidden="true" size={16} /></a>
-          <a className="btn btn-ghost" href="#programs">See programs</a>
+          <a className="btn btn-gold" href="#roster">Explore Player Roster <ArrowRight aria-hidden="true" size={16} /></a>
+          <a className="btn btn-ghost" href="#enroll">Join Training Programs</a>
         </div>
         <p className="hero-coach hero-line" style={{ animationDelay: "1.24s" }}>
           {site.heroLink.lead} <a href={site.heroLink.href} {...ext(site.heroLink.href)}>{site.heroLink.label} &#8594;</a>
@@ -134,14 +175,14 @@ function Hero() {
 
 function Programs() {
   return (
-    <section id="programs" className="section" style={{ background: "var(--void)" }}>
+    <section id="programs" className="section" style={{ background: "var(--sec-a)" }}>
       <div className="container">
         <div className="stat-band r3">
           {site.stats.map((s) => (
             <div className="hstat" key={s.label}><b>{s.value}</b><span>{s.label}</span></div>
           ))}
         </div>
-        <Head eyebrow="Programs" title="Pick your path" center />
+        <Head eyebrow="Programs & batches" title="Pick your path" center />
         <div className="div-grid">
           {site.programs.map((p) => {
             const Icon = p.icon ? ICONS[p.icon] : null;
@@ -166,7 +207,7 @@ function Programs() {
 function Training() {
   const t = site.training;
   return (
-    <section id="training" className="section" style={{ background: "var(--s0)" }}>
+    <section id="training" className="section" style={{ background: "var(--sec-b)" }}>
       <div className="container">
         <Head eyebrow="Inclusions" title="Inside every batch" intro={`${t.price} per batch of ${t.per}. Tournament entry is a separate fee.`} />
         <div className="two-col">
@@ -209,7 +250,7 @@ function Training() {
 
 function Schedule() {
   return (
-    <section id="schedule" className="section" style={{ background: "var(--void)" }}>
+    <section id="schedule" className="section" style={{ background: "var(--sec-a)" }}>
       <div className="container narrow">
         <Head eyebrow="Schedule" title="Weekend training" intro="Every Saturday and Sunday, all year round." />
         <div className="games-list r3 d2">
@@ -223,7 +264,7 @@ function Schedule() {
           ))}
         </div>
         <div className="tc" style={{ marginTop: 28 }}>
-          <a className="btn btn-gold" href={site.enroll.href} {...ext(site.enroll.href)}>Reserve a slot <ArrowRight aria-hidden="true" size={16} /></a>
+          <a className="btn btn-gold" href="#enroll">Reserve a slot <ArrowRight aria-hidden="true" size={16} /></a>
         </div>
       </div>
     </section>
@@ -232,7 +273,7 @@ function Schedule() {
 
 function Coaches() {
   return (
-    <section id="coaches" className="section" style={{ background: "var(--s0)" }}>
+    <section id="coaches" className="section" style={{ background: "var(--sec-b)" }}>
       <div className="container two-col align-center">
         <figure className="frame r3">
           <img src={site.coaches.image} alt={site.coaches.alt} loading="lazy" decoding="async" />
@@ -261,9 +302,9 @@ function Coaches() {
 
 function Record() {
   return (
-    <section id="tournaments" className="section" style={{ background: "var(--void)" }}>
+    <section id="tournaments" className="section" style={{ background: "var(--sec-a)" }}>
       <div className="container">
-        <Head eyebrow="Track record" title={site.record.title} center />
+        <Head eyebrow="Hall of fame" title={site.record.title} center />
         <div className="chips r3 d2">
           {site.record.series.map((s) => <span className="chip" key={s}>{s}</span>)}
         </div>
@@ -282,7 +323,7 @@ function Record() {
 
 function Kit() {
   return (
-    <section id="kit" className="section" style={{ background: "var(--s0)" }}>
+    <section id="kit" className="section" style={{ background: "var(--sec-b)" }}>
       <div className="container">
         <Head eyebrow="2026 Kit" title="Wear the name" center />
         <div className="kit-grid">
@@ -300,12 +341,12 @@ function Kit() {
 
 function Film() {
   return (
-    <section id="film" className="section" style={{ background: "var(--void)" }}>
+    <section id="film" className="section" style={{ background: "var(--sec-a)" }}>
       <div className="container two-col align-center">
         <div>
           <Head eyebrow="Watch" title="The program in one film" intro={site.film.blurb} />
           <div className="r3 d3" style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            <a className="btn btn-gold" href={site.enroll.href} {...ext(site.enroll.href)}>{site.enroll.label} <ArrowRight aria-hidden="true" size={16} /></a>
+            <a className="btn btn-gold" href="#enroll">{site.enroll.label} <ArrowRight aria-hidden="true" size={16} /></a>
             {site.facebook && <a className="btn btn-ghost" href={site.facebook} target="_blank" rel="noopener noreferrer">More on Facebook</a>}
           </div>
         </div>
@@ -345,21 +386,33 @@ function FacebookFeed({ href }: { href: string }) {
   );
 }
 
-function Social() {
-  if (!site.review && !site.facebook) return null;
+function Reviews() {
+  const r = site.reviews;
+  if (!r.length && !site.facebook) return null;
+  // A marquee of one or two cards just repeats itself; below three they sit still.
+  const loop = r.length >= 3;
+  const card = (v: (typeof r)[number], i: number, dup = false) => (
+    <figure className="rev-card" key={(dup ? "d" : "") + i} aria-hidden={dup || undefined}>
+      <span className="rev-badge"><ThumbsUp aria-hidden="true" />Recommends</span>
+      <blockquote>{v.quote}</blockquote>
+      <figcaption><strong>{v.by}</strong> · {v.meta}</figcaption>
+    </figure>
+  );
   return (
-    <section id="community" className="section" style={{ background: "var(--s0)" }}>
+    <section id="community" className="section" style={{ background: "var(--sec-b)" }}>
       <div className="container two-col">
         <div>
-          <Head eyebrow="Community" title="What families say" />
-          {site.review && (
-            <figure className="quote r3 d2">
-              <Quote className="quote-mark" aria-hidden="true" />
-              <blockquote>{site.review.quote}</blockquote>
-              <figcaption><strong>{site.review.by}</strong> · {site.review.meta}</figcaption>
-              <a href={site.review.href} target="_blank" rel="noopener noreferrer" className="quote-link">{site.review.summary} on Facebook &#8594;</a>
-            </figure>
+          <Head eyebrow="Parent & player reviews" title="What families say" />
+          {site.reviewSummary && (
+            <a className="rev-sum r3 d1" href={site.reviewSummary.href} target="_blank" rel="noopener noreferrer">
+              <Star aria-hidden="true" />{site.reviewSummary.label} on Facebook
+            </a>
           )}
+          {r.length > 0 && (loop ? (
+            <div className="rev-marquee r3 d2" tabIndex={0} aria-label="Reviews, scrolling. Focus or hold to pause."><div className="rev-track">{r.map((v, i) => card(v, i))}{r.map((v, i) => card(v, i, true))}</div></div>
+          ) : (
+            <div className="rev-row r3 d2">{r.map((v, i) => card(v, i))}</div>
+          ))}
         </div>
         {site.facebook && <div className="fb-card r3 d3"><FacebookFeed href={site.facebook} /></div>}
       </div>
@@ -369,7 +422,7 @@ function Social() {
 
 function Network() {
   return (
-    <section id="network" className="section" style={{ background: "var(--void)" }}>
+    <section id="network" className="section" style={{ background: "var(--sec-a)" }}>
       <div className="container">
         <Head eyebrow="FilAmElite Management" title="One FAE network" intro="Train here. Play in the league. Book the court. It all connects at faeph.com." center />
         <div className="net-grid">
@@ -386,13 +439,34 @@ function Network() {
   );
 }
 
-function Contact() {
+function Enroll() {
   const c = site.contact;
+  const form = site.enroll.form;
   return (
-    <section id="contact" className="section" style={{ background: "var(--s0)" }}>
+    <section id="enroll" className="section" style={{ background: "var(--sec-b)" }}>
       <div className="container">
-        <Head eyebrow="Get in touch" title="Enroll today" />
-        <div className="cg r3 d2">
+        <Head
+          eyebrow="Enrollment"
+          title="Claim your spot"
+          intro={form
+            ? "Register with the official FilAmElite form below. Our team sends the terms and confirms your slot by Messenger or email."
+            : "Message us to reserve a slot. Our team sends the terms and confirms your spot."}
+          center
+        />
+        {form ? (
+          <div className="form-card r3 d2">
+            <div className="form-bar">
+              <span><ShieldCheck aria-hidden="true" />Submitted through Google Forms to the FilAmElite registration team. Nothing you enter appears on this website.</span>
+              <a href={form} target="_blank" rel="noopener noreferrer">Open in a new tab <ExternalLink aria-hidden="true" /></a>
+            </div>
+            <iframe title={`${site.name} registration form`} src={`${form}?embedded=true`} loading="lazy" />
+          </div>
+        ) : (
+          <div className="tc r3 d2" style={{ marginBottom: 28 }}>
+            <a className="btn btn-gold" href={site.enroll.href} {...ext(site.enroll.href)}>{site.enroll.label} <ArrowRight aria-hidden="true" size={16} /></a>
+          </div>
+        )}
+        <div className="cg r3 d2" id="contact">
           <div className="cc">
             <h3><MapPin aria-hidden="true" />Where</h3>
             <p className="cc-text">{c.address}</p>
@@ -419,7 +493,7 @@ function Contact() {
 
 function Sponsors() {
   return (
-    <section className="section" style={{ padding: "72px 0", borderTop: "1px solid var(--line)", background: "var(--void)" }}>
+    <section className="section" style={{ padding: "72px 0", borderTop: "1px solid var(--line)", background: "var(--sec-a)" }}>
       <div className="container tc">
         <p className="eyebrow r3">Partners</p>
         <div className="spon-grid r3 d2">
@@ -438,6 +512,7 @@ function Index() {
   useHeroParallax();
   return (
     <>
+      <div className="site-bg" aria-hidden="true" />
       <div className="scroll-prog" aria-hidden="true"><i /></div>
       <NxNav />
       <main>
@@ -450,13 +525,14 @@ function Index() {
         <Programs />
         <Training />
         <Schedule />
-        <Coaches />
+        <Roster />
         <Record />
+        <Coaches />
         <Kit />
         <Film />
-        <Social />
+        <Reviews />
+        <Enroll />
         <Network />
-        <Contact />
         <Sponsors />
       </main>
       <NxFooter />

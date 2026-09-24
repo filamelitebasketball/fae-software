@@ -25,6 +25,7 @@
 .tc .sec-intro{margin-inline:auto}
 .container.narrow{max-width:840px}
 .two-col{display:grid;gap:22px}
+.two-col>*{min-width:0} /* a marquee's max-content track must not widen the column */
 @media(min-width:900px){.two-col{grid-template-columns:1fr 1fr;gap:32px}}
 .two-col.align-center{align-items:center}
 .stack{display:grid;gap:22px;align-content:start}
@@ -77,12 +78,6 @@
 .film video{display:block;width:100%;height:100%;object-fit:cover;background:#000}
 
 /* ── Community ── */
-.quote{margin:0;border:1px solid var(--line);border-radius:4px;background:var(--s1);padding:30px 26px}
-.quote-mark{width:30px;height:30px;color:var(--gold);margin-bottom:12px}
-.quote blockquote{margin:0;font-size:16px;line-height:1.75;color:var(--paint)}
-.quote figcaption{margin-top:16px;font-size:12px;color:var(--silver-d)}
-.quote figcaption strong{color:var(--paint)}
-.quote-link{display:inline-block;margin-top:14px;font-size:12.5px;font-weight:600;color:var(--gold-l);text-decoration:none;border-bottom:1px solid rgba(var(--gold-rgb),.35)}
 .fb-card{border:1px solid var(--line);border-radius:4px;background:var(--s1);overflow:hidden;min-height:620px;display:grid;place-items:center}
 .fb-card iframe{width:100%;max-width:500px;height:620px;border:0;display:block}
 .fb-fallback{text-align:center;padding:28px;display:grid;gap:14px;justify-items:center;color:var(--silver)}
@@ -98,7 +93,7 @@
 .net-card:hover{border-color:var(--line-g)}
 
 /* NXGEN centres all of <main>; lists and long copy read better left-aligned. */
-.lb-card,.people,.vm,.cc,.two-col .sec-head,.net-card,.quote{text-align:left}
+.lb-card,.people,.vm,.cc,.two-col .sec-head,.net-card{text-align:left}
 .fb-card:has(.fb-fallback){min-height:0}
 .net-grid{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
 
@@ -106,3 +101,150 @@
 .cc-text{font-size:14px;color:var(--paint);line-height:1.6;margin-bottom:6px}
 .cc-note{font-size:12px;color:var(--silver-d);margin-bottom:16px}
 .socl svg{margin-left:auto}
+
+/* ── Theme backdrop ──────────────────────────────────────────────────────────
+   Each sport's look is a handful of tokens in theme.css (--bg-base, --bg-pattern,
+   --bg-pattern-size, --bg-floor, --sec-a/b). Replaces the old hero video: pure CSS,
+   no network. On scroll the page moves each layer at its own rate (inline transforms,
+   so only the compositor works); .hero-spot follows the pointer. Without JS or with
+   reduced motion the backdrop is simply still. */
+body{background:transparent}
+.site-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;background:var(--bg-base);opacity:var(--site-bg-o,.5)}
+.site-bg::before{content:"";position:absolute;inset:0;background:var(--bg-pattern);background-size:var(--bg-pattern-size,auto);opacity:.55}
+/* section.hero> outranks the .scene-3d > * reveal (styles.css), which would otherwise
+   reset these layers' transform and opacity. */
+.hero-bg,.hero-floor{position:absolute;pointer-events:none;z-index:-2}
+section.hero>.hero-bg{inset:-14% 0 0;opacity:1;transition:none;background:var(--bg-base);will-change:transform;
+  -webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+.hero-bg::before{content:"";position:absolute;inset:0;background:var(--bg-pattern);background-size:var(--bg-pattern-size,auto);
+  -webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 45%,#000 25%,transparent 78%);mask-image:radial-gradient(ellipse 80% 70% at 50% 45%,#000 25%,transparent 78%)}
+section.hero>.hero-spot{position:absolute;left:50%;top:32%;width:1120px;height:1120px;translate:-50% -50%;z-index:-2;pointer-events:none;opacity:1;transition:none;
+  will-change:transform;background:radial-gradient(circle,rgba(var(--gold-rgb),.15),transparent 50%)}
+section.hero>.hero-floor{transition:none;will-change:transform;left:-35%;right:-35%;bottom:-4%;height:58%;background:var(--bg-floor);background-size:100% 100%;opacity:var(--floor-o,.6);
+  transform-origin:50% 100%;transform:perspective(900px) rotateX(62deg);
+  -webkit-mask-image:linear-gradient(to top,#000 20%,transparent 92%);mask-image:linear-gradient(to top,#000 20%,transparent 92%)}
+/* Readable text over the brighter backdrops (measured against WCAG AA). */
+.hero-place,.hero-coach,.hero-cue{color:var(--silver)}
+.nx-nav:not(.scrolled){background:linear-gradient(rgba(5,5,7,.72),rgba(5,5,7,0))}
+.nx-nav .nav-link{color:var(--silver)}
+.site-footer{background:var(--sec-a)}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero-ambient{animation:none}}
+
+/* Hero sub-headline: the closing word cycles; every word shares one grid cell. */
+.hero-rot{display:inline-grid;vertical-align:bottom;text-align:left;color:var(--gold-l)}
+.hero-rot>span{grid-area:1/1;transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.hero-rot>span:not(.on){opacity:0;transform:translateY(.45em)}
+
+/* ── Glass + hover micro-interactions ── */
+/* Cards are tinted glass over the page backdrop. Real backdrop blur is kept to the few
+   controls that sit on the busy hero; on every card it cost frames on phones. */
+.div-card,.lb-card,.cc,.net-card,.id-card,.earn-tile,.rev-card,.spon-chip,.kit,.frame{background-color:rgba(255,255,255,.03)}
+.div-card:hover,.nx3d:hover,.lb-card:hover,.cc:hover,.net-card:hover,.id-card:hover,.rev-card:hover{border-color:var(--line-g);
+  box-shadow:inset 0 0 0 1px rgba(var(--gold-rgb),.34),inset 0 0 36px -8px rgba(var(--gold-rgb),.3),0 22px 44px -18px rgba(0,0,0,.75)!important}
+.btn{transition:transform .3s var(--ease),scale .25s var(--ease),box-shadow .3s,filter .2s,background .2s,border-color .2s}
+.btn:hover{scale:1.035}
+.btn:active{scale:.97}
+.btn-gold:hover{box-shadow:inset 0 0 18px rgba(255,255,255,.3),0 10px 36px -10px rgba(var(--gold-rgb),.6)}
+.btn-ghost{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.btn-ghost:hover{box-shadow:inset 0 0 22px rgba(var(--gold-rgb),.16)}
+@media(prefers-reduced-motion:reduce){.btn:hover,.btn:active{scale:none}}
+
+/* ── Roster: athletic ID cards ── */
+.ros-filters{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:-14px 0 32px}
+.ros-filters label{display:grid;gap:6px;text-align:left;font-family:var(--fm);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--silver-d)}
+.ros-filters select{min-width:160px;min-height:44px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--paint);font:500 14px var(--fb)}
+.ros-filters option{background:var(--s1)}
+.id-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,270px));justify-content:center;gap:18px}
+.id-grid.solo{grid-template-columns:minmax(0,300px);justify-content:center}
+.id-card{position:relative;display:grid;gap:10px;align-content:start;padding:16px;text-align:left;border:1px solid var(--line-g);border-radius:18px;
+  color:var(--paint);font:inherit;cursor:pointer;text-decoration:none;overflow:hidden;width:100%;
+  background-image:linear-gradient(160deg,rgba(var(--gold-rgb),.16),transparent 46%),repeating-linear-gradient(135deg,rgba(255,255,255,.022) 0 2px,transparent 2px 9px)}
+.id-card::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.13) 50%,transparent 65%);transform:translateX(-120%);transition:transform .9s var(--ease)}
+.id-card:hover::after{transform:translateX(120%)}
+@media(prefers-reduced-motion:reduce){.id-card::after{display:none}}
+.id-card:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.id-top{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:var(--fm);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-l)}
+.id-top img{height:26px;width:auto}
+.id-photo{position:relative;display:grid;place-items:center;aspect-ratio:4/5;border-radius:12px;overflow:hidden;
+  background:radial-gradient(circle at 50% 30%,rgba(var(--gold-rgb),.26),rgba(0,0,0,.45) 70%)}
+.id-photo img{width:100%;height:100%;object-fit:cover}
+.id-num-bg{font-family:var(--fd);font-weight:900;font-size:7rem;line-height:1;color:rgba(255,255,255,.07);-webkit-text-stroke:1.5px rgba(var(--gold-rgb),.5)}
+.id-name{font-family:var(--fd);font-weight:900;font-size:1.35rem;text-transform:uppercase;letter-spacing:.01em;line-height:1.05}
+.id-meta{display:flex;flex-wrap:wrap;gap:4px 12px;font-family:var(--fm);font-size:11px;color:var(--silver);letter-spacing:.05em}
+.id-meta b{color:var(--gold)}
+.id-div{font-size:12px;color:var(--silver-d)}
+.id-chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip-b{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;font-family:var(--fm);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--gold-l);background:rgba(var(--gold-rgb),.1);border:1px solid var(--line-g)}
+.chip-b svg{width:12px;height:12px;flex-shrink:0}
+.chip-b.medal{color:#241900;background:linear-gradient(135deg,#ffe38c,#d8a31f);border-color:transparent}
+.id-cta{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:13px;color:var(--gold-l)}
+.id-cta svg{width:15px;height:15px}
+.ros-count{text-align:center;font-size:12.5px;color:var(--silver-d);margin:-18px 0 22px}
+
+/* Badge + medal catalog */
+.earn{margin-top:72px;display:grid;gap:18px}
+.earn-h{font-family:var(--fm);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--silver-d);margin-top:8px}
+.earn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.earn-tile{display:grid;justify-items:center;align-content:start;gap:8px;padding:20px 12px;border:1px solid var(--line);border-radius:16px;text-align:center}
+.earn-ico{display:grid;place-items:center;width:60px;height:60px;clip-path:polygon(25% 4%,75% 4%,100% 50%,75% 96%,25% 96%,0 50%);
+  background:linear-gradient(145deg,rgba(var(--gold-rgb),.42),rgba(var(--gold-rgb),.08));color:var(--gold-l);transition:transform .45s var(--ease)}
+.earn-ico svg{width:24px;height:24px}
+.earn-tile strong{font-family:var(--fd);font-weight:800;font-size:13.5px;color:var(--paint);text-transform:uppercase;letter-spacing:.03em}
+.earn-tile small{font-size:11.5px;color:var(--silver-d);line-height:1.4}
+.medals .earn-ico{clip-path:none;border-radius:50%;color:#2a1d02;background:radial-gradient(circle at 35% 30%,#fff3bd,#e2ae2b 55%,#8a6410);
+  box-shadow:0 0 0 3px rgba(226,174,43,.25),0 8px 22px -8px rgba(226,174,43,.8)}
+.earn-tile:hover .earn-ico{transform:rotate(-10deg) scale(1.12)}
+@media(prefers-reduced-motion:reduce){.earn-tile:hover .earn-ico{transform:none}}
+
+/* Player profile dialog (native <dialog>: Esc and focus handled by the browser) */
+.pdlg{width:min(780px,calc(100% - 32px));max-height:calc(100dvh - 32px);margin:auto;padding:0;border:1px solid var(--line-g);border-radius:20px;
+  background:rgba(13,13,16,.95);color:var(--silver);overflow:auto}
+.pdlg::backdrop{background:rgba(0,0,0,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.pdlg[open]{animation:pdlgIn .35s var(--ease)}
+@keyframes pdlgIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.pdlg[open]{animation:none}}
+.pdlg-body{position:relative;display:grid;gap:20px;padding:22px}
+@media(min-width:700px){.pdlg-body{grid-template-columns:1.05fr 1fr;align-items:start}}
+.pdlg-x{position:absolute;top:10px;right:10px;z-index:1;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);
+  background:rgba(0,0,0,.55);color:var(--paint);cursor:pointer}
+.pdlg-x svg{width:18px;height:18px}
+.pdlg-media{display:grid;gap:10px}
+.pdlg-main{margin:0;border-radius:14px;overflow:hidden;background:#000;aspect-ratio:4/5}
+.pdlg-main img{width:100%;height:100%;object-fit:cover;display:block}
+.pdlg-thumbs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.pdlg-thumbs button{flex:0 0 64px;height:64px;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;cursor:pointer;background:none}
+.pdlg-thumbs button[aria-current="true"]{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.pdlg-thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.pdlg-info{display:grid;gap:14px;text-align:left;padding-top:8px}
+.pdlg-info .display{font-size:clamp(1.8rem,4vw,2.6rem)}
+.pdlg-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0}
+.pdlg-stats div{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.pdlg-stats dt{font-family:var(--fm);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--silver-d)}
+.pdlg-stats dd{margin:3px 0 0;color:var(--paint);font-weight:700}
+
+/* ── Reviews ── */
+.rev-sum{display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;padding:9px 16px;border-radius:999px;background:rgba(var(--gold-rgb),.1);
+  border:1px solid var(--line-g);color:var(--gold-l);font-weight:700;font-size:13px;text-decoration:none}
+.rev-sum svg{width:15px;height:15px;fill:currentColor}
+.rev-row{display:grid;gap:14px}
+.rev-card{margin:0;border:1px solid var(--line);border-radius:16px;padding:24px 22px;text-align:left}
+.rev-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-l);margin-bottom:12px}
+.rev-badge svg{width:14px;height:14px}
+.rev-card blockquote{margin:0;font-size:15.5px;line-height:1.75;color:var(--paint)}
+.rev-card figcaption{margin-top:14px;font-size:12px;color:var(--silver-d)}
+.rev-card figcaption strong{color:var(--paint)}
+.rev-marquee{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.rev-track{display:flex;width:max-content;animation:tick 45s linear infinite}
+.rev-marquee:hover .rev-track,.rev-marquee:active .rev-track,.rev-marquee:focus-within .rev-track{animation-play-state:paused}
+.rev-marquee:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+.rev-marquee .rev-card{width:min(340px,78vw);flex-shrink:0;margin-right:14px}
+@media(prefers-reduced-motion:reduce){.rev-marquee{-webkit-mask-image:none;mask-image:none}.rev-track{animation:none;flex-wrap:wrap;width:auto}.rev-track>[aria-hidden]{display:none}}
+
+/* ── Enrollment: the live Google Form ── */
+.form-card{border:1px solid var(--line-g);border-radius:18px;overflow:hidden;margin:0 auto 28px;max-width:860px;box-shadow:var(--rim);background:#fff}
+.form-bar{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--s1);font-size:12.5px;color:var(--silver);text-align:left}
+.form-bar span,.form-bar a{display:inline-flex;align-items:center;gap:8px}
+.form-bar svg{width:16px;height:16px;color:var(--gold);flex-shrink:0}
+.form-bar a{color:var(--gold-l);font-weight:700;text-decoration:none}
+.form-card iframe{display:block;width:100%;height:min(1500px,85vh);border:0;background:#fff}

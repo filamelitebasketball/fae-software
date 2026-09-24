@@ -10,3 +10,21 @@
   --on-gold:#060606;
   --flag-red:#E3262E; --flag-yellow:#F5C21B; --flag-blue:#2F52E6;
 }
+
+/* Backdrop tokens (used by site.css): charcoal slate, isometric court grid, a soft gold
+   spotlight from above, the flag red/blue as side accents, and a full court in
+   perspective under the hero. */
+:root{
+  --bg-base:linear-gradient(180deg,rgba(6,7,10,.7),transparent 150px),
+    radial-gradient(ellipse 70% 55% at 50% -5%,rgba(245,194,27,.13),transparent 70%),
+    radial-gradient(ellipse 45% 40% at 6% 38%,rgba(227,38,46,.16),transparent 70%),
+    radial-gradient(ellipse 45% 40% at 94% 38%,rgba(47,82,230,.18),transparent 70%),
+    linear-gradient(180deg,#16181e 0%,#0d0e12 55%,#08090c 100%);
+  --bg-pattern:repeating-linear-gradient(90deg,rgba(255,255,255,.045) 0 1px,transparent 1px 44px),
+    repeating-linear-gradient(30deg,rgba(255,255,255,.045) 0 1px,transparent 1px 44px),
+    repeating-linear-gradient(150deg,rgba(255,255,255,.045) 0 1px,transparent 1px 44px);
+  --bg-floor:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 940 500' fill='none' stroke='rgba(245,194,27,.75)' stroke-width='3'><rect x='10' y='10' width='920' height='480'/><path d='M470 10V490'/><circle cx='470' cy='250' r='60'/><circle cx='470' cy='250' r='18'/><rect x='10' y='170' width='190' height='160'/><circle cx='200' cy='250' r='60'/><path d='M10 40H150A230 230 0 0 1 150 460H10M40 220V280'/><circle cx='55' cy='250' r='9'/><rect x='740' y='170' width='190' height='160'/><circle cx='740' cy='250' r='60'/><path d='M930 40H790A230 230 0 0 0 790 460H930M900 220V280'/><circle cx='885' cy='250' r='9'/></svg>");
+  --floor-o:.55;
+  --site-bg-o:.6;
+  --sec-a:rgba(8,9,12,.8); --sec-b:rgba(17,19,25,.84);
+}

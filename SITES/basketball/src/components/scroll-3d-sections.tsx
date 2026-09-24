@@ -18,7 +18,7 @@ export function Scroll3DSections() {
           if (e.isIntersecting) el.classList.add("scene-3d-in");
         }
       },
-      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
+      { threshold: 0, rootMargin: "0px 0px -8% 0px" },
     );
 
     const scan = () => {
