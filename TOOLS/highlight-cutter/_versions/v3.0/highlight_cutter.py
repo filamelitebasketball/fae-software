@@ -45,20 +45,17 @@ def ff(args, dur=None, prog=None):
     """Run ffmpeg. With dur + prog, report 0..1 progress from ffmpeg's -progress stream."""
     live = bool(prog and dur)
     cmd = [FFMPEG, "-hide_banner", "-loglevel", "error", "-y", *(["-progress", "pipe:1", "-nostats"] if live else []), *args]
-    with tempfile.TemporaryFile() as errf:          # a file, not a pipe: damaged footage can print MBs of errors
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=errf, text=True, creationflags=NOWIN)
-        if live:
-            for line in p.stdout:
-                if line.startswith(("out_time_us=", "out_time_ms=")):     # both are microseconds
-                    try:
-                        prog(min(1.0, int(line.split("=")[1]) / 1e6 / dur))
-                    except ValueError:
-                        pass
-        p.communicate()
-        if p.returncode:
-            errf.seek(0)
-            err = errf.read().decode("utf-8", "replace")
-            raise RuntimeError("ffmpeg: " + (err.strip().splitlines() or ["failed"])[-1])
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, creationflags=NOWIN)
+    if live:
+        for line in p.stdout:
+            if line.startswith(("out_time_us=", "out_time_ms=")):     # both are microseconds
+                try:
+                    prog(min(1.0, int(line.split("=")[1]) / 1e6 / dur))
+                except ValueError:
+                    pass
+    out, err = p.communicate()
+    if p.returncode:
+        raise RuntimeError("ffmpeg: " + ((err or "").strip().splitlines() or ["failed"])[-1])
 
 def encoder(vs):
     """Output args. Default = the universal file: H.264 High, 8-bit 4:2:0, AAC-LC 48 kHz stereo, moov first.
@@ -85,12 +82,6 @@ def duration_of(path):
                          creationflags=NOWIN).stderr
     m = re.search(r"Duration: (\d+):(\d+):([\d.]+)", err)
     return int(m[1]) * 3600 + int(m[2]) * 60 + float(m[3]) if m else 0.0
-
-def video_height(path):
-    err = subprocess.run([FFMPEG, "-hide_banner", "-i", str(path)], capture_output=True, text=True,
-                         creationflags=NOWIN).stderr
-    m = re.search(r"Video:.*?(\d{2,5})x(\d{2,5})", err)
-    return int(m[2]) if m else 1080
 
 SETTINGS = Path(os.environ.get("APPDATA") or Path.home()) / "HighlightStudioIO" / "settings.json"
 
@@ -205,10 +196,8 @@ def cut_clip(src, a, b, dst, vs, prog=None):
 
 def build_reel(src, segs, dst, vs, vertical, logo, prog=None):
     """Join rallies into one video (crop to 9:16 when vertical, watermark top-right)."""
-    sh = video_height(src)
-    H = min(vs["res"] or sh, sh)                    # real output height: never upscaled
-    crop = "crop=min(iw\\,trunc(ih*9/16/2)*2):min(ih\\,trunc(iw*16/9/2)*2)"
-    vf = vfilter(vs, H, crop if vertical else "") + ",setsar=1"
+    H = vs["res"] or 1080
+    vf = vfilter(dict(vs, fps=vs["fps"] or 30), H, "crop=trunc(ih*9/16/2)*2:ih" if vertical else "") + ",setsar=1"
     total, done = sum(b - a for a, b, _ in segs) or 1, 0.0
     with tempfile.TemporaryDirectory() as tmp:
         parts = []
@@ -252,8 +241,6 @@ def process(src, out_dir, opt, log=print, step=lambda frac, text: None):
     segs = find_rallies(hits, dur, opt["gap"], opt["min_hits"], opt["pre"], opt["post"], active)
     log(f"{len(hits)} hits found, {len(segs)} rallies in {dur / 60:.1f} min of video.")
     step(0.35, f"{len(segs)} rallies found")
-    if not segs:
-        log("No rallies found, so only the full game is saved. Raise the sensitivity to find rallies.")
     if not segs and not opt["full"]:
         raise RuntimeError('No rallies found. Raise the sensitivity or turn off "Require court motion".')
     vs = {"res": RES[opt["res"]], "crf": CRF[opt["quality"]], "fmt": FMT[opt["fmt"]], "fps": FPS[opt["fps"]]}
@@ -338,14 +325,11 @@ class Share:
                 break
             except OSError:
                 continue
-        if not self.httpd:
-            return ""
         threading.Thread(target=self.httpd.serve_forever, daemon=True).start()
         return f"http://{lan_ip()}:{self.httpd.server_address[1]}/"
     def stop(self):
         if self.httpd:
             self.httpd.shutdown()
-            self.httpd.server_close()
             self.httpd = None
 
 def save_qr(url, path):
@@ -773,10 +757,7 @@ def run_app():
                 if kind == "done":
                     bar.set(1.0, active=False)
                     set_status("Done", CYAN)
-                    try:
-                        finish(data)
-                    except Exception as e:
-                        logbox.insert("end", f"QR code failed: {e}\n")
+                    finish(data)
                 else:
                     bar.set(bar.shown, active=False)
                     set_status("Error", RED2)
@@ -797,29 +778,23 @@ def run_app():
             state["seen"] = {p for p in folder.iterdir() if p.suffix.lower() in VIDEO_EXT}
             log(f"Watching {folder} for new recordings ...")
             set_status("Watching", CYAN)
-            if not state.get("watching"):
-                state["watching"] = True
-                watch_tick({})
+            watch_tick({})
         else:
             set_status("Ready", CYAN)
 
     def watch_tick(sizes):
         if not v["watch"].get():
-            state["watching"] = False
             return
         folder = Path(v["watch_dir"].get())
-        try:
-            for p in folder.iterdir() if folder.is_dir() else []:
-                if p.suffix.lower() in VIDEO_EXT and p not in state["seen"] and not state["busy"]:
-                    size = p.stat().st_size
-                    if sizes.get(p) == size:            # size unchanged for 10 s: the camera finished writing
-                        state["seen"].add(p)
-                        v["input"].set(str(p))
-                        log(f"New recording: {p.name}")
-                        start(str(p))
-                    sizes[p] = size
-        except OSError as e:                        # file renamed/removed mid-scan: try again next tick
-            log(f"Watch folder: {e}")
+        for p in folder.iterdir() if folder.is_dir() else []:
+            if p.suffix.lower() in VIDEO_EXT and p not in state["seen"] and not state["busy"]:
+                size = p.stat().st_size
+                if sizes.get(p) == size:            # size unchanged for 10 s: the camera finished writing
+                    state["seen"].add(p)
+                    v["input"].set(str(p))
+                    log(f"New recording: {p.name}")
+                    start(str(p))
+                sizes[p] = size
         root.after(10000, lambda: watch_tick(sizes))
 
     root.protocol("WM_DELETE_WINDOW", lambda: (remember(), share.stop(), root.destroy()))
@@ -861,6 +836,7 @@ def main():
     ap.add_argument("--logo", default="", help="watermark PNG")
     ap.add_argument("--brand", action="store_true", help="watermark with the bundled Playhouse Pickle logo")
     ap.add_argument("--sensitivity", type=int, default=6)
+    ap.add_argument("--qr", action="store_true", help="save share-qr.png for the venue WiFi link")
     a = ap.parse_args()
     if a.selftest:
         return selftest()
@@ -870,9 +846,9 @@ def main():
              res=a.res, fps=a.fps, quality=a.quality, reel=a.highlights != "none",
              reel_mode="All rallies" if a.highlights == "all" else "Best rallies", top=a.top, longest=a.longest, full=a.full,
              clips=a.clips, vertical=not a.landscape, logo=str(BRAND_PNG) if a.brand else a.logo, sensitivity=a.sensitivity)
-    if not (o["reel"] or o["longest"] or o["full"] or o["clips"]):
-        ap.error("nothing to export: use --highlights, --longest, --full or --clips")
-    process(a.cli, a.out, o, step=lambda f, t: print(f"  {f * 100:5.1f}%  {t}", flush=True))
+    out, files, segs = process(a.cli, a.out, o, step=lambda f, t: print(f"  {f * 100:5.1f}%  {t}", flush=True))
+    if a.qr:
+        print("QR saved:", save_qr(f"http://{lan_ip()}:8800/", out / "share-qr.png"))
 
 if __name__ == "__main__":
     main()
