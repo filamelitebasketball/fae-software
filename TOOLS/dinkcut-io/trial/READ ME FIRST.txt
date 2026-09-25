@@ -1,0 +1,35 @@
+DINKCUT IO - FREE TRIAL
+(c) 2026 LINKMEIO. All rights reserved.
+
+Turns a pickleball match video into a highlights video automatically: every rally in one video,
+the longest rally and the full game, ready for phones (vertical 9:16 or landscape 16:9).
+
+
+START IT
+1. Double-click DinkCutIO-Trial.exe. Nothing to install. Windows 10 or 11 (64-bit).
+2. If Windows shows "Windows protected your PC": click "More info", then "Run anyway".
+   (The app is new and not yet known to Windows. This only happens once.)
+3. An "Opening..." window appears first. The first start can take up to 30 seconds.
+
+
+MAKE HIGHLIGHTS
+1. Home page: under Match video, click Browse and pick a match recording.
+2. Click "Make highlights" (right side). The % bar shows progress.
+3. The videos are saved in your Videos folder, under "DinkCut IO".
+   A QR code appears: scan it with a phone on the same WiFi to download the videos.
+   If Windows asks about the firewall, allow "Private networks" so phones can download.
+
+
+BEST RESULTS
+- A fixed camera that sees the whole court, with its microphone on
+  (the app listens for the paddle hits and watches for movement on the court).
+- One court per video.
+- Missing rallies? Detection (left menu) > raise Sensitivity. Extra rallies from the
+  next court? Lower Sensitivity or raise "Ignore edges %".
+
+
+THE TRIAL
+- Every feature is on for 24 hours from the first time you open it.
+- After that it keeps working as a free version: highlights video only, up to 720p,
+  with the LINKMEIO watermark.
+- To unlock the full version, reply to the person who sent you this app.
