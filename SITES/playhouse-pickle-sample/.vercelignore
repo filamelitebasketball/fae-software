@@ -2,3 +2,4 @@ _versions
 _marketing
 .env*
 .vercel
+AUDIT.md

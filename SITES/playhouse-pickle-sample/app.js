@@ -130,11 +130,13 @@ function renderBooker() {
   $('#bookSummary').innerHTML = !n ? 'Tap one or more open hours.' : `<b>Court ${S.sel.court + 1}</b> · ${days[S.sel.day]} · ${hourRanges(hs)} · ${n} hour${n > 1 ? 's' : ''} × ${peso(PRICES.court)} = <b class="text-lime">${peso(n * PRICES.court)}</b>${nudge}`;
 }
 function toggleHour(h) { const hs = S.sel.hours, i = hs.indexOf(h); if (i < 0) hs.push(h); else hs.splice(i, 1); hs.sort((a, b) => a - b); renderBooker(); }
+const payMode = book => document.querySelectorAll('#dlgPay .book-only').forEach(e => e.classList.toggle('hide', !book));
 function startBooking() {
   const hs = S.sel.hours; if (!hs.length) return;
   if ($('#payOk')) $('#payOk').checked = false;
   if ($('#payOkErr')) $('#payOkErr').classList.add('hide');
   if ($('#payContactErr')) $('#payContactErr').classList.add('hide');
+  payMode(true);
   if (S.user) {
     if ($('#payName')) $('#payName').value = S.user.name || '';
     if ($('#payEmail')) $('#payEmail').value = S.user.email || '';
@@ -149,17 +151,18 @@ function startBooking() {
   openDlg('dlgPay');
 }
 
-// ---------- online payments & checkout visual (RA 10173 & RA 8792 compliant) ----------
+// ---------- online payments & checkout visual (demo) ----------
 let coTimerInterval = null;
 function startOnlinePay(method) {
-  if (!$('#payOk').checked) return $('#payOkErr').classList.remove('hide');
-  $('#payOkErr').classList.add('hide');
+  const book = S.pay.kind === 'book';
+  if (book && !$('#payOk').checked) return $('#payOkErr').classList.remove('hide');
+  if ($('#payOkErr')) $('#payOkErr').classList.add('hide');
   
-  const name = S.user ? S.user.name : $('#payName').value.trim();
-  const email = S.user ? S.user.email : $('#payEmail').value.trim();
-  const phone = $('#payPhone') ? $('#payPhone').value.trim() : '';
+  const name = S.user ? S.user.name : (book ? $('#payName').value.trim() : '');
+  const email = S.user ? S.user.email : (book ? $('#payEmail').value.trim() : '');
+  const phone = book && $('#payPhone') ? $('#payPhone').value.trim() : '';
   
-  if (!S.user && (!name || !EMAIL.test(email))) {
+  if (book && !S.user && (!name || !EMAIL.test(email))) {
     return $('#payContactErr').classList.remove('hide');
   }
   if ($('#payContactErr')) $('#payContactErr').classList.add('hide');
@@ -167,12 +170,13 @@ function startOnlinePay(method) {
   const ref = 'PP-' + Math.floor(100000 + Math.random() * 900000);
   S.pay.method = method;
   S.pay.ref = ref;
-  S.pay.who = name || 'Court Player';
+  S.pay.who = name || 'Guest';
   S.pay.email = email;
   S.pay.phone = phone;
 
-  // Lawfully record lead with affirmative RA 10173 consent
-  captureLead(S.pay.who, S.pay.email, 'Online booking', false, true);
+  if (book && email) {
+    captureLead(S.pay.who, S.pay.email, 'Online booking', false, true);
+  }
 
   // Setup Visual Checkout
   $('#coRef').textContent = ref;
@@ -186,8 +190,7 @@ function startOnlinePay(method) {
   $('#checkoutProvider').textContent = `${method} QR Ph Online Checkout`;
   $('#checkoutIcon').innerHTML = isGcash ? '<i class="fa-solid fa-mobile-screen"></i>' : '<i class="fa-solid fa-wallet"></i>';
 
-  // Standard Philippine QR Ph mock payload
-  const qrPayload = `00020101021226580014ph.com.fae.pay0118PP-${ref}520459995303608540${S.pay.amt}5802PH5919PlayhousePickleball6006Bacoor62180114PLAYHOUSE-COURT6304`;
+  const qrPayload = 'DEMO ONLY - NOT A PAYMENT - ' + ref;
   $('#coQrImg').src = qr(qrPayload);
 
   // Countdown timer: 10 minutes
@@ -231,24 +234,30 @@ function confirmPayment() {
     renderBooker();
     renderMyBookings();
     if (S.user) addProgress({ hours: p.hours.length, matches: 1 });
+
+    // Populate Digital Receipt / Court Pass
+    $('#rcptRef').textContent = p.ref;
+    $('#rcptWho').textContent = p.who;
+    $('#rcptWhen').textContent = p.label;
+    $('#rcptMethod').textContent = `${p.method} (demo)`;
+    $('#rcptAmt').textContent = peso(p.amt);
+    $('#rcptEmail').textContent = p.email || 'your email';
+
+    openDlg('dlgReceipt');
+    toast('Demo: payment marked as verified');
   } else if (p.kind === 'unlock') {
     const m = MATCHES.find(x => x.id === p.id);
     if (m) { m.locked = false; renderMatches(); }
+    closeDlgs();
+    toast('Unlocked. Yours to keep');
+    return;
   } else if (p.kind === 'wifi') {
     const code = 'PH-WF-' + Math.floor(1000 + Math.random() * 9000);
     if (typeof DB !== 'undefined') DB.vouchers.unshift({ code, plan: p.label, who: p.who, st: 'Active' });
+    closeDlgs();
+    showQR('WiFi voucher ready', p.label + ' · connect at the venue', code);
+    return;
   }
-
-  // Populate Digital Receipt / Court Pass
-  $('#rcptRef').textContent = p.ref;
-  $('#rcptWho').textContent = p.who;
-  $('#rcptWhen').textContent = p.label;
-  $('#rcptMethod').textContent = `${p.method} Verified`;
-  $('#rcptAmt').textContent = peso(p.amt);
-  $('#rcptEmail').textContent = p.email || 'your email';
-
-  openDlg('dlgReceipt');
-  toast(`Online payment verified via ${p.method}! Court pass generated.`);
 }
 
 function simulateAutoVerify() {
@@ -256,7 +265,6 @@ function simulateAutoVerify() {
   setTimeout(() => confirmPayment(), 700);
 }
 
-function pay(method) { startOnlinePay(method); }
 const wifiName = i => SITE['WiFi · Plan ' + (i + 1) + ' name'] ?? WIFI[i].n;
 function buyWifi(i) {
   const w = WIFI[i], n = wifiName(i);
@@ -264,8 +272,7 @@ function buyWifi(i) {
   $('#payTitle').textContent = 'Buy ' + n + ' WiFi';
   $('#payDesc').textContent = 'Voucher QR appears right after payment.';
   $('#payAmt').textContent = peso(PRICES[w.k]);
-  if ($('#payContactFields')) $('#payContactFields').classList.remove('hide');
-  if ($('#payOk')) $('#payOk').checked = false;
+  payMode(false);
   openDlg('dlgPay');
 }
 function unlock(id) {
@@ -274,8 +281,7 @@ function unlock(id) {
   $('#payTitle').textContent = 'Keep this match forever';
   $('#payDesc').textContent = m.t + '. Full game plus ' + m.clips + ' highlight clips, no expiry, HD download.';
   $('#payAmt').textContent = peso(PRICES.unlock);
-  if ($('#payContactFields')) $('#payContactFields').classList.remove('hide');
-  if ($('#payOk')) $('#payOk').checked = false;
+  payMode(false);
   openDlg('dlgPay');
 }
 

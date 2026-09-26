@@ -32,8 +32,8 @@ const DB = {
   prices: PRICES, // shared with the public site (app.js)
   staff: [{ n: 'jhoopin3@gmail.com', role: 'Owner (admin)' }, { n: 'filamelitebasketball', role: 'Owner (admin)' }, { n: 'Front desk 1', role: 'Staff' }, { n: 'Court marshal', role: 'Staff' }]
 };
-const SECTIONS = [['overview', 'Overview', 'fa-gauge-high'], ['schedule', 'Schedule', 'fa-calendar-days'], ['customers', 'Customers', 'fa-users'], ['picklecam', 'PickleCam', 'fa-video'], ['payments', 'Payments', 'fa-peso-sign'], ['wifi', 'WiFi', 'fa-wifi'], ['data', 'Data & platform', 'fa-database'], ['marketing', 'Marketing', 'fa-paper-plane'], ['settings', 'Configuration', 'fa-sliders']];
-const SHORTCUTS = [['New booking', 'fa-calendar-plus', 'scBooking()'], ['Check in', 'fa-user-check', 'scCheckin()'], ['Start PickleCam', 'fa-circle-dot', 'scCam()'], ['Sell WiFi', 'fa-wifi', 'scWifi()'], ['Verify payments', 'fa-circle-check', 'scPayments()'], ['Send campaign', 'fa-paper-plane', 'scCampaign()'], ['Open play roster', 'fa-people-group', 'scRoster()'], ['Export to Excel', 'fa-file-excel', 'exportXLSX()']];
+const SECTIONS = [['overview', 'Overview', 'fa-gauge-high'], ['schedule', 'Schedule', 'fa-calendar-days'], ['customers', 'Customers', 'fa-users'], ['picklecam', 'DinkCut', 'fa-video'], ['payments', 'Payments', 'fa-peso-sign'], ['wifi', 'WiFi', 'fa-wifi'], ['data', 'Data & platform', 'fa-database'], ['marketing', 'Marketing', 'fa-paper-plane'], ['settings', 'Configuration', 'fa-sliders']];
+const SHORTCUTS = [['New booking', 'fa-calendar-plus', 'scBooking()'], ['Check in', 'fa-user-check', 'scCheckin()'], ['Start DinkCut', 'fa-circle-dot', 'scCam()'], ['Sell WiFi', 'fa-wifi', 'scWifi()'], ['Verify payments', 'fa-circle-check', 'scPayments()'], ['Send campaign', 'fa-paper-plane', 'scCampaign()'], ['Open play roster', 'fa-people-group', 'scRoster()'], ['Export to Excel', 'fa-file-excel', 'exportXLSX()']];
 let SEC = 'overview';
 const OWNER_LOGINS = ['jhoopin3', 'filamelitebasketball']; // demo gate: client-side only, real auth comes with Supabase
 function custRows() {
@@ -86,7 +86,7 @@ const VIEWS = {
       ${panel('Needs attention', `<ul class="space-y-2 text-sm">
         <li class="flex flex-wrap justify-between gap-3 items-center card p-3"><span><b class="text-gold">4 highlight packs</b> expire within 48 hours.</span><button class="btn btn-lime !py-1.5 !px-3 text-xs" onclick="sendCampaign(0)">Send reminder</button></li>
         <li class="flex flex-wrap justify-between gap-3 items-center card p-3"><span><b class="text-gold">${pend} payments</b> waiting for verification.</span><button class="btn btn-ghost !py-1.5 !px-3 text-xs" onclick="scPayments()">Verify</button></li>
-        <li class="flex flex-wrap justify-between gap-3 items-center card p-3"><span><b>${proc} PickleCam sessions</b> still recording or processing.</span><button class="btn btn-ghost !py-1.5 !px-3 text-xs" onclick="SEC='picklecam';renderAdmin()">Open queue</button></li>
+        <li class="flex flex-wrap justify-between gap-3 items-center card p-3"><span><b>${proc} DinkCut sessions</b> still recording or processing.</span><button class="btn btn-ghost !py-1.5 !px-3 text-xs" onclick="SEC='picklecam';renderAdmin()">Open queue</button></li>
         <li class="flex flex-wrap justify-between gap-3 items-center card p-3"><span><b>${leads} new leads</b> have not been invited to membership.</span><button class="btn btn-ghost !py-1.5 !px-3 text-xs" onclick="sendCampaign(2)">Invite</button></li>
       </ul>`)}
       <div class="grid xl:grid-cols-2 gap-5">
