@@ -20,12 +20,12 @@ function refreshSite() { renderBooker(); renderMatches(); renderWifi('#wifiPorta
 const peso = n => '₱' + n.toLocaleString('en-PH');
 const EMAIL = /^[^ @]+@[^ @]+[.][^ @]{2,}$/;
 
-// Photos load from each owner's public profile; crop = [left %, top %, width %] of a square frame.
+// Photos load from each owner's public profile with fallback to bundled local webp; crop = [left %, top %, width %] of a square frame.
 const OWNERS = [
-  { n: 'Boss Keng', real: 'Exekiel Christian Gaspar', line: 'Co-owner · Team Payaman', img: 'https://graph.facebook.com/BossKengOfficial/picture?width=600&height=600', crop: [-47.8, -32.6, 217.4] },
-  { n: 'Pat Velasquez-Gaspar', real: 'Patricia Velasquez-Gaspar', line: 'Co-owner · Community lead', img: 'https://yt3.googleusercontent.com/JUJ9_H6XzKHpbF-R8qQPPuOnQ4mjF495ZlM4nFJYfAsIZH1d4O3T009LP29As47voRRGkWbiGA=s900-c-k-c0x00ffffff-no-rj', crop: [-106.3, -25, 312.5] },
-  { n: 'Junnie Boy', real: 'Marlon Velasquez Jr.', line: 'Co-owner · Team Payaman', img: 'https://pbs.twimg.com/media/HQ2tJXDawAAt2jU?format=jpg&name=medium', crop: [-199.2, -16.7, 400] },
-  { n: 'Dudut Lang', real: 'Jaime Marino de Guzman', line: 'Co-owner · "Passion with a purpose"', img: 'https://yt3.googleusercontent.com/ytc/AIdro_lo2FoV8ZdLB3tfz4Ded-zLcWfkAtFoEDh0t3M0sLnIeQ=s900-c-k-c0x00ffffff-no-rj', crop: [-22, 0, 122] }
+  { n: 'Boss Keng', real: 'Exekiel Christian Gaspar', line: 'Co-owner · Team Payaman', img: 'https://graph.facebook.com/BossKengOfficial/picture?width=600&height=600', local: 'img/keng.webp', crop: [-47.8, -32.6, 217.4] },
+  { n: 'Pat Velasquez-Gaspar', real: 'Patricia Velasquez-Gaspar', line: 'Co-owner · Community lead', img: 'https://yt3.googleusercontent.com/JUJ9_H6XzKHpbF-R8qQPPuOnQ4mjF495ZlM4nFJYfAsIZH1d4O3T009LP29As47voRRGkWbiGA=s900-c-k-c0x00ffffff-no-rj', local: 'img/pat.webp', crop: [-106.3, -25, 312.5] },
+  { n: 'Junnie Boy', real: 'Marlon Velasquez Jr.', line: 'Co-owner · Team Payaman', img: 'https://pbs.twimg.com/media/HQ2tJXDawAAt2jU?format=jpg&name=medium', local: 'img/junnie.webp', crop: [-199.2, -16.7, 400] },
+  { n: 'Dudut Lang', real: 'Jaime Marino de Guzman', line: 'Co-owner · "Passion with a purpose"', img: 'https://yt3.googleusercontent.com/ytc/AIdro_lo2FoV8ZdLB3tfz4Ded-zLcWfkAtFoEDh0t3M0sLnIeQ=s900-c-k-c0x00ffffff-no-rj', local: 'img/dudut.webp', crop: [-22, 0, 122] }
 ];
 const TAGS = ['Your pickleball playground', '#pickleball', '#bacoorcavite', '#playhousepickleballco', '@playhousepickleco', '#TeamPayaman'];
 const WIFI = [{ n: '1 Hour', k: 'w1', note: 'Quick session' }, { n: '1 Day', k: 'w2', note: 'All-day access' }, { n: '1 Week', k: 'w3', note: 'Best value' }];
@@ -103,7 +103,10 @@ function logout() { S.user = null; $('#loginBtn').classList.remove('hide'); $('#
 function guestSend() {
   const e = $('#gEmail').value.trim();
   if (!EMAIL.test(e)) return $('#gErr').classList.remove('hide');
-  $('#gErr').classList.add('hide'); captureLead(e.split('@')[0], e, 'Kiosk guest', $('#gMkt').checked); closeDlgs(); toast('Links sent to ' + e);
+  $('#gErr').classList.add('hide');
+  if ($('#gOk') && !$('#gOk').checked) return $('#gOkErr').classList.remove('hide');
+  if ($('#gOkErr')) $('#gOkErr').classList.add('hide');
+  captureLead(e.split('@')[0], e, 'Kiosk guest', $('#gMkt').checked, true); closeDlgs(); toast('Links sent to ' + e);
 }
 
 // ---------- booking widget ----------
@@ -129,27 +132,152 @@ function renderBooker() {
 function toggleHour(h) { const hs = S.sel.hours, i = hs.indexOf(h); if (i < 0) hs.push(h); else hs.splice(i, 1); hs.sort((a, b) => a - b); renderBooker(); }
 function startBooking() {
   const hs = S.sel.hours; if (!hs.length) return;
+  if ($('#payOk')) $('#payOk').checked = false;
+  if ($('#payOkErr')) $('#payOkErr').classList.add('hide');
+  if ($('#payContactErr')) $('#payContactErr').classList.add('hide');
+  if (S.user) {
+    if ($('#payName')) $('#payName').value = S.user.name || '';
+    if ($('#payEmail')) $('#payEmail').value = S.user.email || '';
+    if ($('#payContactFields')) $('#payContactFields').classList.add('hide');
+  } else {
+    if ($('#payContactFields')) $('#payContactFields').classList.remove('hide');
+  }
   S.pay = { kind: 'book', amt: hs.length * PRICES.court, day: S.sel.day, court: S.sel.court, hours: [...hs], label: `Court ${S.sel.court + 1} · ${S.sel.dayLabel}, ${hourRanges(hs)}` };
-  $('#payTitle').textContent = 'Confirm booking'; $('#payDesc').textContent = `${S.pay.label}. ${hs.length} hour${hs.length > 1 ? 's' : ''} at ${peso(PRICES.court)} per hour. Tap start on the courtside tablet to record; everyone on your court will be in the video.`;
-  $('#payAmt').textContent = peso(S.pay.amt); openDlg('dlgPay');
+  $('#payTitle').textContent = 'Confirm booking';
+  $('#payDesc').textContent = `${S.pay.label}. ${hs.length} hour${hs.length > 1 ? 's' : ''} at ${peso(PRICES.court)}/hr. Tap start on the courtside tablet to record.`;
+  $('#payAmt').textContent = peso(S.pay.amt);
+  openDlg('dlgPay');
 }
 
-// ---------- payments (simulated) ----------
-function pay(method) {
-  const p = S.pay; closeDlgs(); if (!p) return;
-  if (typeof DB !== 'undefined') DB.payments.unshift({ ref: 'PP' + String(Date.now()).slice(-6), what: p.label, method, amt: p.amt, st: 'Pending' });
-  if (p.kind === 'book') {
-    p.hours.forEach(h => { S.taken.add(p.day + '-' + p.court + '-' + h); if (p.day === 0 && typeof DB !== 'undefined') DB.schedule[p.court + '-' + h] = { who: S.user ? S.user.name : 'Online booking', st: 'Booked' }; });
-    MY_BOOKINGS.unshift({ what: p.label.split(' · ')[0], when: p.label.split(' · ')[1], st: 'Upcoming' }); S.sel.hours = []; renderBooker(); renderMyBookings();
-    toast('Booked via ' + method + (S.user ? '. See you on court' : '. Log in to earn badges for every hour'));
-    if (S.user) addProgress({ hours: p.hours.length, matches: 1 });
+// ---------- online payments & checkout visual (RA 10173 & RA 8792 compliant) ----------
+let coTimerInterval = null;
+function startOnlinePay(method) {
+  if (!$('#payOk').checked) return $('#payOkErr').classList.remove('hide');
+  $('#payOkErr').classList.add('hide');
+  
+  const name = S.user ? S.user.name : $('#payName').value.trim();
+  const email = S.user ? S.user.email : $('#payEmail').value.trim();
+  const phone = $('#payPhone') ? $('#payPhone').value.trim() : '';
+  
+  if (!S.user && (!name || !EMAIL.test(email))) {
+    return $('#payContactErr').classList.remove('hide');
   }
-  if (p.kind === 'unlock') { const m = MATCHES.find(x => x.id === p.id); m.locked = false; renderMatches(); toast('Unlocked via ' + method + '. Yours to keep'); }
-  if (p.kind === 'wifi') showQR('WiFi voucher ready', p.label + ' · connect at the venue', 'PLAYHOUSE-WIFI-' + Date.now());
+  if ($('#payContactErr')) $('#payContactErr').classList.add('hide');
+
+  const ref = 'PP-' + Math.floor(100000 + Math.random() * 900000);
+  S.pay.method = method;
+  S.pay.ref = ref;
+  S.pay.who = name || 'Court Player';
+  S.pay.email = email;
+  S.pay.phone = phone;
+
+  // Lawfully record lead with affirmative RA 10173 consent
+  captureLead(S.pay.who, S.pay.email, 'Online booking', false, true);
+
+  // Setup Visual Checkout
+  $('#coRef').textContent = ref;
+  $('#coAmt').textContent = peso(S.pay.amt);
+  $('#coItem').textContent = S.pay.label;
+  $('#coPlayer').textContent = S.pay.who;
+  $('#coScanApp').textContent = method;
+
+  const isGcash = method === 'GCash';
+  $('#checkoutBanner').className = `p-5 text-white flex justify-between items-center ${isGcash ? 'bg-[#005CE6]' : 'bg-[#008450]'}`;
+  $('#checkoutProvider').textContent = `${method} QR Ph Online Checkout`;
+  $('#checkoutIcon').innerHTML = isGcash ? '<i class="fa-solid fa-mobile-screen"></i>' : '<i class="fa-solid fa-wallet"></i>';
+
+  // Standard Philippine QR Ph mock payload
+  const qrPayload = `00020101021226580014ph.com.fae.pay0118PP-${ref}520459995303608540${S.pay.amt}5802PH5919PlayhousePickleball6006Bacoor62180114PLAYHOUSE-COURT6304`;
+  $('#coQrImg').src = qr(qrPayload);
+
+  // Countdown timer: 10 minutes
+  let secLeft = 600;
+  clearInterval(coTimerInterval);
+  const updateCoTimer = () => {
+    const m = String(Math.floor(secLeft / 60)).padStart(2, '0');
+    const s = String(secLeft % 60).padStart(2, '0');
+    $('#coTimer').textContent = `Expires in ${m}:${s}`;
+    if (secLeft <= 0) {
+      clearInterval(coTimerInterval);
+      $('#coTimer').textContent = 'Expired. Please re-book.';
+    }
+    secLeft--;
+  };
+  updateCoTimer();
+  coTimerInterval = setInterval(updateCoTimer, 1000);
+
+  openDlg('dlgCheckout');
 }
+
+function confirmPayment() {
+  clearInterval(coTimerInterval);
+  const p = S.pay;
+  if (!p) return closeDlgs();
+
+  // Record verified payment
+  if (typeof DB !== 'undefined') {
+    DB.payments.unshift({ ref: p.ref, what: p.label, method: p.method, amt: p.amt, st: 'Verified' });
+  }
+
+  if (p.kind === 'book') {
+    p.hours.forEach(h => {
+      S.taken.add(p.day + '-' + p.court + '-' + h);
+      if (p.day === 0 && typeof DB !== 'undefined') {
+        DB.schedule[p.court + '-' + h] = { who: p.who, st: 'Paid' };
+      }
+    });
+    MY_BOOKINGS.unshift({ what: p.label.split(' · ')[0], when: p.label.split(' · ')[1], st: 'Paid' });
+    S.sel.hours = [];
+    renderBooker();
+    renderMyBookings();
+    if (S.user) addProgress({ hours: p.hours.length, matches: 1 });
+  } else if (p.kind === 'unlock') {
+    const m = MATCHES.find(x => x.id === p.id);
+    if (m) { m.locked = false; renderMatches(); }
+  } else if (p.kind === 'wifi') {
+    const code = 'PH-WF-' + Math.floor(1000 + Math.random() * 9000);
+    if (typeof DB !== 'undefined') DB.vouchers.unshift({ code, plan: p.label, who: p.who, st: 'Active' });
+  }
+
+  // Populate Digital Receipt / Court Pass
+  $('#rcptRef').textContent = p.ref;
+  $('#rcptWho').textContent = p.who;
+  $('#rcptWhen').textContent = p.label;
+  $('#rcptMethod').textContent = `${p.method} Verified`;
+  $('#rcptAmt').textContent = peso(p.amt);
+  $('#rcptEmail').textContent = p.email || 'your email';
+
+  openDlg('dlgReceipt');
+  toast(`Online payment verified via ${p.method}! Court pass generated.`);
+}
+
+function simulateAutoVerify() {
+  toast('Simulating payment webhook confirmation...');
+  setTimeout(() => confirmPayment(), 700);
+}
+
+function pay(method) { startOnlinePay(method); }
 const wifiName = i => SITE['WiFi · Plan ' + (i + 1) + ' name'] ?? WIFI[i].n;
-function buyWifi(i) { const w = WIFI[i], n = wifiName(i); S.pay = { kind: 'wifi', amt: PRICES[w.k], label: n + ' WiFi pass' }; $('#payTitle').textContent = 'Buy ' + n + ' WiFi'; $('#payDesc').textContent = 'Voucher QR appears right after payment.'; $('#payAmt').textContent = peso(PRICES[w.k]); openDlg('dlgPay'); }
-function unlock(id) { const m = MATCHES.find(x => x.id === id); S.pay = { kind: 'unlock', id, amt: PRICES.unlock, label: 'Keep ' + m.id + ' forever' }; $('#payTitle').textContent = 'Keep this match forever'; $('#payDesc').textContent = m.t + '. Full game plus ' + m.clips + ' highlight clips, no expiry, HD download.'; $('#payAmt').textContent = peso(PRICES.unlock); openDlg('dlgPay'); }
+function buyWifi(i) {
+  const w = WIFI[i], n = wifiName(i);
+  S.pay = { kind: 'wifi', amt: PRICES[w.k], label: n + ' WiFi pass' };
+  $('#payTitle').textContent = 'Buy ' + n + ' WiFi';
+  $('#payDesc').textContent = 'Voucher QR appears right after payment.';
+  $('#payAmt').textContent = peso(PRICES[w.k]);
+  if ($('#payContactFields')) $('#payContactFields').classList.remove('hide');
+  if ($('#payOk')) $('#payOk').checked = false;
+  openDlg('dlgPay');
+}
+function unlock(id) {
+  const m = MATCHES.find(x => x.id === id);
+  S.pay = { kind: 'unlock', id, amt: PRICES.unlock, label: 'Keep ' + m.id + ' forever' };
+  $('#payTitle').textContent = 'Keep this match forever';
+  $('#payDesc').textContent = m.t + '. Full game plus ' + m.clips + ' highlight clips, no expiry, HD download.';
+  $('#payAmt').textContent = peso(PRICES.unlock);
+  if ($('#payContactFields')) $('#payContactFields').classList.remove('hide');
+  if ($('#payOk')) $('#payOk').checked = false;
+  openDlg('dlgPay');
+}
 
 // ---------- portal ----------
 function pTab(n) {
@@ -178,11 +306,11 @@ function renderMatches() {
 }
 function renderMyBookings() { $('#myBookings').innerHTML = MY_BOOKINGS.map(b => `<div class="card p-4 flex justify-between items-center"><div><p class="font-bold">${b.what}</p><p class="text-xs text-muted">${b.when}</p></div><span class="badge ${b.st === 'Completed' ? 'b-mute' : 'b-lime'}">${b.st}</span></div>`).join(''); }
 function renderWifi(el) { $(el).innerHTML = WIFI.map((w, i) => `<div class="card p-6 text-center lift relative">${i === 2 ? '<span class="absolute -top-3 left-1/2 -translate-x-1/2 badge b-gold bg-black">Best value</span>' : ''}<p class="font-bold text-lg" data-cfg="WiFi · Plan ${i + 1} name">${w.n}</p><p class="display text-4xl text-lime my-3 num">${peso(PRICES[w.k])}</p><p class="text-xs text-muted mb-5" data-cfg="WiFi · Plan ${i + 1} note">${w.note}</p><button class="btn btn-lime w-full justify-center" onclick="buyWifi(${i})">Buy pass</button></div>`).join(''); }
-setInterval(() => document.querySelectorAll('[data-exp]').forEach(el => el.textContent = countdown(+el.dataset.exp - Date.now())), 1000);
+setInterval(() => { if (!document.hidden) document.querySelectorAll('[data-exp]').forEach(el => el.textContent = countdown(+el.dataset.exp - Date.now())); }, 1000);
 
 // ---------- home sections ----------
 function renderHome() {
-  $('#ownerGrid').innerHTML = OWNERS.map((o, i) => `<figure class="founder reveal"><div class="frame"><img src="${o.img}" alt="${o.n}" loading="lazy" referrerpolicy="no-referrer" style="left:${o.crop[0]}%;top:${o.crop[1]}%;width:${o.crop[2]}%"></div><figcaption class="mt-4"><p class="font-bold text-lg" data-cfg="Owners · Owner ${i + 1} name">${o.n}</p><p class="text-xs text-lime font-semibold" data-cfg="Owners · Owner ${i + 1} full name">${o.real}</p><p class="text-xs text-muted mt-1" data-cfg="Owners · Owner ${i + 1} role">${o.line}</p></figcaption></figure>`).join('');
+  $('#ownerGrid').innerHTML = OWNERS.map((o, i) => `<figure class="founder reveal"><div class="frame"><img src="${o.img}" alt="${o.n}" loading="lazy" referrerpolicy="no-referrer" onerror="if(this.src.indexOf('${o.local}')<0)this.src='${o.local}'" style="left:${o.crop[0]}%;top:${o.crop[1]}%;width:${o.crop[2]}%"></div><figcaption class="mt-4"><p class="font-bold text-lg" data-cfg="Owners · Owner ${i + 1} name">${o.n}</p><p class="text-xs text-lime font-semibold" data-cfg="Owners · Owner ${i + 1} full name">${o.real}</p><p class="text-xs text-muted mt-1" data-cfg="Owners · Owner ${i + 1} role">${o.line}</p></figcaption></figure>`).join('');
   const row = TAGS.map((t, i) => `<span class="${t.startsWith('#') || t.startsWith('@') ? '' : 'text-lime'}" data-cfg="Hashtags · Tag ${i + 1}">${t}</span>`).join('');
   $('#mq').innerHTML = row + row;
 }

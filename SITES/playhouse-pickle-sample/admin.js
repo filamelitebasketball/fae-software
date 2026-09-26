@@ -1,4 +1,6 @@
 // Owner console: shortcut panel + main operations panel. Demo data, in-memory; Excel workbook = soft-copy backend.
+const esc = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const q = v => esc(JSON.stringify(String(v)));   // a JS string literal safe inside onclick="..."
 const DB = {
   customers: [
     { n: 'Patricia Villanueva', c: 'patvilla@gmail.com', t: 'Player', last: 'Sep 22', spend: 4820, src: 'Booking', ok: 'Aug 30, 2026', mkt: 'Aug 30, 2026' },
@@ -30,14 +32,14 @@ const DB = {
   prices: PRICES, // shared with the public site (app.js)
   staff: [{ n: 'jhoopin3@gmail.com', role: 'Owner (admin)' }, { n: 'filamelitebasketball', role: 'Owner (admin)' }, { n: 'Front desk 1', role: 'Staff' }, { n: 'Court marshal', role: 'Staff' }]
 };
-const SECTIONS = [['overview', 'Overview', 'fa-gauge-high'], ['schedule', 'Schedule', 'fa-calendar-days'], ['customers', 'Customers', 'fa-users'], ['picklecam', 'Your Brand', 'fa-video'], ['payments', 'Payments', 'fa-peso-sign'], ['wifi', 'WiFi', 'fa-wifi'], ['data', 'Data & platform', 'fa-database'], ['marketing', 'Marketing', 'fa-paper-plane'], ['settings', 'Configuration', 'fa-sliders']];
-const SHORTCUTS = [['New booking', 'fa-calendar-plus', 'scBooking()'], ['Check in', 'fa-user-check', 'scCheckin()'], ['Start Your Brand', 'fa-circle-dot', 'scCam()'], ['Sell WiFi', 'fa-wifi', 'scWifi()'], ['Verify payments', 'fa-circle-check', 'scPayments()'], ['Send campaign', 'fa-paper-plane', 'scCampaign()'], ['Open play roster', 'fa-people-group', 'scRoster()'], ['Export to Excel', 'fa-file-excel', 'exportXLSX()']];
+const SECTIONS = [['overview', 'Overview', 'fa-gauge-high'], ['schedule', 'Schedule', 'fa-calendar-days'], ['customers', 'Customers', 'fa-users'], ['picklecam', 'PickleCam', 'fa-video'], ['payments', 'Payments', 'fa-peso-sign'], ['wifi', 'WiFi', 'fa-wifi'], ['data', 'Data & platform', 'fa-database'], ['marketing', 'Marketing', 'fa-paper-plane'], ['settings', 'Configuration', 'fa-sliders']];
+const SHORTCUTS = [['New booking', 'fa-calendar-plus', 'scBooking()'], ['Check in', 'fa-user-check', 'scCheckin()'], ['Start PickleCam', 'fa-circle-dot', 'scCam()'], ['Sell WiFi', 'fa-wifi', 'scWifi()'], ['Verify payments', 'fa-circle-check', 'scPayments()'], ['Send campaign', 'fa-paper-plane', 'scCampaign()'], ['Open play roster', 'fa-people-group', 'scRoster()'], ['Export to Excel', 'fa-file-excel', 'exportXLSX()']];
 let SEC = 'overview';
 const OWNER_LOGINS = ['jhoopin3', 'filamelitebasketball']; // demo gate: client-side only, real auth comes with Supabase
 function custRows() {
   const s = (VIEWS.q || '').toLowerCase(), f = VIEWS.f || 'All';   // not "q": that name is the quoting helper used below
   const rows = DB.customers.filter(c => (f === 'All' || c.t === f) && (c.n + c.c).toLowerCase().includes(s));
-  return rows.map(c => `<tr><td class="font-semibold">${c.n}</td><td class="text-muted num">${c.c}</td><td>${badge(c.t)}</td><td class="text-muted text-xs">${c.src || ''}</td><td>${c.mkt ? `<span class="badge b-lime" title="Opted in ${esc(c.mkt)}">Yes</span>` : '<span class="text-muted text-xs">No</span>'}</td><td class="text-muted num">${c.last}</td><td class="text-right num">${peso(c.spend)}</td><td class="text-right">${c.t !== 'Player' ? `<button class="text-xs text-lime hover:underline" onclick="promote(${q(c.c)})">Promote</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="8" class="text-muted">No matches.</td></tr>';
+  return rows.map(c => `<tr><td class="font-semibold">${esc(c.n)}</td><td class="text-muted num">${esc(c.c)}</td><td>${badge(c.t)}</td><td class="text-muted text-xs">${esc(c.src || '')}</td><td>${c.mkt ? `<span class="badge b-lime" title="Opted in ${esc(c.mkt)}">Yes</span>` : '<span class="text-muted text-xs">No</span>'}</td><td class="text-muted num">${esc(c.last)}</td><td class="text-right num">${peso(c.spend)}</td><td class="text-right">${c.t !== 'Player' ? `<button class="text-xs text-lime hover:underline" onclick="promote(${q(c.c)})">Promote</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="8" class="text-muted">No matches.</td></tr>';
 }
 const STAGE = { Lead: 'b-mute', Member: 'b-gold', Player: 'b-lime' };
 const STB = { Paid: 'b-lime', Booked: 'b-gold', 'Checked-in': 'b-sky', Verified: 'b-lime', Pending: 'b-gold', Delivered: 'b-lime', Unlocked: 'b-sky', Processing: 'b-gold', Recording: 'b-red', Active: 'b-lime', Used: 'b-mute' };
@@ -84,7 +86,7 @@ const VIEWS = {
       ${panel('Needs attention', `<ul class="space-y-2 text-sm">
         <li class="flex flex-wrap justify-between gap-3 items-center card p-3"><span><b class="text-gold">4 highlight packs</b> expire within 48 hours.</span><button class="btn btn-lime !py-1.5 !px-3 text-xs" onclick="sendCampaign(0)">Send reminder</button></li>
         <li class="flex flex-wrap justify-between gap-3 items-center card p-3"><span><b class="text-gold">${pend} payments</b> waiting for verification.</span><button class="btn btn-ghost !py-1.5 !px-3 text-xs" onclick="scPayments()">Verify</button></li>
-        <li class="flex flex-wrap justify-between gap-3 items-center card p-3"><span><b>${proc} Your Brand sessions</b> still recording or processing.</span><button class="btn btn-ghost !py-1.5 !px-3 text-xs" onclick="SEC='picklecam';renderAdmin()">Open queue</button></li>
+        <li class="flex flex-wrap justify-between gap-3 items-center card p-3"><span><b>${proc} PickleCam sessions</b> still recording or processing.</span><button class="btn btn-ghost !py-1.5 !px-3 text-xs" onclick="SEC='picklecam';renderAdmin()">Open queue</button></li>
         <li class="flex flex-wrap justify-between gap-3 items-center card p-3"><span><b>${leads} new leads</b> have not been invited to membership.</span><button class="btn btn-ghost !py-1.5 !px-3 text-xs" onclick="sendCampaign(2)">Invite</button></li>
       </ul>`)}
       <div class="grid xl:grid-cols-2 gap-5">
@@ -97,7 +99,7 @@ const VIEWS = {
     const cell = (c, h) => {
       if (isOpenPlay(c, h)) return `<div class="cell" style="cursor:default"><span class="text-lime">Open play</span></div>`;
       const b = DB.schedule[c + '-' + h];
-      return b ? `<button class="cell ${b.st === 'Checked-in' ? 'in' : 'booked'}" onclick="cycleSlot(${c},${h})"><b>${b.who}</b><br>${badge(b.st)}</button>`
+      return b ? `<button class="cell ${b.st === 'Checked-in' ? 'in' : 'booked'}" onclick="cycleSlot(${c},${h})"><b>${esc(b.who)}</b><br>${badge(b.st)}</button>`
                : `<button class="cell open text-muted" onclick="scBooking(${c},${h})">Open</button>`;
     };
     return panel('Today · court schedule', `<div class="overflow-x-auto"><div class="grid-sched min-w-[520px]"><div></div>${[1, 2, 3].map(c => `<div class="text-xs font-semibold text-muted px-1">Court ${c}</div>`).join('')}${hrs.map(h => `<div class="text-xs text-muted pt-2 num">${hourLabel(h)}</div>${[0, 1, 2].map(c => cell(c, h)).join('')}`).join('')}</div></div><p class="text-xs text-muted mt-4">Bookings are by the hour: tap an open hour to start, then add as many hours as you need. Tap a booking to move it from Booked to Paid to Checked-in.</p>`, `<button class="btn btn-lime !py-2 text-sm" onclick="scBooking()"><i class="fa-solid fa-plus"></i>New booking</button>`);
@@ -113,19 +115,19 @@ const VIEWS = {
     const clips = DB.sessions.reduce((a, s) => a + s.clips, 0);
     return `<div class="grid gap-5"><div class="grid grid-cols-2 xl:grid-cols-4 gap-4">${kpi(DB.sessions.length, 'Sessions today')}${kpi(clips, 'Highlight clips generated')}${kpi('3m 40s', 'Avg. stop to highlights')}${kpi(DB.sessions.filter(s => s.st === 'Unlocked').length, 'Kept forever today', '', 'text-gold')}</div>
     ${panel('Recording queue', `<div class="overflow-x-auto"><table class="min-w-[620px]"><thead><tr><th>Session</th><th>Court</th><th>Delivered to</th><th>Start</th><th>Full game</th><th>Highlights</th><th>Status</th><th></th></tr></thead><tbody>
-      ${DB.sessions.map(s => `<tr><td class="font-semibold num">#${s.id}</td><td>${s.court}</td><td class="text-muted num">${s.who}</td><td class="num">${s.start}</td><td class="num">${s.mins ? s.mins + ' min' : 'live'}</td><td class="num">${s.clips || '...'}</td><td>${badge(s.st)}</td><td class="text-right">${s.st === 'Delivered' || s.st === 'Unlocked' ? `<button class="text-xs text-lime hover:underline" onclick="toast(${q('Link re-sent to ' + s.who)})">Resend</button>` : ''}</td></tr>`).join('')}
+      ${DB.sessions.map(s => `<tr><td class="font-semibold num">#${esc(s.id)}</td><td>${esc(s.court)}</td><td class="text-muted num">${esc(s.who)}</td><td class="num">${esc(s.start)}</td><td class="num">${s.mins ? esc(s.mins) + ' min' : 'live'}</td><td class="num">${esc(s.clips || '...')}</td><td>${badge(s.st)}</td><td class="text-right">${s.st === 'Delivered' || s.st === 'Unlocked' ? `<button class="text-xs text-lime hover:underline" onclick="toast(${q('Link re-sent to ' + s.who)})">Resend</button>` : ''}</td></tr>`).join('')}
     </tbody></table></div>`, `<button class="btn btn-lime !py-2 text-sm" onclick="scCam()"><i class="fa-solid fa-circle-dot"></i>Start session</button>`)}</div>`;
   },
   payments() {
     const sum = m => DB.payments.filter(p => p.method === m && p.st === 'Verified').reduce((a, p) => a + p.amt, 0);
     return `<div class="grid gap-5"><div class="grid grid-cols-3 gap-4">${kpi(peso(sum('GCash')), 'GCash verified')}${kpi(peso(sum('Maya')), 'Maya verified')}${kpi(peso(sum('Cash')), 'Cash verified')}</div>
     ${panel('Payment ledger', `<div class="overflow-x-auto"><table class="min-w-[560px]"><thead><tr><th>Ref</th><th>For</th><th>Method</th><th class="text-right">Amount</th><th>Status</th><th></th></tr></thead><tbody>
-      ${DB.payments.map((p, i) => `<tr><td class="num">${p.ref}</td><td>${p.what}</td><td>${p.method}</td><td class="text-right num">${peso(p.amt)}</td><td>${badge(p.st)}</td><td class="text-right">${p.st === 'Pending' ? `<button class="text-xs text-lime hover:underline" onclick="verifyPay(${i})">Verify</button>` : ''}</td></tr>`).join('')}
+      ${DB.payments.map((p, i) => `<tr><td class="num">${esc(p.ref)}</td><td>${esc(p.what)}</td><td>${esc(p.method)}</td><td class="text-right num">${peso(p.amt)}</td><td>${badge(p.st)}</td><td class="text-right">${p.st === 'Pending' ? `<button class="text-xs text-lime hover:underline" onclick="verifyPay(${i})">Verify</button>` : ''}</td></tr>`).join('')}
     </tbody></table></div>`)}</div>`;
   },
   wifi() {
     return `<div class="grid gap-5">${panel('Sell a voucher', `<div class="grid sm:grid-cols-3 gap-3">${WIFI.map((w, i) => [wifiName(i), PRICES[w.k]]).map(w => `<button class="card p-4 text-left hover:border-lime" onclick="issueVoucher(${q(w[0])})"><p class="font-bold">${w[0]}</p><p class="display text-2xl text-lime num mt-1">${peso(w[1])}</p></button>`).join('')}</div>`)}
-    ${panel('Issued vouchers', `<table><thead><tr><th>Code</th><th>Plan</th><th>For</th><th>Status</th></tr></thead><tbody>${DB.vouchers.map(v => `<tr><td class="num font-semibold">${v.code}</td><td>${v.plan}</td><td>${v.who}</td><td>${badge(v.st)}</td></tr>`).join('')}</tbody></table>`)}</div>`;
+    ${panel('Issued vouchers', `<div class="overflow-x-auto"><table><thead><tr><th>Code</th><th>Plan</th><th>For</th><th>Status</th></tr></thead><tbody>${DB.vouchers.map(v => `<tr><td class="num font-semibold">${esc(v.code)}</td><td>${esc(v.plan)}</td><td>${esc(v.who)}</td><td>${badge(v.st)}</td></tr>`).join('')}</tbody></table></div>`)}</div>`;
   },
   data() {
     const t = tables(), cfg = PLATFORM.cfg;
@@ -135,7 +137,7 @@ const VIEWS = {
       `<div class="flex gap-2"><label class="btn btn-ghost !py-2 text-sm cursor-pointer" style="margin:0;color:inherit;font-size:14px"><i class="fa-solid fa-file-import"></i>Import<input type="file" accept=".xlsx,.xls" class="hide" onchange="importXLSX(this.files[0])"></label><button class="btn btn-lime !py-2 text-sm" onclick="exportXLSX()"><i class="fa-solid fa-file-excel"></i>Export Excel</button></div>`)}
     ${panel('Connect their platform', `<p class="text-sm text-muted mb-4">Already on a membership or booking system? Paste its API link and the console syncs with it, using the same sheets as the Excel file. No API? Use Excel export and import.</p>
       <div class="grid sm:grid-cols-2 gap-4"><div><label for="plName">Platform</label><input id="plName" placeholder="e.g. their gym membership app" value="${esc(cfg.name || '')}"></div><div><label for="plUrl">API link (https)</label><input id="plUrl" type="url" placeholder="https://..." value="${esc(cfg.url || '')}"></div></div>
-      <p class="text-xs text-muted mt-3">Status: ${cfg.url ? `linked to <b class="text-lime">${cfg.name || cfg.url}</b>` : 'not linked · the Excel soft copy is the backend'}</p>`,
+      <p class="text-xs text-muted mt-3">Status: ${cfg.url ? `linked to <b class="text-lime">${esc(cfg.name || cfg.url)}</b>` : 'not linked · the Excel soft copy is the backend'}</p>`,
       `<div class="flex gap-2"><button class="btn btn-ghost !py-2 text-sm" onclick="syncPlatform('pull')"><i class="fa-solid fa-cloud-arrow-down"></i>Pull</button><button class="btn btn-lime !py-2 text-sm" onclick="syncPlatform('push')"><i class="fa-solid fa-cloud-arrow-up"></i>Push</button></div>`)}</div>`;
   },
   marketing() {
@@ -153,11 +155,9 @@ const VIEWS = {
     ${panel('Hours', `<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">${hr('open', 'Courts open')}${hr('close', 'Courts close')}${hr('playFrom', 'Open play starts')}${hr('playTo', 'Open play ends')}</div><p class="text-xs text-muted mt-3">Hourly booking slots on the site and the schedule follow these hours. Open play runs on Court 3.</p>`)}
     ${panel('Page content', `<p class="text-sm text-muted mb-4">Every text and link on the public page, by section. Type to change it on the site.</p>${Object.entries(groups).map(([g, items]) => `<details class="card p-4 mb-3"><summary class="font-semibold cursor-pointer">${g} <span class="text-xs text-muted font-normal">${items.length} fields</span></summary><div class="grid gap-3 mt-4">${items.map(field).join('')}</div></details>`).join('')}`,
       `<div class="flex gap-2"><button class="btn btn-ghost !py-2 text-sm" onclick="resetConfig()">Reset to original</button><button class="btn btn-lime !py-2 text-sm" onclick="go('home')"><i class="fa-solid fa-eye"></i>View site</button></div>`)}
-    ${panel('Staff and access', `<table><thead><tr><th>Account</th><th>Role</th></tr></thead><tbody>${DB.staff.map(s => `<tr><td class="font-semibold">${s.n}</td><td>${s.role}</td></tr>`).join('')}</tbody></table>`)}</div>`;
+    ${panel('Staff and access', `<div class="overflow-x-auto"><table><thead><tr><th>Account</th><th>Role</th></tr></thead><tbody>${DB.staff.map(s => `<tr><td class="font-semibold">${esc(s.n)}</td><td>${esc(s.role)}</td></tr>`).join('')}</tbody></table></div>`)}</div>`;
   }
 };
-const esc = v => String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-const q = v => esc(JSON.stringify(String(v)));   // a JS string literal safe inside onclick="..."
 function setPrice(k, v) { PRICES[k] = Math.max(0, Math.round(+v) || 0); saveConfig(); refreshSite(); toast('Price updated on the site'); }
 function setHour(k, v) {
   const next = { ...HOURS, [k]: +v };
@@ -219,7 +219,7 @@ function saveBooking() {
 function cycleSlot(c, h) { const b = DB.schedule[c + '-' + h], order = ['Booked', 'Paid', 'Checked-in']; b.st = order[(order.indexOf(b.st) + 1) % 3]; toast(b.who + ': ' + b.st); renderAdmin(); }
 function scCheckin() {
   const due = Object.entries(DB.schedule).filter(([, b]) => b.st !== 'Checked-in');
-  drawer(`<h2 class="font-bold text-xl mb-5">Check in</h2>${due.length ? due.map(([k, b]) => { const [c, h] = k.split('-').map(Number); return `<div class="card p-4 mb-3 flex justify-between items-center"><div><p class="font-semibold">${b.who}</p><p class="text-xs text-muted">Court ${c + 1} · ${hourLabel(h)} · ${b.st}</p></div><button class="btn btn-lime !py-1.5 !px-3 text-xs" onclick="DB.schedule['${k}'].st='Checked-in';toast(${q(b.who + ' checked in')});scCheckin();renderAdmin()">Check in</button></div>`; }).join('') : '<p class="text-muted">Everyone is checked in.</p>'}`);
+  drawer(`<h2 class="font-bold text-xl mb-5">Check in</h2>${due.length ? due.map(([k, b]) => { const [c, h] = k.split('-').map(Number); return `<div class="card p-4 mb-3 flex justify-between items-center"><div><p class="font-semibold">${esc(b.who)}</p><p class="text-xs text-muted">Court ${c + 1} · ${hourLabel(h)} · ${b.st}</p></div><button class="btn btn-lime !py-1.5 !px-3 text-xs" onclick="DB.schedule['${k}'].st='Checked-in';toast(${q(b.who + ' checked in')});scCheckin();renderAdmin()">Check in</button></div>`; }).join('') : '<p class="text-muted">Everyone is checked in.</p>'}`);
 }
 function scCam() {
   drawer(`<h2 class="font-bold text-xl mb-5">Start a recording session</h2><div class="space-y-4">
@@ -242,7 +242,7 @@ function scWifi() { drawer(`<h2 class="font-bold text-xl mb-5">Sell WiFi</h2><di
 function issueVoucher(plan) { const code = 'PH-WF-' + (3382 + DB.vouchers.length); DB.vouchers.unshift({ code, plan, who: 'Walk-in', st: 'Active' }); if (SEC === 'wifi') renderAdmin(); showQR('Voucher ' + code, plan + ' · connect to Playhouse-Guest', code); }
 function scPayments() {
   const pend = DB.payments.map((p, i) => [p, i]).filter(([p]) => p.st === 'Pending');
-  drawer(`<h2 class="font-bold text-xl mb-5">Verify payments</h2>${pend.length ? pend.map(([p, i]) => `<div class="card p-4 mb-3 flex justify-between items-center gap-3"><div><p class="font-semibold">${p.what}</p><p class="text-xs text-muted num">${p.method} · ${p.ref} · ${peso(p.amt)}</p></div><button class="btn btn-lime !py-1.5 !px-3 text-xs" onclick="verifyPay(${i});scPayments()">Verify</button></div>`).join('') : '<p class="text-muted">All payments verified.</p>'}`);
+  drawer(`<h2 class="font-bold text-xl mb-5">Verify payments</h2>${pend.length ? pend.map(([p, i]) => `<div class="card p-4 mb-3 flex justify-between items-center gap-3"><div><p class="font-semibold">${esc(p.what)}</p><p class="text-xs text-muted num">${esc(p.method)} · ${esc(p.ref)} · ${peso(p.amt)}</p></div><button class="btn btn-lime !py-1.5 !px-3 text-xs" onclick="verifyPay(${i});scPayments()">Verify</button></div>`).join('') : '<p class="text-muted">All payments verified.</p>'}`);
 }
 function verifyPay(i) { DB.payments[i].st = 'Verified'; toast('Payment ' + DB.payments[i].ref + ' verified'); renderAdmin(); }
 function scCampaign() { drawer(`<h2 class="font-bold text-xl mb-5">Send a campaign</h2>${OPTIN_NOTE}${CAMPAIGNS.map((c, i) => `<div class="card p-4 mb-3"><p class="font-bold">${c.n}</p><p class="text-xs text-muted mt-1">${c.d}</p><button class="btn btn-lime !py-1.5 !px-3 text-xs mt-3" onclick="sendCampaign(${i})">Send to ${c.aud()}</button></div>`).join('')}`); }
@@ -250,8 +250,8 @@ function sendCampaign(i) { const c = CAMPAIGNS[i]; DB.sent.unshift({ name: c.n, 
 function scRoster() {
   drawer(`<h2 class="font-bold text-xl mb-1">Open play tonight</h2><p class="text-sm text-muted mb-5">${hourLabel(HOURS.playFrom)} to ${hourLabel(HOURS.playTo)} · Court 3 · <span class="num">${DB.roster.length}/16</span> players</p>
   <div class="bar mb-5"><span style="width:${DB.roster.length / 16 * 100}%"></span></div>
-  <ol class="space-y-2 mb-5">${DB.roster.map((n, i) => `<li class="card p-3 flex justify-between"><span><span class="text-muted num mr-2">${i + 1}</span>${n}</span><span class="badge b-lime">₱${DB.prices.open}</span></li>`).join('')}</ol>
-  <div class="flex gap-2"><input id="rN" placeholder="Add walk-in name"><button class="btn btn-lime" onclick="const v=$('#rN').value.trim();if(v&&DB.roster.length<16){DB.roster.push(v);scRoster()}">Add</button></div>`);
+  <ol class="space-y-2 mb-5">${DB.roster.map((n, i) => `<li class="card p-3 flex justify-between"><span><span class="text-muted num mr-2">${i + 1}</span>${esc(n)}</span><span class="badge b-lime">₱${DB.prices.open}</span></li>`).join('')}</ol>
+  <div class="flex gap-2"><input id="rN" placeholder="Add walk-in name" aria-label="Add walk-in player name"><button class="btn btn-lime" onclick="const v=$('#rN').value.trim();if(v&&DB.roster.length<16){DB.roster.push(v);scRoster()}">Add</button></div>`);
 }
 function promote(contact) { const c = DB.customers.find(x => x.c === contact); c.t = c.t === 'Lead' ? 'Member' : 'Player'; toast(c.n + ' is now a ' + c.t); renderAdmin(); }
 // ---------- data: Excel soft copy + their platform ----------

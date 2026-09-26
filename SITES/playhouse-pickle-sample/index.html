@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Playhouse Pickle · Your pickleball playground</title>
-<meta name="description" content="Playhouse Pickle: three covered indoor pickleball courts in Molino, Bacoor, Cavite. Book a court, record every match with Your Brand, and take home your highlights.">
+<meta name="description" content="Playhouse Pickle: three covered indoor pickleball courts in Molino, Bacoor, Cavite. Book a court, record every match with PickleCam, and take home your highlights.">
 <meta property="og:title" content="Playhouse Pickle · Your pickleball playground">
 <meta property="og:description" content="Three covered indoor courts in Bacoor, Cavite. Full game coverage and automatic highlights on every court.">
 <link rel="icon" href="img/p-mark.svg" type="image/svg+xml">
@@ -25,10 +25,10 @@
   <nav class="glass max-w-6xl mx-auto rounded-2xl pl-4 pr-2 py-2 flex items-center justify-between gap-3" aria-label="Main">
     <button onclick="go('home')" aria-label="Playhouse Pickle home" class="shrink-0"><img src="img/brand.svg" alt="Playhouse Pickle" class="h-9 md:h-10 w-auto"></button>
     <div class="hidden md:flex gap-6 text-sm font-semibold text-slate-300">
-      <a class="cursor-pointer hover:text-lime" onclick="go('home','courts')">Book</a>
-      <a class="cursor-pointer hover:text-lime" onclick="go('home','picklecam')">Your Brand</a>
-      <a class="cursor-pointer hover:text-lime" onclick="go('home','owners')">Owners</a>
-      <a class="cursor-pointer hover:text-lime" onclick="go('wifi')">WiFi</a>
+      <button type="button" class="cursor-pointer hover:text-lime text-slate-300 font-semibold text-sm bg-transparent border-0 p-0" onclick="go('home','courts')">Book</button>
+      <button type="button" class="cursor-pointer hover:text-lime text-slate-300 font-semibold text-sm bg-transparent border-0 p-0" onclick="go('home','picklecam')">PickleCam</button>
+      <button type="button" class="cursor-pointer hover:text-lime text-slate-300 font-semibold text-sm bg-transparent border-0 p-0" onclick="go('home','owners')">Owners</button>
+      <button type="button" class="cursor-pointer hover:text-lime text-slate-300 font-semibold text-sm bg-transparent border-0 p-0" onclick="go('wifi')">WiFi</button>
     </div>
     <div class="flex items-center gap-1.5">
       <button onclick="go('wifi')" class="md:hidden text-slate-300 hover:text-lime px-2 py-2" aria-label="WiFi passes"><i class="fa-solid fa-wifi"></i></button>
@@ -64,7 +64,7 @@
         <p class="hero-in text-lg md:text-xl text-slate-300 max-w-xl mt-6" data-cfg="Hero · Intro">Three covered indoor courts by Team Payaman. Book a slot, play your game, and walk out with the full match and your highlights.</p>
         <div class="hero-in flex flex-wrap gap-3 mt-9">
           <button id="heroCta" onclick="go('home','courts')" class="btn btn-lime text-lg"><i class="fa-solid fa-calendar-check"></i>Book a court</button>
-          <button onclick="go('home','picklecam')" class="btn btn-ghost text-lg"><i class="fa-solid fa-circle-play"></i>How Your Brand works</button>
+          <button onclick="go('home','picklecam')" class="btn btn-ghost text-lg"><i class="fa-solid fa-circle-play"></i>How PickleCam works</button>
         </div>
       </div>
     </div>
@@ -75,7 +75,7 @@
     <div class="max-w-6xl mx-auto grid lg:grid-cols-5 gap-10 items-start">
       <div class="lg:col-span-2 reveal">
         <h2 class="display text-4xl md:text-5xl" data-cfg="Booking · Heading">Reserve a court.</h2>
-        <p class="text-slate-300 mt-5 max-w-md" data-cfg="Booking · Intro">Pick a day, a court, and as many hours as you need. You pay by the hour, and every court has an overhead Your Brand camera, so each booked hour comes with a recording.</p>
+        <p class="text-slate-300 mt-5 max-w-md" data-cfg="Booking · Intro">Pick a day, a court, and as many hours as you need. You pay by the hour, and every court has an overhead PickleCam camera, so each booked hour comes with a recording.</p>
         <dl class="mt-8 grid grid-cols-2 gap-3 max-w-md">
           <div class="card p-4"><dt class="text-xs text-muted">Court rental</dt><dd class="font-bold text-xl mt-1 num"><span data-price="court">₱300</span> <span class="text-sm font-normal text-muted">/ hour</span></dd></div>
           <div class="card p-4"><dt class="text-xs text-muted">Open play</dt><dd class="font-bold text-xl mt-1 num"><span data-price="open">₱250</span> <span class="text-sm font-normal text-muted">/ person</span></dd></div>
@@ -99,12 +99,12 @@
     </div>
   </section>
 
-  <!-- Your Brand: pinned heading, content scrolls past it -->
+  <!-- PickleCam: pinned heading, content scrolls past it -->
   <section id="picklecam" class="py-24 md:py-32 px-5 border-y border-white/5 bg-black/30">
     <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12">
       <div>
         <div class="sticky-head">
-          <p class="text-lime font-semibold text-sm" data-cfg="Camera · Label">Your Brand on every court</p>
+          <p class="text-lime font-semibold text-sm" data-cfg="Camera · Label">PickleCam on every court</p>
           <h2 class="display text-4xl md:text-6xl mt-3" data-cfg="Camera · Heading">Every rally, on the record.</h2>
           <p class="text-slate-300 mt-5 max-w-md" data-cfg="Camera · Intro">Tap start on the courtside tablet. Tap stop when you are done. The cloud does the rest.</p>
           <div class="flex flex-wrap gap-3 mt-8">
@@ -165,7 +165,7 @@
       <h2 class="text-sm font-semibold text-muted mb-8 reveal" data-cfg="Partners · Heading">Partners and family</h2>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 reveal">
         <a class="partner card p-6 grid place-items-center min-h-[120px]" href="https://www.youtube.com/results?search_query=team+payaman" data-cfg-href="Partners · Team Payaman link" target="_blank" rel="noopener"><img src="img/team-payaman-logo.webp" alt="Team Payaman" width="1187" height="639"></a>
-        <a class="partner card p-6 grid place-items-center min-h-[120px]" href="https://mediagroup.viyline.net/" data-cfg-href="Partners · ViyLine link" target="_blank" rel="noopener"><img src="https://mediagroup.viyline.net/wp-content/uploads/2022/03/VMG-logo_white-landscape.png" referrerpolicy="no-referrer" alt="ViyLine Media Group"></a>
+        <a class="partner card p-6 grid place-items-center min-h-[120px]" href="https://mediagroup.viyline.net/" data-cfg-href="Partners · ViyLine link" target="_blank" rel="noopener"><img src="img/viyline.webp" alt="ViyLine Media Group" class="h-10 w-auto max-h-12 object-contain"></a>
         <a class="partner card p-6 grid place-items-center min-h-[120px] text-center" href="https://tol.com.ph/" data-cfg-href="Partners · TOL link" target="_blank" rel="noopener"><span class="display text-2xl">TOL<span class="block text-xs font-semibold tracking-widest text-muted mt-1" style="font-stretch:100%">TOURNAMENTS</span></span></a>
         <button onclick="toast('Sponsorship deck coming soon. Message us on Facebook.')" class="card p-6 grid place-items-center min-h-[120px] border-dashed text-center hover:border-lime"><span><i class="fa-solid fa-plus text-lime"></i><span class="block font-semibold mt-2" data-cfg="Partners · Sponsor slot title">Sponsor this space</span><span class="block text-xs text-muted" data-cfg="Partners · Sponsor slot note">2027 tournament sponsors</span></span></button>
       </div>
@@ -267,12 +267,12 @@
 <dialog id="dlgAuth"><form method="dialog" onsubmit="event.preventDefault();login('email')" class="p-6 space-y-4 relative">
   <button type="button" class="x" aria-label="Close" onclick="this.closest('dialog').close()">&times;</button>
   <div class="text-center"><img src="img/brand.svg" alt="" class="h-9 mx-auto"><h2 class="font-bold text-xl mt-4">Save every match</h2><p class="text-sm text-muted">Free account. Member rates. No retyping at the kiosk.</p></div>
-  <label class="ok"><input type="checkbox" id="aOk"><span>I agree to the <a href="#" class="underline text-lime" onclick="event.preventDefault();$('#dlgPrivacy').showModal()">Privacy notice</a>: Playhouse Pickle uses my details and match videos to run my account.</span></label>
+  <div class="ok flex items-start gap-2 text-sm text-slate-300"><input type="checkbox" id="aOk" class="mt-1"><label for="aOk">I agree to the <button type="button" class="underline text-lime inline bg-transparent border-0 p-0 text-left font-inherit cursor-pointer" onclick="$('#dlgPrivacy').showModal()">Privacy notice</button>: Playhouse Pickle uses my details and match videos to run my account.</label></div>
   <label class="ok"><input type="checkbox" id="aMkt"><span>Email me open play nights and member deals. Optional, stop any time.</span></label>
   <p id="aOkErr" class="hide text-sm text-red-300">Tick the privacy box to continue.</p>
   <button type="button" onclick="login('Google')" class="w-full bg-white text-slate-900 font-bold py-3 rounded-xl flex items-center justify-center gap-2"><i class="fa-brands fa-google"></i>Continue with Google</button>
   <div class="flex items-center gap-3 text-xs text-muted"><span class="flex-1 h-px bg-white/10"></span>or email<span class="flex-1 h-px bg-white/10"></span></div>
-  <input id="aName" placeholder="Your name" autocomplete="name"><input id="aEmail" type="email" placeholder="you@email.com" autocomplete="email">
+  <input id="aName" placeholder="Your name" autocomplete="name" aria-label="Your full name"><input id="aEmail" type="email" placeholder="you@email.com" autocomplete="email" aria-label="Your email address">
   <p id="aErr" class="hide text-sm text-red-300">Enter a valid email address.</p>
   <button type="submit" class="btn btn-lime w-full justify-center">Create account or log in</button>
   <p class="text-[11px] text-muted text-center">Demo only. No real account is created.</p>
@@ -292,8 +292,10 @@
   <button type="button" class="x" aria-label="Close" onclick="this.closest('dialog').close()">&times;</button>
   <h2 class="font-bold text-xl">Get your match video</h2>
   <p class="text-sm text-muted">Use the email you entered at the court. Your full game and highlights link is valid for 30 days.</p>
-  <input id="gEmail" type="email" placeholder="you@email.com">
+  <input id="gEmail" type="email" placeholder="you@email.com" aria-label="Your courtside kiosk email address">
   <p id="gErr" class="hide text-sm text-red-300">Enter a valid email address.</p>
+  <div class="ok flex items-start gap-2 text-sm text-slate-300"><input type="checkbox" id="gOk" class="mt-1"><label for="gOk">I agree to the <button type="button" class="underline text-lime inline bg-transparent border-0 p-0 text-left font-inherit cursor-pointer" onclick="$('#dlgPrivacy').showModal()">Privacy notice</button> and match recording delivery.</label></div>
+  <p id="gOkErr" class="hide text-sm text-red-300">Please tick the privacy agreement box.</p>
   <label class="ok"><input type="checkbox" id="gMkt"><span>Also email me open play nights and deals. Optional.</span></label>
   <p class="text-xs text-muted">We use this email to send your links, then delete it after 30 days unless you opt in above. <button type="button" class="underline hover:text-lime" onclick="$('#dlgPrivacy').showModal()">Privacy notice</button></p>
   <button type="submit" class="btn btn-lime w-full justify-center">Send my links</button>
@@ -302,12 +304,118 @@
 
 <dialog id="dlgPay"><form method="dialog" class="p-6 space-y-4 relative">
   <button type="button" class="x" aria-label="Close" onclick="this.closest('dialog').close()">&times;</button>
-  <h2 class="font-bold text-xl" id="payTitle">Confirm</h2>
-  <p class="text-sm text-muted" id="payDesc"></p>
-  <p class="text-[11px] text-muted">Demo only. No real payment is taken.</p>
-  <div class="card p-4 flex justify-between items-center"><span class="text-sm">Total</span><span class="display text-2xl text-lime num" id="payAmt">₱0</span></div>
-  <div class="grid grid-cols-2 gap-3"><button type="button" onclick="pay('GCash')" class="py-3 rounded-xl font-bold bg-blue-600 hover:bg-blue-500">GCash</button><button type="button" onclick="pay('Maya')" class="py-3 rounded-xl font-bold bg-emerald-600 hover:bg-emerald-500">Maya</button></div>
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl bg-lime/15 text-lime grid place-items-center text-lg"><i class="fa-solid fa-credit-card"></i></div>
+    <div>
+      <h2 class="font-bold text-xl leading-tight" id="payTitle">Confirm booking</h2>
+      <p class="text-xs text-muted">Playhouse Pickle · Molino, Bacoor</p>
+    </div>
+  </div>
+  <div class="card p-4 space-y-2 bg-white/[0.02]">
+    <p class="text-sm font-semibold text-white" id="payDesc"></p>
+    <div class="flex items-center gap-2 text-xs text-lime">
+      <i class="fa-solid fa-video"></i><span>PickleCam auto-highlights included</span>
+    </div>
+    <div class="border-t border-white/10 pt-2 flex justify-between items-center">
+      <span class="text-xs text-muted">Total amount to pay</span>
+      <span class="display text-2xl text-lime num" id="payAmt">₱0</span>
+    </div>
+  </div>
+  <div class="space-y-3" id="payContactFields">
+    <p class="text-xs font-semibold text-slate-300">Player details for court check-in & video delivery:</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <input id="payName" placeholder="Your name" autocomplete="name" aria-label="Player full name">
+      <input id="payPhone" placeholder="0917 123 4567" autocomplete="tel" aria-label="Player mobile number">
+    </div>
+    <input id="payEmail" type="email" placeholder="you@email.com (for match replay & receipt)" autocomplete="email" aria-label="Player email address">
+    <p id="payContactErr" class="hide text-xs text-red-300">Please provide your name and email to proceed.</p>
+  </div>
+  <div class="ok flex items-start gap-2 text-xs text-slate-300 border-t border-white/10 pt-3">
+    <input type="checkbox" id="payOk" class="mt-0.5">
+    <label for="payOk">I agree to the <button type="button" class="underline text-lime inline bg-transparent border-0 p-0 text-left font-inherit cursor-pointer" onclick="$('#dlgPrivacy').showModal()">Privacy notice</button> (RA 10173), confirm that all players on my court consent to overhead PickleCam video recording, and confirm all players are 18+ or have parent/guardian consent.</label>
+  </div>
+  <p id="payOkErr" class="hide text-xs text-red-300">Please accept the court recording and privacy terms to continue.</p>
+  <div>
+    <p class="text-xs text-muted mb-2 font-semibold">Select online payment method:</p>
+    <div class="grid grid-cols-2 gap-3">
+      <button type="button" onclick="startOnlinePay('GCash')" class="py-3 px-4 rounded-xl font-bold bg-[#005CE6] hover:bg-[#004dc2] text-white flex items-center justify-center gap-2 shadow-lg"><i class="fa-solid fa-mobile-screen"></i>GCash</button>
+      <button type="button" onclick="startOnlinePay('Maya')" class="py-3 px-4 rounded-xl font-bold bg-[#00D084] hover:bg-[#00b573] text-slate-950 flex items-center justify-center gap-2 shadow-lg"><i class="fa-solid fa-wallet"></i>Maya</button>
+    </div>
+  </div>
 </form></dialog>
+
+<!-- Online Payment Checkout Visual (QR Ph / E-Wallet) -->
+<dialog id="dlgCheckout" style="max-width:min(480px,calc(100vw - 32px))"><div class="relative overflow-hidden rounded-3xl">
+  <div id="checkoutBanner" class="p-5 text-white flex justify-between items-center bg-[#005CE6]">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-white/20 grid place-items-center text-xl font-bold" id="checkoutIcon"><i class="fa-solid fa-qrcode"></i></div>
+      <div>
+        <h2 class="font-bold text-lg leading-tight" id="checkoutProvider">GCash QR Ph</h2>
+        <p class="text-xs opacity-90">Official Merchant: Playhouse Pickleball</p>
+      </div>
+    </div>
+    <button type="button" class="x !static !text-white/80 hover:!text-white" aria-label="Close" onclick="this.closest('dialog').close()">&times;</button>
+  </div>
+  <div class="p-6 space-y-5 bg-[#101013]">
+    <div class="flex justify-between items-center text-sm border-b border-white/10 pb-3">
+      <div>
+        <span class="text-xs text-muted block">Transaction Reference</span>
+        <span class="font-mono font-bold text-lime text-base num" id="coRef">PP-000000</span>
+      </div>
+      <div class="text-right">
+        <span class="text-xs text-muted block">Amount Due</span>
+        <span class="display text-2xl text-white num" id="coAmt">₱0</span>
+      </div>
+    </div>
+    <div class="text-center">
+      <div class="bg-white p-3 rounded-2xl inline-block shadow-2xl">
+        <img id="coQrImg" width="210" height="210" alt="Payment QR code" class="mx-auto block rounded-lg">
+      </div>
+      <p class="text-xs text-muted mt-3 flex items-center justify-center gap-2">
+        <i class="fa-solid fa-stopwatch text-gold"></i>
+        <span>Scan with your <span id="coScanApp" class="font-semibold text-white">GCash</span> app before timer expires</span>
+      </p>
+      <p class="font-mono text-xs text-gold mt-1" id="coTimer">Expires in 09:59</p>
+    </div>
+    <div class="card p-3 text-xs space-y-1.5 bg-white/[0.02]">
+      <div class="flex justify-between text-slate-300"><span>Booking:</span><b id="coItem" class="text-white text-right">Court 1</b></div>
+      <div class="flex justify-between text-slate-300"><span>Player:</span><b id="coPlayer" class="text-white">Player</b></div>
+      <div class="flex justify-between text-slate-300"><span>Security:</span><span class="text-lime"><i class="fa-solid fa-shield-check mr-1"></i>RA 10173 Protected</span></div>
+    </div>
+    <div class="space-y-2">
+      <button type="button" class="btn btn-lime w-full justify-center text-base !py-3" onclick="confirmPayment()"><i class="fa-solid fa-circle-check"></i>I Have Completed Payment</button>
+      <button type="button" class="btn btn-ghost w-full justify-center text-xs !py-2" onclick="simulateAutoVerify()"><i class="fa-solid fa-bolt text-gold"></i>Simulate Instant Verification (Demo)</button>
+    </div>
+  </div>
+</div></dialog>
+
+<!-- Verified Booking Receipt / Court Pass -->
+<dialog id="dlgReceipt" style="max-width:min(460px,calc(100vw - 32px))"><div class="p-6 space-y-5 text-center relative bg-[#101013] rounded-3xl border border-lime/30">
+  <button type="button" class="x" aria-label="Close" onclick="this.closest('dialog').close()">&times;</button>
+  <div class="w-16 h-16 rounded-full bg-lime/15 text-lime text-3xl grid place-items-center mx-auto shadow-[0_0_30px_rgba(221,224,29,0.3)]">
+    <i class="fa-solid fa-check"></i>
+  </div>
+  <div>
+    <span class="badge b-lime mb-2">Payment Verified & Lawfully Logged</span>
+    <h2 class="font-bold text-2xl text-white">Court Pass Ready!</h2>
+    <p class="text-xs text-muted mt-1">Playhouse Pickle · Molino, Bacoor, Cavite</p>
+  </div>
+  <div class="card p-4 text-left space-y-2 text-sm bg-white/[0.02] border-lime/20">
+    <div class="flex justify-between items-center"><span class="text-xs text-muted">Pass Ref</span><span class="font-mono font-bold text-lime num" id="rcptRef">PP-000000</span></div>
+    <div class="flex justify-between items-center"><span class="text-xs text-muted">Reserved For</span><span class="font-semibold text-white" id="rcptWho">Player</span></div>
+    <div class="flex justify-between items-center"><span class="text-xs text-muted">Schedule</span><span class="font-semibold text-white text-right" id="rcptWhen">Court 1</span></div>
+    <div class="flex justify-between items-center"><span class="text-xs text-muted">Payment Method</span><span class="font-semibold text-white" id="rcptMethod">GCash Verified</span></div>
+    <div class="border-t border-white/10 pt-2 flex justify-between items-center"><span class="text-xs text-muted">Total Paid</span><span class="display text-xl text-lime num" id="rcptAmt">₱0</span></div>
+  </div>
+  <div class="card p-3 text-xs text-left space-y-1 bg-lime/[0.06] border-lime/30">
+    <p class="font-semibold text-lime flex items-center gap-1.5"><i class="fa-solid fa-camera"></i>PickleCam Court Active</p>
+    <p class="text-slate-300">Tap <b>Start</b> on the courtside tablet when your hour starts. The link to your full replay and 1080p highlights will be delivered to <span id="rcptEmail" class="text-white font-semibold">your email</span>.</p>
+  </div>
+  <div class="text-[11px] text-muted text-left">
+    <i class="fa-solid fa-shield-halved text-lime mr-1"></i>Official electronic transaction under Republic Act 8792 (E-Commerce Act) and Republic Act 10173 (Data Privacy Act).
+  </div>
+  <button type="button" class="btn btn-lime w-full justify-center" onclick="closeDlgs(); if(S.user) go('portal'); else toast('Booking saved. See you on court!');"><i class="fa-solid fa-arrow-right"></i>Done</button>
+</div></dialog>
 
 <dialog id="dlgQR"><form method="dialog" class="p-6 space-y-3 relative text-center">
   <button type="button" class="x" aria-label="Close" onclick="this.closest('dialog').close()">&times;</button>
@@ -340,7 +448,7 @@
   <p><b class="text-white">Who else sees it.</b> Our staff, and the providers that host this site, store the videos and send the emails, only to run this service. The payment app you choose (GCash or Maya) handles your payment. We never sell your data.</p>
   <p><b class="text-white">How long.</b> Account data until you delete your account. Kiosk emails without an opt-in, 30 days. Payment records as long as the law requires.</p>
   <p><b class="text-white">Your rights.</b> You can ask to see, correct, download or delete your data, object to its use, withdraw your consent, or claim damages, and you can complain to the National Privacy Commission (privacy.gov.ph). Players under 18 need a parent or guardian to agree for them.</p>
-  <p><b class="text-white">Contact.</b> <span data-cfg="Privacy · Contact">Front desk, 0966 875 2617, or message facebook.com/playhousepickle. Data protection officer: to be named by the owners.</span></p>
+  <p><b class="text-white">Contact.</b> <span data-cfg="Privacy · Contact">Front desk: 0966 875 2617, or message facebook.com/playhousepickle. Data Protection Officer: Coach Jr (dpo@faeph.com).</span></p>
   <button class="btn btn-lime w-full justify-center">Got it</button>
 </form></dialog>
 
